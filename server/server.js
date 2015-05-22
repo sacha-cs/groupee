@@ -5,6 +5,8 @@ formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
 
+utils = require('./utils');
+
 postHandler = require('./postHandlers.js');
 getHandler = require('./getHandlers.js');
 
@@ -20,7 +22,7 @@ sessionKeys = [];
 
 var disallowed = ["server"];
 
-http.createServer(serverListener).listen(8082);
+http.createServer(serverListener).listen(8085);
 console.log("Listening...");
 
 function serverListener(request, response) {
@@ -44,7 +46,7 @@ function serverListener(request, response) {
                 }
             });
             request.on("end", function() {
-                handler(request, response, splitParams(message));
+                handler(request, response, utils.splitParams(message));
             });
         }
         else
@@ -59,7 +61,7 @@ function serverListener(request, response) {
     var handler = getHandler.getHandler(request.url.substring(1).split("?")[0]);
     if(handler != null) {
         var paramString = request.url.split("?")[1];
-        handler(request, response, splitParams(paramString));
+        handler(request, response, utils.splitParams(paramString));
         return;
     }
 
@@ -147,21 +149,6 @@ function POSTDataTooBig(response) {
 }
 
 
-
-function splitParams(string, splitOn) {
-    if(!splitOn)
-        splitOn = '&';
-    var params = {};
-    if(string == null || string == undefined) return params;
-    var parts = string.split(splitOn);
-    for (var i = 0; i < parts.length; i++) {
-        var param = parts[i];
-        var keyAndValue = param.split("=");
-        params[keyAndValue[0].trim()] = keyAndValue[1].trim();
-    }
-    return params;
-}
-
 function requestDisallowed(url) {
     for(var i = 0; i < disallowed.length; i++)
     {
@@ -169,27 +156,4 @@ function requestDisallowed(url) {
             return true;
     }
     return false;
-}
-
-function respondPlain(response, text) {
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.end(text);
-}
-
-function getUser(request) {
-    var cookie = request.headers.cookie;
-    if(!cookie) return;
-    var cookies = splitParams(cookie, ';');
-    var seshCookie = cookies.seshCookie;
-    if(!seshCookie) return;
-    var user = sessionKeys[seshCookie];
-    return user;
-}
-
-function usernameIsValid(username) {
-    return /^[0-9a-zA-Z_.-]+$/.test(username);
-}
-
-function passwordIsValid(password) {
-    return /^[0-9a-zA-Z_.-!?]+$/.test(username);
 }

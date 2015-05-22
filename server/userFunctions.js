@@ -12,30 +12,31 @@ function login(request, response, params) {
             if(!err) return false;
             console.log(err);
             done(client);
-            response.writeHead(200, {'contentType': 'text/plain'});
-            response.end('NUnknown');
+            response.writeHead(500, {'contentType': 'text/plain'});
+            response.end('An error occurred. Contact the webmaster.');
             return true;
         }
         if(params.username && params.password)
         {
-            client.query("SELECT password FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
+            client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
                 if(handleError(err)) return;
                 done(client);
                 if(result.rows.length != 0) {
-                    if(result.rows[0].password == params.password) {
+                    var expected = result.rows[0].pwdhash;
+                    if(passwordHash.verify(params.password, expected)) {
                         var seshCookie = Math.round(Math.random() * 4294967295);
                         sessionKeys["" + seshCookie] = params.username;
-                        return respondPlain(response,
+                        return utils.respondPlain(response,
                                             "Y" + seshCookie);
                     } else {
-                        return respondPlain(response, "NIncorrectPassword");
+                        return utils.respondPlain(response, "NIncorrectPassword");
                     }
                 } else {
-                    return respondPlain(response, "NNoUser");
+                    return utils.respondPlain(response, "NNoUser");
                 }
             });
         } else {
-            return respondPlain(response, "NEmptyFields");
+            return utils.respondPlain(response, "NEmptyFields");
         }
     });
 }
@@ -55,30 +56,34 @@ function register(request, response, params) {
         }
 
         if(params.username && params.password && params.passwordconfirm) {
+            if (!usernameIsValid(params.username) || !passwordIsValid(params.password)) {
+                return utils.respondPlain(response, "NInvalidCharacters");
+            }
             client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, checkQuery) {
                 if(checkQuery.rows.length > 0) {
-                    return respondPlain(response, "NUsernameTaken");
+                    return utils.respondPlain(response, "NUsernameTaken");
                 }
 
                 if(params.password == params.passwordconfirm) {
-                    client.query("INSERT INTO users(username, password, pwdhash) VALUES('" + 
-                        params.username + "', '" + params.password + "', '" + params.password + "')", function(err, createQuery) {
+                    var hashedPassword = passwordHash.generate(params.password);
+                    client.query("INSERT INTO users(username, pwdhash) VALUES('" + 
+                        params.username.toLowerCase() + "', '" + hashedPassword + "')", function(err, createQuery) {
 
-                        client.query("SELECT * FROM users WHERE username='" + params.username + "'", function(err, finalCheckQuery) {
+                        client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, finalCheckQuery) {
                             if(finalCheckQuery.rows.length > 0) {
-                                return respondPlain(response, "YRegisteredSuccessfully");
+                                return utils.respondPlain(response, "YRegisteredSuccessfully");
                             } else {
-                                return respondPlain(response, "NUnknownError");
+                                return utils.respondPlain(response, "NUnknownError");
                             }
                         });
 
                     });
                 } else {
-                    return respondPlain(response, "NPasswordsDifferent");
+                    return utils.respondPlain(response, "NPasswordsDifferent");
                 }
             });
         } else {
-            return respondPlain(response, "NEmptyFields");
+            return utils.respondPlain(response, "NEmptyFields");
         }
     });
 }
@@ -98,7 +103,7 @@ function uploadAvatar(request, response, data) {
             response.end("Upload failed. :(");
             return;
         }
-        respondPlain(response, "File Uploaded successfully!");
+        utils.respondPlain(response, "File Uploaded successfully!");
 
         var file = files.avatar;
         //TODO: pass around user? think about this.
@@ -112,3 +117,10 @@ function uploadAvatar(request, response, data) {
     });
 }
 
+function usernameIsValid(username) {
+    return /^[0-9a-zA-Z_.-]+$/.test(username);
+}
+
+function passwordIsValid(password) {
+    return /^[0-9a-zA-Z_.-!?]+$/.test(username);
+}

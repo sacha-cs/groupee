@@ -7,13 +7,13 @@ getHandler.addHandler("chat/last_chat_no", lastChatNo);
 getHandler.addHandler("chat/chat_update", chatUpdate);
 
 function chatSendMessage(request, response, params) {
-    var username = getUser(request);
+    var username = utils.getUser(request);
     messages.push({user:username, message:params.chatmessage});
     messageNo++;
 }
 
 function lastChatNo(request, response) {
-    respondPlain(response, "");
+    utils.respondPlain(response, "" + messageNo);
 }
 
 function chatUpdate(request, response, params) {

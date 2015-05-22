@@ -34,7 +34,7 @@ function updateChat() {
         if (newID > lastMessageID)
         {
             lastMessageID = newID;
-            for (i = 0; i < msgInfo.length; i++) {
+            for (i = 0; i < msgInfo.length -1; i++) {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
