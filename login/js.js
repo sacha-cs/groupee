@@ -80,6 +80,9 @@ function register()
                  case "EmptyFields":
                     setErrorText("Please fill out all the fields.");
                     break;
+                case "InvalidCharacters":
+                    setErrorText("Invalid characters used in username/password");
+                    break;
             }
         }
                     

@@ -2,6 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var path = require('path');
 var formidable = require('formidable');
+var passwordHash = require('password-hash');
 var pg = require('pg');
 var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
 var uploadPath = "/vol/project/2014/271/g1427136/"
@@ -37,11 +38,12 @@ var postMap = {
             }
             if(params.username && params.password)
             {
-                client.query("SELECT password FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
+                client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
                     if(handleError(err)) return;
                     done(client);
                     if(result.rows.length != 0) {
-                        if(result.rows[0].password == params.password) {
+                        var expected = result.rows[0].pwdhash;
+                        if(passwordHash.verify(params.password, expected)) {
                             var seshCookie = Math.round(Math.random() * 4294967295);
                             sessionKeys["" + seshCookie] = params.username;
                             return respondPlain(response,
@@ -73,16 +75,20 @@ var postMap = {
             }
 
             if(params.username && params.password && params.passwordconfirm) {
+                if (!usernameIsValid(params.username) || !passwordIsValid(params.password)) {
+                    return respondPlain(response, "NInvalidCharacters");
+                }
                 client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, checkQuery) {
                     if(checkQuery.rows.length > 0) {
                         return respondPlain(response, "NUsernameTaken");
                     }
 
                     if(params.password == params.passwordconfirm) {
-                        client.query("INSERT INTO users(username, password, pwdhash) VALUES('" + 
-                            params.username + "', '" + params.password + "', '" + params.password + "')", function(err, createQuery) {
+                        var hashedPassword = passwordHash.generate(params.password);
+                        client.query("INSERT INTO users(username, pwdhash) VALUES('" + 
+                            params.username.toLowerCase() + "', '" + hashedPassword + "')", function(err, createQuery) {
 
-                            client.query("SELECT * FROM users WHERE username='" + params.username + "'", function(err, finalCheckQuery) {
+                            client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, finalCheckQuery) {
                                 if(finalCheckQuery.rows.length > 0) {
                                     return respondPlain(response, "YRegisteredSuccessfully");
                                 } else {
@@ -308,4 +314,12 @@ function getUser(request) {
     if(!seshCookie) return;
     var user = sessionKeys[seshCookie];
     return user;
+}
+
+function usernameIsValid(username) {
+    return /^[0-9a-zA-Z_.-]+$/.test(username);
+}
+
+function passwordIsValid(password) {
+    return /^[0-9a-zA-Z_.-!?]+$/.test(username);
 }
