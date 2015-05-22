@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
+var formidable = require('formidable');
 var pg = require('pg');
 var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
 
@@ -53,6 +54,25 @@ var postMap = {
     },
     "sacha/register":function(request, response, params) {
         
+    },
+    "fileupload/upload":function(request, response, data) {
+        var form = new formidable.IncomingForm();
+        form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
+        form.keepExtension = true;
+        form.type = "multipart";
+        form.on("error", function(error) {
+            console.log(error);
+        });
+        form.parse(request, function(err, fields, files) {
+            if(err)
+            {
+                response.writeHead(500, { 'Content-Type': 'text/plain' });
+                response.end("Upload failed. :(");
+                return;
+            }
+            respondPlain(response, "File Uploaded successfully!");
+            return;
+        });
     }
 }
 
@@ -79,6 +99,12 @@ function serverListener(request, response) {
         var requestURL = request.url.substring(1);
         var handler = postMap[requestURL];
         if(handler != null) {
+            var postType = request.headers["content-type"].split(';');
+            if(postType[0] == "multipart/form-data")
+            {
+                handler(request, response, message);
+                return;
+            }
             var message = "";
             request.on("data", function(data) {
                 message += data.toString('utf-8');
@@ -190,14 +216,18 @@ function POSTDataTooBig(response) {
     response.end('<!doctype html><html><head><title>413</title></head><body>413: Request Entity Too Large</body></html>');
 }
 
-function splitParams(string) {
+
+
+function splitParams(string, splitOn) {
+    if(!splitOn)
+        splitOn = '&';
     var params = {};
     if(string == null || string == undefined) return params;
-    var parts = string.split("&");
+    var parts = string.split(splitOn);
     for (var i = 0; i < parts.length; i++) {
         var param = parts[i];
         var keyAndValue = param.split("=");
-        params[keyAndValue[0]] = keyAndValue[1];
+        params[keyAndValue[0].trim()] = keyAndValue[1].trim();
     }
     return params;
 }
