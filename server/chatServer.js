@@ -13,8 +13,7 @@ function chatSendMessage(request, response, params) {
 }
 
 function lastChatNo(request, response) {
-    response.writeHead(200, { 'Content-Type': 'text/plain' });
-    response.end("" + messageNo);
+    respondPlain(response, "");
 }
 
 function chatUpdate(request, response, params) {
@@ -23,7 +22,8 @@ function chatUpdate(request, response, params) {
     response.write(messageNo + "#");
     while(last < messageNo)
     {
-        response.write("<img src='" + filePath + "avatars/" + messages[last].user + ".png' />" + messages[last].user + ": " + messages[last].message + "<br />");
+        //TODO: Handle case of users potentially sending semi-colons. 
+        response.write("user=" + messages[last].user + ";message=" + messages[last].message + "\n");
         last++;
     }
     response.end();
