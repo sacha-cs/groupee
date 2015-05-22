@@ -15,6 +15,7 @@ function login()
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
+            document.cookie="seshCookie="+response.slice(1)+";path=/";
             window.location = "/chat/";
         } else {
             switch(response.slice(1)) {
@@ -78,6 +79,9 @@ function register()
                     break;
                  case "EmptyFields":
                     setErrorText("Please fill out all the fields.");
+                    break;
+                case "InvalidCharacters":
+                    setErrorText("Invalid characters used in username/password");
                     break;
             }
         }
