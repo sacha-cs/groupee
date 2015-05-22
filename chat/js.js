@@ -1,4 +1,5 @@
 var chatRefreshRate = 1000;
+var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 
 var lastMessageID;
 var chatInterval;
@@ -29,10 +30,17 @@ function updateChat() {
     function(response) {
         var res = response.split("#");
         var newID = parseInt(res[0]);
-        if(newID > lastMessageID)
+        var msgInfo = res[1].split("\n");
+        if (newID > lastMessageID)
         {
             lastMessageID = newID;
-            chat.innerHTML += res[1];
+            for (i = 0; i < msgInfo.length; i++) {
+                var currMsg = msgInfo[i].split(";");
+                var user = currMsg[0].split("=")[1];
+                var textMsg = currMsg[1].split("=")[1];
+                var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' />" + user + ": " + textMsg + "<br />";  
+                chat.innerHTML += htmlMsg;    
+            }
         }
     });
 }

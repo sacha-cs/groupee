@@ -5,7 +5,6 @@ var formidable = require('formidable');
 var pg = require('pg');
 var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
 var uploadPath = "/vol/project/2014/271/g1427136/"
-var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 var messageNo=0;
 var messages = [];
 
@@ -141,7 +140,8 @@ var getMap = {
         response.write(messageNo + "#");
         while(last < messageNo)
         {
-            response.write("<img src='" + filePath + "avatars/" + messages[last].user + ".png' />" + messages[last].user + ": " + messages[last].message + "<br />");
+            //TODO: Handle case of users potentially sending semi-colons. 
+            response.write("user=" + messages[last].user + ";message=" + messages[last].message + "\n");
             last++;
         }
         response.end();
