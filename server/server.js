@@ -1,6 +1,8 @@
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
+var pg = require('pg');
+var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
 
 var messageNo=0;
 var messages = [];
@@ -8,12 +10,57 @@ var messages = [];
 var disallowed = ["server"];
 
 var postMap = {
-    "chat/send_message" : function(message) {
-        var chatMessageStart = message.indexOf("chatmessage=");
-        message = message.substring(chatMessageStart + "chatmessage=".length);
-
-        messages.push(message);
+    "chat/send_message" : function(request, response, params) {
+        messages.push(params.chatmessage);
         messageNo++;
+    },
+    "sacha/login" : function(request, response, params) {
+        pg.connect(connectionString, function(err, client, done) {
+            if(err) {
+                return console.error('error! :(', err);
+            }
+            var handleError = function(err) {
+                if(!err) return false;
+                console.log(err);
+                done(client);
+                response.writeHead(500, {'contentType': 'text/plain'});
+                response.end('An error occurred. Contact the webmaster.');
+                return true;
+            }
+
+            if(params.username && params.password)
+            {
+                client.query("SELECT password FROM users WHERE username='" + params.username + "'", function(err, result) {
+                    if(handleError(err)) return;
+                    done(client);
+                    if(result.rows.length != 0) {
+                        if(result.rows[0].password == params.password)
+                        {
+                            response.writeHead(301, {'Location': '/chat/'});
+                            response.end();
+                        }
+                        else
+                        {
+                            response.writeHead(200, {'contentType': 'text/plain'});
+                            response.end('Wrong password.');
+                        }
+                    }
+                    else
+                    {
+                        response.writeHead(500, {'contentType': 'text/plain'});
+                        response.end('No-one with that username exists.');
+                    }
+                });
+            } 
+            else
+            {
+                response.writeHead(500, {'contentType': 'text/plain'});
+                response.end('Please fill out username and password.');
+            }
+        });
+    },
+    "sacha/register":function(request, response, params) {
+        
     }
 }
 
@@ -52,22 +99,22 @@ function serverListener(request, response) {
                 }
             });
             request.on("end", function() {
-                handler(message);
+                handler(request, response, splitParams(message));
             });
         }
         else
         {
             console.log("POST handler missing: " + request.url.substring(1));
+            response.writeHead(200);
+            response.end();
         }
-        response.writeHead(200);
-        response.end();
         return;
     }
 
     var handler = getMap[request.url.substring(1).split("?")[0]];
     if(handler != null) {
         var paramString = request.url.split("?")[1];
-        handler(request, response, splitGETParams(paramString));
+        handler(request, response, splitParams(paramString));
         return;
     }
 
@@ -146,10 +193,10 @@ function POSTDataTooBig(response) {
     response.end('<!doctype html><html><head><title>413</title></head><body>413: Request Entity Too Large</body></html>');
 }
 
-function splitGETParams(string) {
+function splitParams(string) {
     var params = {};
     if(string == null || string == undefined) return params;
-    var parts = string.split(",");
+    var parts = string.split("&");
     for (var i = 0; i < parts.length; i++) {
         var param = parts[i];
         var keyAndValue = param.split("=");
