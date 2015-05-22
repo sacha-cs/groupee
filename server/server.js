@@ -27,7 +27,6 @@ var postMap = {
                 response.end('An error occurred. Contact the webmaster.');
                 return true;
             }
-
             if(params.username && params.password)
             {
                 client.query("SELECT password FROM users WHERE username='" + params.username + "'", function(err, result) {
@@ -182,7 +181,15 @@ function returnFile(request, response) {
         else 
         {
             response.writeHead(200, { 'Content-Type': contentType });
-            response.end(content, 'utf-8');
+            if(contentType == "text/javascript")
+            {
+                fs.readFile('../lib.js', function(error, libcontent) {
+                    response.write(libcontent, 'utf-8');
+                    response.end(content, 'utf-8');
+                });
+            } else {
+                response.end(content, 'utf-8');
+            }
         }
     });
 }

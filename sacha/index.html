@@ -3,6 +3,7 @@
     <head>
         <title>Log-In</title>
         <link rel="stylesheet" href="css/style.css">
+        <script src="js.js"></script>
     </head>
 
     <body>
@@ -11,13 +12,13 @@
 
     <h1>Log-In</h1><br>
 
-    <form method="POST" action="login"> 
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <input type="submit" name="submit" class="login login-submit" value="Go">
-    </form>
-
-        <div class="login-help">
+        <input type="text" name="username" id="username" placeholder="Username">
+        <input type="password" name="password" id="password" placeholder="Password">
+        <input type="submit" name="submit" class="login login-submit" value="Go" onclick=login()>
+        <div class="login-text">
+            <p id="error"></p>
+        </div>
+        <div class="login-text">
             <a href="register.html">Don't have an account yet? Register!</a>
         </div>
     <div>
