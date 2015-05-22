@@ -5,7 +5,8 @@ var formidable = require('formidable');
 var passwordHash = require('password-hash');
 var pg = require('pg');
 var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
-
+var uploadPath = "/vol/project/2014/271/g1427136/"
+var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 var messageNo=0;
 var messages = [];
 
@@ -13,13 +14,13 @@ var sessionKeys = [];
 
 var disallowed = ["server"];
 
-http.createServer(serverListener).listen(8081);
+http.createServer(serverListener).listen(8082);
 console.log("Listening...");
 
 var postMap = {
     "chat/send_message" : function(request, response, params) {
-        var user = getUser(request);
-        messages.push(user + ": " + params.chatmessage);
+        var username = getUser(request);
+        messages.push({user:username, message:params.chatmessage});
         messageNo++;
     },
     "login/login" : function(request, response, params) {
@@ -121,6 +122,15 @@ var postMap = {
                 return;
             }
             respondPlain(response, "File Uploaded successfully!");
+
+            var file = files.avatar;
+            //TODO: pass around user? think about this.
+            var user = getUser(request);
+            if(user)
+            {
+                fs.rename(file.path, uploadPath + "avatars/" + user + ".png",
+                          function() {});
+            }
             return;
         });
     }
@@ -137,7 +147,7 @@ var getMap = {
         response.write(messageNo + "#");
         while(last < messageNo)
         {
-            response.write(messages[last] + "<br />");
+            response.write("<img src='" + filePath + "avatars/" + messages[last].user + ".png' />" + messages[last].user + ": " + messages[last].message + "<br />");
             last++;
         }
         response.end();
