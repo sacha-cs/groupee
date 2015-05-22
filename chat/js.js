@@ -5,7 +5,7 @@ var chatInterval;
 
 function startChat() {
     aClient = new HttpClient();
-    aClient.get("/last_chat_no",
+    aClient.get("last_chat_no",
     function(response) {
         lastMessageID = parseInt(response);
     });

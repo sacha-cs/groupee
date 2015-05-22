@@ -8,7 +8,7 @@ var messages = [];
 var disallowed = ["server"];
 
 var postMap = {
-    "send_message" : function(message) {
+    "chat/send_message" : function(message) {
         var chatMessageStart = message.indexOf("chatmessage=");
         message = message.substring(chatMessageStart + "chatmessage=".length);
 
@@ -18,11 +18,11 @@ var postMap = {
 }
 
 var getMap = {
-    "last_chat_no" : function(request, response) {
+    "chat/last_chat_no" : function(request, response) {
         response.writeHead(200, { 'Content-Type': 'text/plain' });
         response.end("" + messageNo);
     },
-    "chat_update" : function(request, response, params) {
+    "chat/chat_update" : function(request, response, params) {
         response.writeHead(200, { "Content-Type": 'text/plain' });
         var last = parseInt(params.last);
         response.write(messageNo + "#");
@@ -55,6 +55,10 @@ function serverListener(request, response) {
                 handler(message);
             });
         }
+        else
+        {
+            console.log("POST handler missing: " + request.url.substring(1));
+        }
         response.writeHead(200);
         response.end();
         return;
@@ -74,9 +78,12 @@ function serverListener(request, response) {
         return;
     }
 
-    var filePath = '..' + request.url;
-    if (filePath == '../')
-        filePath = '../index.html';
+    request.url = '..' + request.url;
+    returnFile(request, response);
+}
+
+function returnFile(request, response) {
+    var filePath = request.url;
     var extname = path.extname(filePath);
     var contentType = 'text/html';
     switch (extname) {
@@ -103,12 +110,22 @@ function serverListener(request, response) {
     fs.readFile(filePath, function(error, content) {
         if (error) {
             if(error.code == 'ENOENT') {
-                fs.readFile('./404.html', function(error, content) {
+                console.log("404ing! " + filePath);
+                fs.readFile('../404.html', function(error, content) {
                     response.writeHead(200, { 'Content-Type': contentType });
                     response.end(content, 'utf-8');
                 });
             }
-            else 
+            else if(error.code == 'EISDIR') {
+                if(filePath.slice(-1) != '/')
+                {
+                    response.writeHead(301, { 'Location':request.url+'/' });
+                    response.end();
+                }
+                request.url += "index.html";
+                return returnFile(request, response);
+            }
+            else
             {
                 response.writeHead(500);
                 response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
@@ -142,7 +159,6 @@ function splitGETParams(string) {
 }
 
 function requestDisallowed(url) {
-    console.log(url);
     for(var i = 0; i < disallowed.length; i++)
     {
         if(url.slice(1, disallowed[i].length + 1) == disallowed[i])
