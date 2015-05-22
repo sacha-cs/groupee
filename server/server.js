@@ -8,6 +8,8 @@ var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g142713
 var messageNo=0;
 var messages = [];
 
+var sessionKeys = [];
+
 var disallowed = ["server"];
 
 http.createServer(serverListener).listen(8080);
@@ -15,7 +17,8 @@ console.log("Listening...");
 
 var postMap = {
     "chat/send_message" : function(request, response, params) {
-        messages.push(params.chatmessage);
+        var user = getUser(request);
+        messages.push(user + ": " + params.chatmessage);
         messageNo++;
     },
     "sacha/login" : function(request, response, params) {
@@ -38,8 +41,10 @@ var postMap = {
                     done(client);
                     if(result.rows.length != 0) {
                         if(result.rows[0].password == params.password) {
+                            var seshCookie = Math.round(Math.random() * 4294967295);
+                            sessionKeys["" + seshCookie] = params.username;
                             return respondPlain(response,
-                                                "YSESSIONCOOKIEGOESHERE");
+                                                "Y" + seshCookie);
                         } else {
                             return respondPlain(response, "NIncorrectPassword");
                         }
@@ -244,4 +249,14 @@ function requestDisallowed(url) {
 function respondPlain(response, text) {
     response.writeHead(200, {'Content-Type': 'text/plain'});
     response.end(text);
+}
+
+function getUser(request) {
+    var cookie = request.headers.cookie;
+    if(!cookie) return;
+    var cookies = splitParams(cookie, ';');
+    var seshCookie = cookies.seshCookie;
+    if(!seshCookie) return;
+    var user = sessionKeys[seshCookie];
+    return user;
 }

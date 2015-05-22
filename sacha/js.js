@@ -15,6 +15,8 @@ function login()
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
+            document.cookie="seshCookie="+response.slice(1) + ";path=/";
+            console.log("seshCookie = " + response.slice(1));
             window.location = "/chat/";
         } else {
             switch(response.slice(1)) {
