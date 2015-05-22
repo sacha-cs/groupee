@@ -71,6 +71,8 @@ function register(request, response, params) {
 
                         client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, finalCheckQuery) {
                             if(finalCheckQuery.rows.length > 0) {
+                                // New user has just been created. 
+                                fs.createReadStream(uploadPath + "avatar.png").pipe(fs.createWriteStream(uploadPath + "avatars/" + params.username.toLowerCase() + ".png"));
                                 return utils.respondPlain(response, "YRegisteredSuccessfully");
                             } else {
                                 return utils.respondPlain(response, "NUnknownError");
@@ -107,11 +109,10 @@ function uploadAvatar(request, response, data) {
 
         var file = files.avatar;
         //TODO: pass around user? think about this.
-        var user = getUser(request);
+        var user = utils.getUser(request);
         if(user)
         {
-            fs.rename(file.path, uploadPath + "avatars/" + user + ".png",
-                      function() {});
+            fs.rename(file.path, uploadPath + "avatars/" + user + ".png");
         }
         return;
     });
@@ -122,5 +123,5 @@ function usernameIsValid(username) {
 }
 
 function passwordIsValid(password) {
-    return /^[0-9a-zA-Z_.-!?]+$/.test(username);
+    return /^[0-9a-zA-Z_.-]+$/.test(password);
 }

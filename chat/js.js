@@ -38,7 +38,7 @@ function updateChat() {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
-                var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' />" + user + ": " + textMsg + "<br />";  
+                var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + textMsg + "<br />";  
                 chat.innerHTML += htmlMsg;    
             }
         }
