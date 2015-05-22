@@ -1,163 +1,33 @@
 var http = require('http');
-var fs = require('fs');
-var path = require('path');
-var formidable = require('formidable');
-var passwordHash = require('password-hash');
-var pg = require('pg');
-var connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
-var uploadPath = "/vol/project/2014/271/g1427136/"
-var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
-var messageNo=0;
-var messages = [];
+path = require('path');
+fs = require('fs');
+formidable = require('formidable');
+passwordHash = require('password-hash');
+pg = require('pg');
 
-var sessionKeys = [];
+postHandler = require('./postHandlers.js');
+getHandler = require('./getHandlers.js');
+
+require('./userFunctions');
+require('./chatServer');
+
+
+connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
+uploadPath = "/vol/project/2014/271/g1427136/"
+filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
+
+sessionKeys = [];
 
 var disallowed = ["server"];
 
 http.createServer(serverListener).listen(8082);
 console.log("Listening...");
 
-var postMap = {
-    "chat/send_message" : function(request, response, params) {
-        var username = getUser(request);
-        messages.push({user:username, message:params.chatmessage});
-        messageNo++;
-    },
-    "login/login" : function(request, response, params) {
-        pg.connect(connectionString, function(err, client, done) {
-            if(err) {
-                return console.error('error! :(', err);
-            }
-            var handleError = function(err) {
-                if(!err) return false;
-                console.log(err);
-                done(client);
-                response.writeHead(500, {'contentType': 'text/plain'});
-                response.end('An error occurred. Contact the webmaster.');
-                return true;
-            }
-            if(params.username && params.password)
-            {
-                client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
-                    if(handleError(err)) return;
-                    done(client);
-                    if(result.rows.length != 0) {
-                        var expected = result.rows[0].pwdhash;
-                        if(passwordHash.verify(params.password, expected)) {
-                            var seshCookie = Math.round(Math.random() * 4294967295);
-                            sessionKeys["" + seshCookie] = params.username;
-                            return respondPlain(response,
-                                                "Y" + seshCookie);
-                        } else {
-                            return respondPlain(response, "NIncorrectPassword");
-                        }
-                    } else {
-                        return respondPlain(response, "NNoUser");
-                    }
-                });
-            } else {
-                return respondPlain(response, "NEmptyFields");
-            }
-        });
-    },
-    "login/register":function(request, response, params) {
-        pg.connect(connectionString, function(err, client, done) {
-            if(err) {
-                return console.error('error! :(', err);
-            }
-            var handleError = function(err) {
-                if(!err) return false;
-                console.log(err);
-                done(client);
-                response.writeHead(500, {'contentType': 'text/plain'});
-                response.end('An error occurred. Contact the webmaster.');
-                return true;
-            }
-
-            if(params.username && params.password && params.passwordconfirm) {
-                if (!usernameIsValid(params.username) || !passwordIsValid(params.password)) {
-                    return respondPlain(response, "NInvalidCharacters");
-                }
-                client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, checkQuery) {
-                    if(checkQuery.rows.length > 0) {
-                        return respondPlain(response, "NUsernameTaken");
-                    }
-
-                    if(params.password == params.passwordconfirm) {
-                        var hashedPassword = passwordHash.generate(params.password);
-                        client.query("INSERT INTO users(username, pwdhash) VALUES('" + 
-                            params.username.toLowerCase() + "', '" + hashedPassword + "')", function(err, createQuery) {
-
-                            client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, finalCheckQuery) {
-                                if(finalCheckQuery.rows.length > 0) {
-                                    return respondPlain(response, "YRegisteredSuccessfully");
-                                } else {
-                                    return respondPlain(response, "NUnknownError");
-                                }
-                            });
-
-                        });
-                    } else {
-                        return respondPlain(response, "NPasswordsDifferent");
-                    }
-                });
-            } else {
-                return respondPlain(response, "NEmptyFields");
-            }
-        });
-    },
-    "fileupload/upload":function(request, response, data) {
-        var form = new formidable.IncomingForm();
-        form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
-        form.keepExtension = true;
-        form.type = "multipart";
-        form.on("error", function(error) {
-            console.log(error);
-        });
-        form.parse(request, function(err, fields, files) {
-            if(err)
-            {
-                response.writeHead(500, { 'Content-Type': 'text/plain' });
-                response.end("Upload failed. :(");
-                return;
-            }
-            respondPlain(response, "File Uploaded successfully!");
-
-            var file = files.avatar;
-            //TODO: pass around user? think about this.
-            var user = getUser(request);
-            if(user)
-            {
-                fs.rename(file.path, uploadPath + "avatars/" + user + ".png",
-                          function() {});
-            }
-            return;
-        });
-    }
-}
-
-var getMap = {
-    "chat/last_chat_no" : function(request, response) {
-        response.writeHead(200, { 'Content-Type': 'text/plain' });
-        response.end("" + messageNo);
-    },
-    "chat/chat_update" : function(request, response, params) {
-        response.writeHead(200, { "Content-Type": 'text/plain' });
-        var last = parseInt(params.last);
-        response.write(messageNo + "#");
-        while(last < messageNo)
-        {
-            response.write("<img src='" + filePath + "avatars/" + messages[last].user + ".png' />" + messages[last].user + ": " + messages[last].message + "<br />");
-            last++;
-        }
-        response.end();
-    }
-}
-
 function serverListener(request, response) {
     if(request.method=="POST") {
         var requestURL = request.url.substring(1);
-        var handler = postMap[requestURL];
+        var handler = postHandler.getHandler(requestURL);
+
         if(handler != null) {
             var postType = request.headers["content-type"].split(';');
             if(postType[0] == "multipart/form-data")
@@ -186,7 +56,7 @@ function serverListener(request, response) {
         return;
     }
 
-    var handler = getMap[request.url.substring(1).split("?")[0]];
+    var handler = getHandler.getHandler(request.url.substring(1).split("?")[0]);
     if(handler != null) {
         var paramString = request.url.split("?")[1];
         handler(request, response, splitParams(paramString));
