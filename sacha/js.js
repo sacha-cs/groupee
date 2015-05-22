@@ -3,16 +3,38 @@ function login()
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
    
-    console.log("u: " + username + ", p: "+password);
     if(username == "" || password == "")
     {
-        document.getElementById("error").innerHTML = "Please fill out all fields.";
+        setErrorText("Please fill out all fields.");
+        return;
     }
 
     aClient = new HttpClient();
     aClient.post('login', 'username=' + username + 
                          '&password=' + password, 
     function (response) {
-        console.log(response);
+        var correct = response[0];
+        if(correct == "Y") {
+            window.location = "/chat/";
+        } else {
+            switch(response.slice(1)) {
+                case "IncorrectPassword":
+                    setErrorText("Incorrect Password.");
+                    break;
+                 case "NoUser":
+                    setErrorText("No User with that Username.");
+                    break;
+                 case "EmptyFields":
+                    setErrorText("Please fill out all the fields.");
+                    break;
+            }
+        }
+                    
     });
+}
+
+function setErrorText(error) {
+
+    document.getElementById("error").innerHTML = error;
+    return;
 }

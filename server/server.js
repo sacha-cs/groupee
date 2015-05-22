@@ -9,6 +9,9 @@ var messages = [];
 
 var disallowed = ["server"];
 
+http.createServer(serverListener).listen(8080);
+console.log("Listening...");
+
 var postMap = {
     "chat/send_message" : function(request, response, params) {
         messages.push(params.chatmessage);
@@ -33,28 +36,18 @@ var postMap = {
                     if(handleError(err)) return;
                     done(client);
                     if(result.rows.length != 0) {
-                        if(result.rows[0].password == params.password)
-                        {
-                            response.writeHead(301, {'Location': '/chat/'});
-                            response.end();
+                        if(result.rows[0].password == params.password) {
+                            return respondPlain(response,
+                                                "YSESSIONCOOKIEGOESHERE");
+                        } else {
+                            return respondPlain(response, "NIncorrectPassword");
                         }
-                        else
-                        {
-                            response.writeHead(200, {'contentType': 'text/plain'});
-                            response.end('Wrong password.');
-                        }
-                    }
-                    else
-                    {
-                        response.writeHead(500, {'contentType': 'text/plain'});
-                        response.end('No-one with that username exists.');
+                    } else {
+                        return respondPlain(response, "NNoUser");
                     }
                 });
-            } 
-            else
-            {
-                response.writeHead(500, {'contentType': 'text/plain'});
-                response.end('Please fill out username and password.');
+            } else {
+                return respondPlain(response, "NEmptyFields");
             }
         });
     },
@@ -80,9 +73,6 @@ var getMap = {
         response.end();
     }
 }
-
-http.createServer(serverListener).listen(80);
-console.log("Listening...");
 
 function serverListener(request, response) {
     if(request.method=="POST") {
@@ -163,13 +153,13 @@ function returnFile(request, response) {
                 });
             }
             else if(error.code == 'EISDIR') {
-                if(filePath.slice(-1) != '/')
-                {
+                if(filePath.slice(-1) != '/') {
                     response.writeHead(301, { 'Location':request.url+'/' });
                     response.end();
+                } else {
+                    request.url += "index.html";
+                    return returnFile(request, response);
                 }
-                request.url += "index.html";
-                return returnFile(request, response);
             }
             else
             {
@@ -219,4 +209,9 @@ function requestDisallowed(url) {
             return true;
     }
     return false;
+}
+
+function respondPlain(response, text) {
+    response.writeHead(200, {'Content-Type': 'text/plain'});
+    response.end(text);
 }

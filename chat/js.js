@@ -1,4 +1,4 @@
-var chatRefreshRate = 100;
+var chatRefreshRate = 1000;
 
 var lastMessageID;
 var chatInterval;
