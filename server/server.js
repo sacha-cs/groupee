@@ -10,7 +10,7 @@ var messages = [];
 
 var disallowed = ["server"];
 
-http.createServer(serverListener).listen(8080);
+http.createServer(serverListener).listen(8081);
 console.log("Listening...");
 
 var postMap = {
@@ -18,7 +18,7 @@ var postMap = {
         messages.push(params.chatmessage);
         messageNo++;
     },
-    "sacha/login" : function(request, response, params) {
+    "login/login" : function(request, response, params) {
         pg.connect(connectionString, function(err, client, done) {
             if(err) {
                 return console.error('error! :(', err);
@@ -33,7 +33,7 @@ var postMap = {
             }
             if(params.username && params.password)
             {
-                client.query("SELECT password FROM users WHERE username='" + params.username + "'", function(err, result) {
+                client.query("SELECT password FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
                     if(handleError(err)) return;
                     done(client);
                     if(result.rows.length != 0) {
@@ -52,8 +52,47 @@ var postMap = {
             }
         });
     },
-    "sacha/register":function(request, response, params) {
-        
+    "login/register":function(request, response, params) {
+        pg.connect(connectionString, function(err, client, done) {
+            if(err) {
+                return console.error('error! :(', err);
+            }
+            var handleError = function(err) {
+                if(!err) return false;
+                console.log(err);
+                done(client);
+                response.writeHead(500, {'contentType': 'text/plain'});
+                response.end('An error occurred. Contact the webmaster.');
+                return true;
+            }
+
+            if(params.username && params.password && params.passwordconfirm) {
+                client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, checkQuery) {
+                    if(checkQuery.rows.length > 0) {
+                        return respondPlain(response, "NUsernameTaken");
+                    }
+
+                    if(params.password == params.passwordconfirm) {
+                        client.query("INSERT INTO users(username, password, pwdhash) VALUES('" + 
+                            params.username + "', '" + params.password + "', '" + params.password + "')", function(err, createQuery) {
+
+                            client.query("SELECT * FROM users WHERE username='" + params.username + "'", function(err, finalCheckQuery) {
+                                if(finalCheckQuery.rows.length > 0) {
+                                    return respondPlain(response, "YRegisteredSuccessfully");
+                                } else {
+                                    return respondPlain(response, "NUnknownError");
+                                }
+                            });
+
+                        });
+                    } else {
+                        return respondPlain(response, "NPasswordsDifferent");
+                    }
+                });
+            } else {
+                return respondPlain(response, "NEmptyFields");
+            }
+        });
     },
     "fileupload/upload":function(request, response, data) {
         var form = new formidable.IncomingForm();
