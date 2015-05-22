@@ -67,6 +67,13 @@ function serverListener(request, response) {
         return;
     }
 
+    if(requestDisallowed(request.url))
+    {
+        response.writeHead(403);
+        response.end();
+        return;
+    }
+
     var filePath = '..' + request.url;
     if (filePath == '../')
         filePath = '../index.html';
@@ -134,3 +141,12 @@ function splitGETParams(string) {
     return params;
 }
 
+function requestDisallowed(url) {
+    console.log(url);
+    for(var i = 0; i < disallowed.length; i++)
+    {
+        if(url.slice(1, disallowed[i].length + 1) == disallowed[i])
+            return true;
+    }
+    return false;
+}
