@@ -1,22 +1,31 @@
-var localUrl = "http://146.169.46.253";
-var chatRefreshRate = 1000;
+var chatRefreshRate = 100;
 
 var lastMessageID;
 var chatInterval;
 
 function startChat() {
     aClient = new HttpClient();
-    aClient.get(localUrl + "/last_chat_no",
+    aClient.get("/last_chat_no",
     function(response) {
         lastMessageID = parseInt(response);
+    });
+    chatInterval = setInterval(updateChat, chatRefreshRate);
+
+    document.getElementById('message').onkeypress = function(e) {
+        var event = e || window.event;
+        var charCode = event.which || event.keyCode;
+
+        if ( charCode == '13' ) {
+            sendMessage();
+            return false;
+        }
     }
-    chatInterval = setInterval(updateChat, chatRefreshRate)
 }
 
 function updateChat() {
     var chat = document.getElementById("chat");
     aClient = new HttpClient();
-    /*aClient.get('http://146.169.46.253/chat_update?last='+lastMessageID, 
+    aClient.get('chat_update?last='+lastMessageID, 
     function(response) {
         var res = response.split("#");
         var newID = parseInt(res[0]);
@@ -25,19 +34,20 @@ function updateChat() {
             lastMessageID = newID;
             chat.innerHTML += res[1];
         }
-    });*/
+    });
 }
 
 function sendMessage() {
     var chatBox = document.getElementById("message");
     var message = chatBox.value;
-    chatBox.value = "";
     if(!message)
         return;
     aClient = new HttpClient();
-    aClient.post('http://146.169.46.253/send_message', "chatmessage="+message, 
+    aClient.post('send_message', "chatmessage="+message, 
     function (response) {
     });
+    chatBox.value = "";
+    chatBox.focus();
 }
 
 var HttpClient = function() {
@@ -59,7 +69,6 @@ var HttpClient = function() {
             if (http.readyState == 4 && http.status == 200)
                 aCallback(http.responseText);
         }
-        console.log(params);
         http.send(params);
     }
 }
