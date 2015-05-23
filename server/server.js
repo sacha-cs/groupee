@@ -21,11 +21,19 @@ filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 sessionKeys = [];
 
 var disallowed = ["server"];
+var anonAvailable = ["login"];
 
 http.createServer(serverListener).listen(8085);
 console.log("Listening...");
 
 function serverListener(request, response) {
+    //If we're not logged in, then there are only some requests we should
+    //respond to.
+    if(!utils.getUser(request) && !requestAnonAvailable(request.url)) {
+        response.writeHead("307", {'Location' : '/login/' });
+        response.end();
+        return;
+    }
     if(request.method=="POST") {
         var requestURL = request.url.substring(1);
         var handler = postHandler.getHandler(requestURL);
@@ -148,6 +156,15 @@ function POSTDataTooBig(response) {
     response.end('<!doctype html><html><head><title>413</title></head><body>413: Request Entity Too Large</body></html>');
 }
 
+
+function requestAnonAvailable(url) {
+    for(var i = 0; i < anonAvailable.length; i++)
+    {
+        if(url.slice(1, anonAvailable[i].length + 1) == anonAvailable[i])
+            return true;
+    }
+    return false;
+}
 
 function requestDisallowed(url) {
     for(var i = 0; i < disallowed.length; i++)
