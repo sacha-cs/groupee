@@ -6,7 +6,7 @@ var chatInterval;
 
 function startChat() {
     aClient = new HttpClient();
-    aClient.get("last_chat_no",
+    aClient.get("/chat/last_chat_no",
     function(response) {
         lastMessageID = parseInt(response);
         chatInterval = setInterval(updateChat, chatRefreshRate);
@@ -27,7 +27,7 @@ function updateChat() {
     var chat = document.getElementById("chat");
     aClient = new HttpClient();
     var d = new Date();
-    aClient.get('chat_update?last='+lastMessageID + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
+    aClient.get('/chat/chat_update?last='+lastMessageID + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
     function(response) {
         var res = response.split("#");
         var newID = parseInt(res[0]);
@@ -53,7 +53,7 @@ function sendMessage() {
         return;
     aClient = new HttpClient();
     var d = new Date();
-    aClient.post('send_message', "chatmessage="+message + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
+    aClient.post('/chat/send_message', "chatmessage="+message + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
     function (response) {
     });
     chatBox.value = "";

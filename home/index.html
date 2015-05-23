@@ -1,14 +1,23 @@
 <html>
     <head>
         <link rel="stylesheet" href="css/style.css">
+        <script src="../chat/js.js"></script>
         <title>Home</title>
     </head>
 
-    <body>
+    <body onload="startChat()">
+        <!-- <div id="group"></div> -->
 
-    <div class="container">
-<!--         <div id="group">
-        </div> -->
+    <input id="slide-chat" type="checkbox" role="button" />
+        <label for="slide-chat"><a class="chat-button">Chat!</a></label>
+
+    <div class="chat-space">
+        <p id="chat"><p>
+        <input id="message"></input>
+        <button onclick="sendMessage()">Send</button>       
+    </div>
+
+    <div class="content">
 
         <div id="wrapper">
             <div id="todo">
@@ -42,9 +51,9 @@
             <div id="settings">
                 <div class="label">Settings</div>
             </div>
- 
         </div>
-    </div>
+
+    </div>  
 
     </body>
 

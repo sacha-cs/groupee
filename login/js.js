@@ -40,7 +40,7 @@ function login()
         var correct = response[0];
         if(correct == "Y") {
             document.cookie="seshCookie="+response.slice(1)+";path=/";
-            window.location = "/chat/";
+            window.location = "/home/";
         } else {
             switch(response.slice(1)) {
                 case "IncorrectPassword":
