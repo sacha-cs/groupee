@@ -3,12 +3,14 @@ var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 
 var lastMessageID;
 var chatInterval;
+var needUpdate;
 
 function startChat() {
     aClient = new HttpClient();
     aClient.get("/chat/last_chat_no",
     function(response) {
         lastMessageID = parseInt(response);
+        needUpdate = true;
         chatInterval = setInterval(updateChat, chatRefreshRate);
     });
 
@@ -24,6 +26,10 @@ function startChat() {
 }
 
 function updateChat() {
+    if(!needUpdate)
+        return;
+
+    needUpdate = false;
     var chat = document.getElementById("chat");
     aClient = new HttpClient();
     var d = new Date();
@@ -42,6 +48,7 @@ function updateChat() {
                 addMessageToChat(user, textMsg);
             }
         }
+        needUpdate = true;
     });
 }
 
