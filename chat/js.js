@@ -39,8 +39,7 @@ function updateChat() {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
-                var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + textMsg + "<br />";  
-                chat.innerHTML += htmlMsg;    
+                addMessageToChat(user, textMsg);
             }
         }
     });
@@ -51,6 +50,11 @@ function sendMessage() {
     var message = chatBox.value;
     if(!message)
         return;
+    
+
+    addMessageToChat(getCookie("username"), message);
+
+
     aClient = new HttpClient();
     var d = new Date();
     aClient.post('/chat/send_message', "chatmessage="+message + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
@@ -60,4 +64,7 @@ function sendMessage() {
     chatBox.focus();
 }
 
-
+function addMessageToChat(user, message) {
+    var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + message + "<br />";  
+    chat.innerHTML += htmlMsg;    
+}

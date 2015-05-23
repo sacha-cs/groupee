@@ -46,7 +46,7 @@ function login(request, response, params) {
 
             //Create a new session cookie for the user and send it to them
             var seshCookie = createSessionCookie(username);
-            return utils.respondPlain(response, "Y" + seshCookie);
+            return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
         });
     });
 }

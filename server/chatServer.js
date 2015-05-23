@@ -23,6 +23,11 @@ function chatUpdate(request, response, params) {
     response.write(messageNo + "#");
     while(last < messageNo)
     {
+        if(messages[last].user == utils.getUser(request))
+        {
+            last++;
+            continue;
+        }
         //TODO: Handle case of users potentially sending semi-colons. 
         response.write("user=" + messages[last].user + ";message=" + messages[last].message + "\n");
         last++;

@@ -26,7 +26,8 @@ function login()
 {
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
-   
+    
+    setErrorText("");
     if(username == "" || password == "")
     {
         setErrorText("Please fill out all fields.");
@@ -39,7 +40,9 @@ function login()
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
-            document.cookie="seshCookie="+response.slice(1)+";path=/";
+            var parts = response.slice(1).split('#');
+            document.cookie="seshCookie="+parts[0]+";path=/";
+            document.cookie="username="+parts[1]+";path=/";
             window.location = "/home/";
         } else {
             switch(response.slice(1)) {
@@ -66,6 +69,7 @@ function setErrorText(error) {
 
 function register()
 {
+    setErrorText("");
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
     var passwordconfirm = document.getElementById("passwordconfirm").value;
