@@ -5,6 +5,9 @@ this.respondPlain = function (response, text) {
 }
 
 this.getUser = function(request) {
+    //Yes, there is a cookie that has the client's username, but rule #1:
+    //NEVER TRUST THE USER. The user can't fake the session cookie, they can
+    //fake the username cookie!!
     var cookie = request.headers.cookie;
     if(!cookie) return;
     var cookies = this.splitParams(cookie, ';');
@@ -15,10 +18,12 @@ this.getUser = function(request) {
 }
 
 this.splitParams = function(string, splitOn) {
-    if(!splitOn)
-        splitOn = '&';
     var params = {};
     if(string == null || string == undefined) return params;
+    
+    if(!splitOn)
+        splitOn = '&';
+    
     var parts = string.split(splitOn);
     for (var i = 0; i < parts.length; i++) {
         var param = parts[i];

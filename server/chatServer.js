@@ -10,7 +10,9 @@ getHandler.addHandler("chat/chat_update", chatUpdate);
 
 function chatSendMessage(request, response, params) {
     var username = utils.getUser(request);
-    messages.push({user:username, message:params.chatmessage});
+    var safeMessage = escapeHtml(params.chatmessage);
+    safeMessage = encodeURIComponent(safeMessage);
+    messages.push({user:username, message:safeMessage});
     messageNo++;
     utils.respondPlain(response, "MessageRecieved");
 
@@ -72,4 +74,16 @@ function chatUpdate(request, response, params, checkForNew) {
 function requestTimedOut(requestData) {
     requestData.timedOut = true;
     chatUpdate(requestData.request, requestData.response, requestData.params, true);
+}
+
+function escapeHtml(text) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }

@@ -45,7 +45,7 @@ function updateChat() {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
-                addMessageToChat(user, textMsg);
+                addMessageToChat(user, decodeURIComponent(textMsg));
             }
         }
         needUpdate = true;
@@ -59,7 +59,7 @@ function sendMessage() {
         return;
     
 
-    addMessageToChat(getCookie("username"), message);
+    addMessageToChat(getCookie("username"), escapeHtml(message));
 
 
     aClient = new HttpClient();
@@ -74,4 +74,16 @@ function sendMessage() {
 function addMessageToChat(user, message) {
     var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + message + "<br />";  
     chat.innerHTML += htmlMsg;    
+}
+
+function escapeHtml(text) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
