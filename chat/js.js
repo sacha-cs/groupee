@@ -9,8 +9,8 @@ function startChat() {
     aClient.get("last_chat_no",
     function(response) {
         lastMessageID = parseInt(response);
+        chatInterval = setInterval(updateChat, chatRefreshRate);
     });
-    chatInterval = setInterval(updateChat, chatRefreshRate);
 
     document.getElementById('message').onkeypress = function(e) {
         var event = e || window.event;

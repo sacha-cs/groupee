@@ -1,3 +1,27 @@
+function setUpListeners() {
+    document.getElementById('username').onkeypress = keyListener;
+    document.getElementById('password').onkeypress = keyListener;
+    if(window.location.pathname!="/login/login/" &&
+       window.location.pathname!="/login/index.html")
+        document.getElementById('passwordconfirm').onkeypress = keyListener;
+}
+
+function keyListener(e) {
+    var event = e || window.event;
+    var charCode = event.which || event.keyCode;
+
+    if ( charCode == '13' ) {
+        console.log(window.location.pathname);
+        if(window.location.pathname=="/login/login/" ||
+           window.location.pathname=="/login/index.html")
+            login();
+        else
+            register();
+        return false;
+    }
+}
+
+
 function login()
 {
     var username = document.getElementById("username").value;
