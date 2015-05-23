@@ -23,8 +23,14 @@ sessionKeys = [];
 var disallowed = ["server"];
 var anonAvailable = ["login"];
 
-http.createServer(serverListener).listen(8085);
-console.log("Listening...");
+var port = process.argv[2];
+if(!port)
+    port = 8080;
+else
+    port = parseInt(port);
+
+http.createServer(serverListener).listen(port);
+console.log("Listening on port " + port);
 
 function serverListener(request, response) {
     //If we're not logged in, then there are only some requests we should
