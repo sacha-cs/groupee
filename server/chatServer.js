@@ -10,6 +10,7 @@ function chatSendMessage(request, response, params) {
     var username = utils.getUser(request);
     messages.push({user:username, message:params.chatmessage});
     messageNo++;
+    utils.respondPlain(response, "MessageRecieved");
 }
 
 function lastChatNo(request, response) {
