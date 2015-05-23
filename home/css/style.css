@@ -1,0 +1,103 @@
+body {
+  background: #2c3e50;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: 'Helvetica', sans-serif;
+}
+
+#wrapper {
+  position: relative;
+  display: block;
+  width: 1000px;
+  height: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+}
+
+.label {
+  position: absolute;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  font-weight: 300;
+  font-size: 21px;
+  line-height: 1.2;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  width: 142px;
+  height: 28px;
+  margin-top: 160px;
+  text-shadow: rgba(0, 0, 0, 0.247059) 0px 7px 15px;
+}
+
+
+/* icons */
+
+#todo, #whiteboard, #timetable, #posts, #documents, #photos, #code-viewer, #settings {
+  width: 142px;
+  height: 142px;
+  float: left;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 80px;
+  box-shadow: 0px 0px 30px 0px rgba(0,0,0,.1); 
+  border-radius: 35px;
+  /*-webkit-filter: blur(15px);*/
+  -webkit-transition: -webkit-filter .50s;
+  -webkit-backface-visibility: hidden; /*fixes Flash bug*/
+}
+
+#mail:hover, #contacts:hover, #calender:hover, #notes:hover, #reminders:hover, #find:hover, #pages:hover, #numbers:hover, #keynote:hover {
+/*  -webkit-filter: blur(10px);
+  -webkit-transition: -webkit-filter .50s; 
+  box-shadow: 0px 0px 30px 0px rgba(0,0,0,0);*/
+}
+
+#todo:active, #whiteboard:active, #timetable:active, #posts:active, #documents:active, #photos:active, #code-viewer:active, #settings:active {
+  opacity: 0.8; 
+}
+
+#todo {
+  background-image: url(https://lh5.ggpht.com/5aMofcRnMdrYe0ytYyRNcGn9iPiPJjBHUeI4hUfnRfihDtoR5ZxpXjA83Um0stg9-odQ=w300);
+}
+
+#whiteboard {
+  background-image: url(http://www.ten90group.com/images/who_we_are/brainstorm_icon.png); 
+}
+
+#timetable {
+  background-image: url(https://cdn4.iconfinder.com/data/icons/flat-icon-set/2133/flat_icons-graficheria.it-06.png);
+}
+
+#posts {
+  background-image: url(https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Sticky_Notes.png);
+}
+
+#documents {
+  background-image: url(https://cdn2.iconfinder.com/data/icons/squareplex/512/documents.png);
+}
+
+#photos {
+  background-image: url(http://icons.iconarchive.com/icons/tristan-edwards/sevenesque/1024/Preview-icon.png);
+}
+
+#code-viewer {
+  background-image: url(https://cdn3.iconfinder.com/data/icons/seo-internet-marketing-flat-icons/128/web-code.png);
+}
+
+#settings {
+  background-image: url(http://icons.iconarchive.com/icons/grafikartes/flat-retro-modern/256/settings-icon.png);
+}
+
+/* additional */
+/*#group {
+  margin-left: 15px;
+  margin-top: 15px;
+  width:56px;
+  height: 16px;
+}*/
+
