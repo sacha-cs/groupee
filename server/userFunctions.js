@@ -4,89 +4,100 @@ postHandler.addHandler("login/register", register);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
 
 function login(request, response, params) {
+
+    //Check we have both a username and password
+    if(!params.username || !params.password) {
+        return utils.respondPlain(response, "NEmptyFields");
+    }
+    
+    //Usernames are all lowercase
+    var username = params.username.toLowerCase();
+    
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
-            return console.error('error! :(', err);
-        }
-        var handleError = function(err) {
-            if(!err) return false;
             console.log(err);
+            return utils.respondPlain(response, "NServerError");
+        }
+        
+        var query = "SELECT * " +
+                    "FROM users " +
+                    "WHERE username='" + username + "'";
+        client.query(query, function(err, result) {
             done(client);
-            response.writeHead(500, {'contentType': 'text/plain'});
-            response.end('An error occurred. Contact the webmaster.');
-            return true;
-        }
-        if(params.username && params.password)
-        {
-            client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, result) {
-                if(handleError(err)) return;
-                done(client);
-                if(result.rows.length != 0) {
-                    var expected = result.rows[0].pwdhash;
-                    if(passwordHash.verify(params.password, expected)) {
-                        var seshCookie = Math.round(Math.random() * 4294967295);
-                        sessionKeys["" + seshCookie] = params.username;
-                        return utils.respondPlain(response,
-                                            "Y" + seshCookie);
-                    } else {
-                        return utils.respondPlain(response, "NIncorrectPassword");
-                    }
-                } else {
-                    return utils.respondPlain(response, "NNoUser");
-                }
-            });
-        } else {
-            return utils.respondPlain(response, "NEmptyFields");
-        }
+
+            if(err) {
+                console.log(err);
+                return utils.respondPlain(response, "NServerError");
+            }
+            
+            //If the user does not exit (i.e. no rows where username matches)
+            if(result.rows.length == 0) {
+                return utils.respondPlain(response, "NNoUser");
+            }
+    
+            //Get the password hash from the database and compare it to
+            //the password received.
+            var expected = result.rows[0].pwdhash;
+            
+            //If the password doesn't match
+            if(!passwordHash.verify(params.password, expected)) {
+                return utils.respondPlain(response, "NIncorrectPassword");
+            }
+
+            //Create a new session cookie for the user and send it to them
+            var seshCookie = createSessionCookie(username);
+            return utils.respondPlain(response, "Y" + seshCookie);
+        });
     });
 }
 
 function register(request, response, params) {
-    pg.connect(connectionString, function(err, client, done) {
-        if(err) {
-            return console.error('error! :(', err);
-        }
-        var handleError = function(err) {
-            if(!err) return false;
-            console.log(err);
-            done(client);
-            response.writeHead(500, {'contentType': 'text/plain'});
-            response.end('An error occurred. Contact the webmaster.');
-            return true;
-        }
-
-        if(params.username && params.password && params.passwordconfirm) {
-            if (!usernameIsValid(params.username) || !passwordIsValid(params.password)) {
-                return utils.respondPlain(response, "NInvalidCharacters");
-            }
-            client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, checkQuery) {
-                if(checkQuery.rows.length > 0) {
-                    return utils.respondPlain(response, "NUsernameTaken");
-                }
-
-                if(params.password == params.passwordconfirm) {
-                    var hashedPassword = passwordHash.generate(params.password);
-                    client.query("INSERT INTO users(username, pwdhash) VALUES('" + 
-                        params.username.toLowerCase() + "', '" + hashedPassword + "')", function(err, createQuery) {
-
-                        client.query("SELECT * FROM users WHERE username='" + params.username.toLowerCase() + "'", function(err, finalCheckQuery) {
-                            if(finalCheckQuery.rows.length > 0) {
-                                // New user has just been created. 
-                                fs.createReadStream(uploadPath + "avatar.png").pipe(fs.createWriteStream(uploadPath + "avatars/" + params.username.toLowerCase() + ".png"));
-                                return utils.respondPlain(response, "YRegisteredSuccessfully");
-                            } else {
-                                return utils.respondPlain(response, "NUnknownError");
-                            }
-                        });
-
-                    });
-                } else {
-                    return utils.respondPlain(response, "NPasswordsDifferent");
-                }
-            });
-        } else {
+    
+    if(!params.username || !params.password || !params.passwordconfirm) {
             return utils.respondPlain(response, "NEmptyFields");
-        }
+    }
+
+    if (!usernameIsValid(params.username) || 
+        !passwordIsValid(params.password)) {
+        return utils.respondPlain(response, "NInvalidCharacters");
+    }
+
+    if (params.password != params.passwordconfirm) {
+        return utils.respondPlain(response, "NPasswordsDifferent");
+    }
+
+    //Usernames are all lowercase
+    var username = params.username.toLowerCase();
+    
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) { return respondError(err); }
+
+        //Check username isn't taken
+        var query = "SELECT * " +
+                    "FROM users " +
+                    "WHERE username='" + username + "'";
+        client.query(query, function(err, checkResult) {
+            if(err) { return respondError(err); }
+            
+            if(checkResult.rows.length > 0) {
+                return utils.respondPlain(response, "NUsernameTaken");
+            }
+
+            //Generate the password hash
+            var hashedPassword = passwordHash.generate(params.password);
+            
+            //And insert into database
+            query = "INSERT INTO users(username, pwdhash) " +
+                    "VALUES('" + username + "', '" + hashedPassword + "')";
+            client.query(query, function(err, checkResult) {
+                done(client);
+                if(err) { return respondError(err); }
+                
+                // New user has just been created. 
+                createAvatar(username);
+                return utils.respondPlain(response, "YRegisteredSuccessfully");
+            });
+        });
     });
 }
 
@@ -118,10 +129,27 @@ function uploadAvatar(request, response, data) {
     });
 }
 
+function createAvatar(username) {
+    var defaultAvatar = fs.createReadStream(uploadPath + "avatar.png");
+    var newAvatar = fs.createWriteStream(uploadPath + "avatars/" + username + ".png")
+    defaultAvatar.pipe(newAvatar);
+}
+
 function usernameIsValid(username) {
     return /^[0-9a-zA-Z_.-]+$/.test(username);
 }
 
 function passwordIsValid(password) {
     return /^[0-9a-zA-Z_.-]+$/.test(password);
+}
+
+function createSessionCookie(user) {
+    var seshCookie = Math.round(Math.random() * 4294967295);
+    sessionKeys["" + seshCookie] = user;
+    return seshCookie;
+}
+
+function respondError(err) {
+    console.log(err);
+    return respondPlain("NServerError");
 }
