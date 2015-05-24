@@ -241,20 +241,31 @@ li {
   left: 0;
   width: 0;
   height: 0;
-  border: 5px solid white;
+  border: 5px solid #C6D9FF;
   border-right-color: transparent;
   border-top-color: transparent;
 }
 
+.self .messages {
+  max-width: 220px;
+  background: #C6D9FF;
+  padding: 5px;
+  border-radius: 2px;
+}
 
-.messages {
+.other .messages {
   max-width: 220px;
   background: white;
   padding: 5px;
   border-radius: 2px;
 }
 
-.messages p {
+.self .messages p {
+  font-size: 0.8rem;
+  margin: 0 0 0.2rem 0;
+}
+
+.other .messages p {
   font-size: 0.8rem;
   margin: 0 0 0.2rem 0;
 }
