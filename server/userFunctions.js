@@ -57,7 +57,8 @@ function register(request, response, params) {
             return utils.respondPlain(response, "NEmptyFields");
     }
 
-    if (!usernameIsValid(params.username) || 
+    if (!nameIsValid(params.username) || 
+        !nameIsValid(params.group) ||
         !passwordIsValid(params.password)) {
         return utils.respondPlain(response, "NInvalidCharacters");
     }
@@ -68,16 +69,24 @@ function register(request, response, params) {
 
     //Usernames are all lowercase
     var username = params.username.toLowerCase();
-    
+    var groupname = params.group.toLowerCase();    
+
     pg.connect(connectionString, function(err, client, done) {
-        if(err) { return respondError(err); }
+        if(err) { return respondError(err, response); }
 
         //Check username isn't taken
-        var query = "SELECT * " +
+        var usernameQuery = "SELECT * " +
                     "FROM users " +
                     "WHERE username='" + username + "'";
-        client.query(query, function(err, checkResult) {
-            if(err) { return respondError(err); }
+
+        //Check if the group name entered exists in the DB.
+        var groupIdQuery = "SELECT group_id " +
+                    "FROM groups " +
+                    "WHERE group_name='" + groupname + "'";
+
+        // Handle user insertion.
+        client.query(usernameQuery, function(err, checkResult) {
+            if(err) { return respondError(err, response); }
             
             if(checkResult.rows.length > 0) {
                 return utils.respondPlain(response, "NUsernameTaken");
@@ -87,15 +96,48 @@ function register(request, response, params) {
             var hashedPassword = passwordHash.generate(params.password);
             
             //And insert into database
-            query = "INSERT INTO users(username, pwdhash) " +
+            usernameQuery = "INSERT INTO users(username, pwdhash) " +
                     "VALUES('" + username + "', '" + hashedPassword + "')";
-            client.query(query, function(err, checkResult) {
+            client.query(usernameQuery, function(err, checkResult) {
                 done(client);
-                if(err) { return respondError(err); }
+                if(err) { return respondError(err, response); }
                 
                 // New user has just been created. 
                 createAvatar(username);
                 return utils.respondPlain(response, "YRegisteredSuccessfully");
+            });
+
+            // Handle group insertion/creation.
+            console.log("Gonna handle group insertion");
+            client.query(groupIdQuery, function(err, checkResult) {
+                done(client);
+                if(err) { return respondError(err, response); }
+              
+                var newGroupId = 0;
+      
+                // If the group already exists, set the group id to the existing one.
+                if (checkResult.rows.length > 0) {
+                    newGroupId = checkResult.rows[0].group_id;
+                } else {
+                    // Group does not already exist, so we create a new one.
+                    var groupDesc = "This group has no description.";
+                    newGroupId = Math.floor((Math.random() * 100) + 1);
+                    var newGroupQuery = "INSERT INTO groups VALUES('" + newGroupId + "', '" + groupname + "', '" + groupDesc + "')";
+                    client.query(newGroupQuery, function(err, checkResult) {
+                        done(client);
+                        if(err) { return respondError(err, response); }
+                        // Group was successfully created.
+                        return utils.respondPlain(response, "YGroupCreatedSuccessfully");
+                    });
+                }
+                // Insert user into the group.
+                groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
+                client.query(groupInsertQuery, function(err, checkResult) {
+                    done(client);
+                    if(err) { return respondError(err, response); }
+                    // User has been inserted into appropriate group.
+                    return utils.respondPlain(response, "YInsertedIntoGroupSuccessfully");
+                });
             });
         });
     });
@@ -134,9 +176,10 @@ function createAvatar(username) {
     defaultAvatar.pipe(newAvatar);
 }
 
-function usernameIsValid(username) {
-    return /^[0-9a-zA-Z_.-]+$/.test(username);
+function nameIsValid(name) {
+    return /^[0-9a-zA-Z_.-]+$/.test(name);
 }
+
 
 function passwordIsValid(password) {
     return /^[0-9a-zA-Z_.-]+$/.test(password);
@@ -148,7 +191,7 @@ function createSessionCookie(user) {
     return seshCookie;
 }
 
-function respondError(err) {
+function respondError(err, response) {
     console.log(err);
-    return respondPlain("NServerError");
+    return utils.respondPlain(response);
 }

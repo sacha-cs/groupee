@@ -1,6 +1,7 @@
 function setUpListeners() {
     document.getElementById('username').onkeypress = keyListener;
     document.getElementById('password').onkeypress = keyListener;
+    document.getElementById('group').onkeypress = keyListener;
     if(window.location.pathname!="/login/" &&
        window.location.pathname!="/login/index.html")
         document.getElementById('passwordconfirm').onkeypress = keyListener;
@@ -27,6 +28,7 @@ function login()
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
     
+
     setErrorText("");
     if(username == "" || password == "")
     {
@@ -73,8 +75,9 @@ function register()
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
     var passwordconfirm = document.getElementById("passwordconfirm").value;
+    var group = document.getElementById("group").value;
 
-    if(username == "" || password == "" || passwordconfirm == "")
+    if(username == "" || password == "" || passwordconfirm == "" || group == "")
     {
         setErrorText("Please fill out all fields.");
         return;
@@ -89,7 +92,8 @@ function register()
     aClient = new HttpClient();
     aClient.post('register', 'username=' + username + 
                          '&password=' + password +
-                         '&passwordconfirm=' + passwordconfirm, 
+                         '&passwordconfirm=' + passwordconfirm + 
+                         '&group=' + group, 
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
