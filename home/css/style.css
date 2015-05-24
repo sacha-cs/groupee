@@ -188,7 +188,7 @@ label {
 
 .discussion {
   overflow-y: auto;
-  height: calc(100% - 30px);
+  /*height: calc(100% - 30px);*/
   list-style: none;
   margin: 0;
   padding: 0 0 50px 0;
@@ -283,10 +283,16 @@ li {
 
 }*/
 
+#message {
+  width: 150px;
+}
+
 #chat-box {
   position: fixed;
   width: 100%;
   height: 50px;
+  padding-left:45px;
+  padding-top: 10px;
   bottom: 0px;
   background: #4B6B8B;
 }
