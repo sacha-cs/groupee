@@ -1,3 +1,5 @@
+@import "compass/css3";
+
 body {
   background: #2c3e50;
   -webkit-background-size: cover;
@@ -105,22 +107,18 @@ body {
 .chat-space {
     background-color: #4B6B8B;
     overflow-y: auto;
-    width: 250px;
+    width: 300px;
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
 }
 
-.chat-space h1 {
-    color: white;
-}
-
 .content {
     background-color: #2c3e50;
     position: absolute;
     top: 0;
-    left: 250px;
+    left: 300px;
     right: 0;
     bottom: 0;
     -webkit-transition: left 0.5s ease;
@@ -145,7 +143,7 @@ label {
     z-index: 2;
     position: absolute;
     top: 10px;
-    left: 260px;
+    left: 310px;
     -webkit-transition: left 0.5s ease;
     -moz-transition: left 0.5s ease;
     -o-transition: left 0.5s ease;
@@ -189,3 +187,75 @@ label {
   top:1px;
 }
 
+
+.discussion {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 50px 0;
+}
+
+li {
+  padding: 0.5rem;
+  overflow: hidden;
+  display: flex;
+}
+
+.avatar {
+  width: 40px; 
+  position: relative;
+}
+
+#avatar {
+  display: block;
+  width: 100%;
+}
+
+.other .avatar:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border: 5px solid white;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+}
+
+.self {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.self .messages {
+    order: 1;
+    border-bottom-right-radius: 0;
+}
+
+.self .avatar {
+    order: 2;
+}
+
+.self .avatar:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 5px solid white;
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+
+.messages {
+  background: white;
+  padding: 10px;
+  border-radius: 2px;
+}
+
+.messages .p {
+  font-size: 0.8rem;
+  margin: 0 0 0.2rem 0;
+}

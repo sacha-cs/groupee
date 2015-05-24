@@ -70,6 +70,21 @@ function sendMessage() {
 }
 
 function addMessageToChat(user, message) {
-    var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + message + "<br />";  
+    var messenger;
+    if (getCookie("username") == user) {
+        messenger = "self";
+    } else {
+        messenger = "other";
+    }
+
+    var htmlMsg = "<li class=\"" + messenger + "\">" + 
+                        "<div class=\"avatar\">" +
+                            "<img id=\"avatar\" src='" + filePath + "avatars/" + user + ".png'/>" +
+                        "</div>" +
+                        "<div class=\"messages\">" +
+                            "<p><u>" + user + ":</u> " + message + "</p>" +
+                        "</div>" +
+                    "</li>";
+
     chat.innerHTML += htmlMsg;    
 }
