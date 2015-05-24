@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Whiteboard</title>
+<script src="js.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="startWhiteboard()">
+<div id=wrapper>
+    <canvas id="board" width=800 height=500>Upgrade your browser to use the whiteboard!</canvas>
+    <canvas id="tempBoard" width=800 height=500></canvas>
+</div>
+<br />
+Current Tool: <span id="currTool">Pen</span><br />
+Line thickness: 
+<button onclick="setUserPenThickness(1)">1</button>
+<button onclick="setUserPenThickness(3)">3</button>
+<button onclick="setUserPenThickness(5)">5</button>
+<button onclick="setUserPenThickness(7)">7</button>
+<button onclick="setUserPenThickness(9)">9</button>
+<br />
+Colour: 
+<button onclick="setUserPenColour('rgb(255, 0, 0)')">Red</button>
+<button onclick="setUserPenColour('rgb(0, 255, 0)')">Green</button>
+<button onclick="setUserPenColour('rgb(0, 0, 255)')">Blue</button>
+<button onclick="setUserPenColour('rgb(255, 255, 0)')">Yellow</button>
+<button onclick="setUserPenColour('rgb(255, 0, 255)')">Purple</button>
+<button onclick="setUserPenColour('rgb(0, 255, 255)')">Cyan</button>
+<button onclick="setUserPenColour('rgb(0, 0, 0)')">Black</button>
+<button onclick="setUserPenColour('rgb(255, 255, 255)')">White</button>
+<br />
+Fill/Text Colour: 
+<button onclick="setUserFillColour('rgb(255, 0, 0)')">Red</button>
+<button onclick="setUserFillColour('rgb(0, 255, 0)')">Green</button>
+<button onclick="setUserFillColour('rgb(0, 0, 255)')">Blue</button>
+<button onclick="setUserFillColour('rgb(255, 255, 0)')">Yellow</button>
+<button onclick="setUserFillColour('rgb(255, 0, 255)')">Purple</button>
+<button onclick="setUserFillColour('rgb(0, 255, 255)')">Cyan</button>
+<button onclick="setUserFillColour('rgb(0, 0, 0)')">Black</button>
+<button onclick="setUserFillColour('rgb(255, 255, 255)')">White</button>
+<br />
+Tool:
+<button onclick="selectPen()">Pen</button>
+<button onclick="selectText()">Text</button>
+<br />
+Text size:
+<input id="textSize" onChange="setUserTextSize()"></input>
+<br />
+<div id=hiddenWrapper>
+<textarea id="textHidden"></textarea>
+</div>
+</input>
+</body>
+</html>

@@ -1,0 +1,28 @@
+canvas { border: 1px solid black; }
+
+#wrapper {
+    position:relative;
+    width:800px;
+    height:500px;
+}
+
+#board {
+    position:absolute;
+    border: 3px solid red;
+}
+
+#tempBoard {
+    position:absolute;
+    border: 3px solid green;
+    top:0px;
+}
+
+#textHidden {
+    position:absolute;
+    left:-500px;
+    top:-500px;
+}
+
+#hiddenWrapper {
+    position:relative;
+}
