@@ -4,6 +4,7 @@ canvas { border: 1px solid black; }
     position:relative;
     width:800px;
     height:500px;
+    cursor:none;
 }
 
 #board {
