@@ -45,23 +45,16 @@ function serverListener(request, response) {
         var handler = postHandler.getHandler(requestURL);
 
         if(handler != null) {
-            var postType = request.headers["content-type"].split(';');
-            if(postType[0] == "multipart/form-data")
-            {
-                handler(request, response, message);
-                return;
-            }
-            var message = "";
-            request.on("data", function(data) {
-                message += data.toString('utf-8');
-                if(message.length > 1e7) {
-                    POSTDataTooBig(response);
-                    return;
-                }
+            var form = new formidable.IncomingForm();
+            form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
+            form.keepExtensions = true;
+            form.on("error", function(error) {
+                console.log(error);
             });
-            request.on("end", function() {
-                handler(request, response, utils.splitParams(message));
+            form.parse(request, function(err, fields, files) {
+                handler(request, response, fields, files);
             });
+
         }
         else
         {

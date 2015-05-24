@@ -10,8 +10,7 @@ getHandler.addHandler("chat/chat_update", chatUpdate);
 
 function chatSendMessage(request, response, params) {
     var username = utils.getUser(request);
-    var safeMessage = escapeHtml(params.chatmessage);
-    safeMessage = encodeURIComponent(safeMessage);
+    var safeMessage = encodeURIComponent(escapeHtml(decodeURIComponent(params.chatmessage)));
     messages.push({user:username, message:safeMessage});
     messageNo++;
     utils.respondPlain(response, "MessageRecieved");
@@ -19,11 +18,6 @@ function chatSendMessage(request, response, params) {
     var i = 0;
     while(i < waitingRequests.length) {
         var curr = waitingRequests[i];
-        if(username == utils.getUser(curr.request))
-        {
-            i++;
-            continue;
-        }
         waitingRequests.splice(i, 1);
         if(curr.timedOut)
             continue;
@@ -59,12 +53,6 @@ function chatUpdate(request, response, params, checkForNew) {
     response.write(messageNo + "#");
     while(last < messageNo)
     {
-        if(messages[last].user == utils.getUser(request))
-        {
-            last++;
-            continue;
-        }
-        //TODO: Handle case of users potentially sending semi-colons. 
         response.write("user=" + messages[last].user + ";message=" + messages[last].message + "\n");
         last++;
     }
@@ -82,8 +70,9 @@ function escapeHtml(text) {
         '<': '&lt;',
         '>': '&gt;',
         '"': '&quot;',
-        "'": '&#039;'
+        "'": '&#039;',
+        "=": '&#061;'
     };
 
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    return text.replace(/[&<>"'=]/g, function(m) { return map[m]; });
 }

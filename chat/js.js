@@ -57,14 +57,12 @@ function sendMessage() {
     var message = chatBox.value;
     if(!message)
         return;
-    
 
-    addMessageToChat(getCookie("username"), escapeHtml(message));
-
+    //addMessageToChat(getCookie("username"), escapeHtml(message));
 
     aClient = new HttpClient();
     var d = new Date();
-    aClient.post('/chat/send_message', "chatmessage="+message + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
+    aClient.post('/chat/send_message', "chatmessage="+ encodeURIComponent(message) + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
     function (response) {
     });
     chatBox.value = "";
@@ -74,16 +72,4 @@ function sendMessage() {
 function addMessageToChat(user, message) {
     var htmlMsg = "<img src='" + filePath + "avatars/" + user + ".png' width=100 height=100/>" + user + ": " + message + "<br />";  
     chat.innerHTML += htmlMsg;    
-}
-
-function escapeHtml(text) {
-    var map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }

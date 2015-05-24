@@ -104,8 +104,7 @@ function register(request, response, params) {
 function uploadAvatar(request, response, data) {
     var form = new formidable.IncomingForm();
     form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
-    form.keepExtension = true;
-    form.type = "multipart";
+    form.keepExtensions = true;
     form.on("error", function(error) {
         console.log(error);
     });
