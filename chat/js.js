@@ -58,8 +58,6 @@ function sendMessage() {
     if(!message)
         return;
 
-    //addMessageToChat(getCookie("username"), escapeHtml(message));
-
     aClient = new HttpClient();
     var d = new Date();
     aClient.post('/chat/send_message', "chatmessage="+ encodeURIComponent(message) + "&time=" + d.getMinutes() + ":" + d.getSeconds(),

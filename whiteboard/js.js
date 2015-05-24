@@ -1,4 +1,6 @@
-//The canvases - the permenent and temporary
+var TOOL_INTERVAL = 1000;
+
+//The canvases - the permenant and temporary
 var canvas;
 var ctx;
 var tempCanvas;
@@ -7,20 +9,21 @@ var tempCtx;
 //The hidden text input that is used for text input.
 var textHidden;
 
-var mouseDown = false;
 var started = false;
-var last;
+var mouseDown = false;
 var userPen;
 var tool;
-var addingText;
+
+var lastMousePos;
 var textPos;
 var showCursor;
 
-var cursorInterval = setInterval(function() { 
-    showCursor = !showCursor;
-    if(tool=="Text" && document.activeElement == textHidden)
-        drawTextTemp(null, true);
-     }, 500);
+//Data for sending to server
+var lastSentTime;
+var sendInterval;
+var toSend;
+var lastUpdate;
+var updatesToDraw = [];
 
 function startWhiteboard() {
     //Get the canvas and the context so we can draw stuff!
@@ -40,9 +43,11 @@ function startWhiteboard() {
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
 
-    addingText = false;
-
     tool = "Pen";
+
+    lastUpdate = 0;
+
+    setInterval(drawUpdates, 33);
 
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
@@ -54,22 +59,18 @@ function startWhiteboard() {
             drawCircle(tempCtx, mousePos, userPen.thickness/2);
             drawCircleOutline(tempCtx, mousePos, userPen.thickness/2);
             if(mouseDown) {
-                if(!started) {
-                    started = true;
-                    last = mousePos;
-                }
                 ctx.strokeStyle = userPen.colour;
                 ctx.lineWidth = userPen.thickness;
                 ctx.beginPath();
-                ctx.moveTo(last.x, last.y);
+                ctx.moveTo(lastMousePos.x, lastMousePos.y);
                 ctx.lineTo(mousePos.x, mousePos.y);
                 ctx.stroke();
-                last = mousePos;
+                lastMousePos = mousePos;
+                toSend.data += ("x:"+mousePos.x+";y:"+mousePos.y+";time:"+toolSendTime() + "\n");
             }
         }
-
-            
     });
+
     tempCanvas.addEventListener("mousedown", function() {
         mouseDown = true;
         if(tool == "Text") {
@@ -78,19 +79,28 @@ function startWhiteboard() {
             textPos = mousePos;
             setTimeout(function () { textHidden.focus() }, 100);
             textHidden.value = "";
+        } else if(tool == "Pen") {
+            started = true;
+            startedUsingTool();
+            lastMousePos = mousePos;
+            toSend.data += ("x:"+mousePos.x+";y:"+mousePos.y+";time:"+toolSendTime()+"\n");
         }
 
     });
+
     tempCanvas.addEventListener("mouseup", function(evt) {
         mouseDown = false;
         if(tool != "Text") {
             started = false;
+            finishedUsingTool();
         }
     });
     textHidden.addEventListener("input", drawTextTemp);
     textHidden.addEventListener("blur", drawTextPermenent);
     textHidden.addEventListener("keydown", function() {
         setTimeout(drawTextTemp, 10)});
+
+    updateWhiteboard();
 } 
 
 function drawTextTemp(e, isCaretFlash) {
@@ -178,4 +188,97 @@ function selectText() {
     tool = "Text";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="text";
+}
+
+var cursorInterval = setInterval(function() { 
+    showCursor = !showCursor;
+    if(tool=="Text" && document.activeElement == textHidden)
+        drawTextTemp(null, true);
+     }, 500);
+
+function startedUsingTool() {
+    toSend = {colour:userPen.colour,
+              thickness:userPen.thickness,
+              fillColour:userPen.fillColour,
+              textSize:userPen.textSize,
+              tool:tool,
+              data:""};
+    lastSentTime = (new Date()).getTime();
+    sendInterval = setInterval(sendToolUpdates, TOOL_INTERVAL);
+}
+
+function finishedUsingTool() {
+    clearInterval(sendInterval);
+    sendToolUpdates();    
+}
+
+function toolSendTime() {
+    return (new Date()).getTime() - lastSentTime;
+}
+
+function sendToolUpdates() {
+    var payload = "data=colour-" + toSend.colour +
+                 "@thickness-" + toSend.thickness +
+                 "@fillColour-" + toSend.fillColour +
+                 "@textSize-" + toSend.textSize +
+                 "@tool-" + tool +
+                 "@data-" + toSend.data;
+    toSend.data = "";
+    lastSentTime = (new Date()).getTime();
+    var aClient = new HttpClient();
+    aClient.post('update', payload, function (repsonse) {});
+}
+
+function updateWhiteboard() {
+    var client = new HttpClient();
+    client.get('getUpdate?last=' + lastUpdate, function(response) {
+        var res = response.split("<>");
+        lastUpdate = parseInt(res[0]);
+        var responses = res[1].split("\\");
+        for(var k = 0; k < responses.length; k++) {
+            var update = {};
+            res = responses[k].split("@");
+            for(var i = 0; i < res.length; i++) {
+                var keyAndValue = res[i].split("-");
+                console.log("Key and Value: " + keyAndValue);
+                update[keyAndValue[0]] = keyAndValue[1];
+            }
+            if(update.data) {
+                var points = update.data.split('\n');
+                update.data = [];
+                for(var j = 0; j < points.length; j++) {
+                    var info = points[j].split(";");
+                    if(!info || info == "")
+                        continue;
+                    update.data.push({x:info[0].split(":")[1],
+                                      y:info[1].split(":")[1],
+                                      time:info[2].split(":")[1]} );
+                }
+                update.last = update.data[0];
+                update.start = (new Date()).getTime();
+                updatesToDraw.push(update);
+            }
+        }
+        updateWhiteboard();
+    });
+}
+
+function drawUpdates() {
+    var time = (new Date()).getTime();
+    for(var i = 0; i < updatesToDraw.length; i++) {
+        var timePassed = time - updatesToDraw[i].start;
+        var data = updatesToDraw[i].data;
+        while(data.length > 0 && data[0].time < timePassed) {
+           if(updatesToDraw[i].tool == "Pen") {
+                ctx.strokeStyle = updatesToDraw[i].colour;
+                ctx.lineWidth = updatesToDraw[i].thickness;
+                console.log(updatesToDraw[i].thickness);
+                ctx.beginPath();
+                ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
+                ctx.lineTo(data[0].x, data[0].y);
+                ctx.stroke();
+                updatesToDraw[i].last = data.shift();
+           }
+        }
+    }
 }
