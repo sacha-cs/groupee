@@ -25,7 +25,7 @@ function createGroup() {
                         break;
                 }
             } else { // No problems.
-               window.location = "add_people.html"; 
+               window.location = "add_users.html"; 
             } 
         }
     );
