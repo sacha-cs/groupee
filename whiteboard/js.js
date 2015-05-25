@@ -51,7 +51,6 @@ function startWhiteboard() {
     lastUpdate = 0;
 
     setInterval(drawUpdates, 33);
-    playingBack = true;
     updateWhiteboard(true);
 
     tempCanvas.addEventListener('mousemove', function(evt) {
@@ -275,7 +274,8 @@ function updateWhiteboard(allUpdates) {
                 }
                 update.last = update.data[0];
 
-                if(playingBack) {
+                if(allUpdates) {
+                    playingBack = true;
                     update.playback = true;
                     update.start=playbackEndTime;
                     playbackEndTime+=parseInt(update.data[update.data.length-1].time);

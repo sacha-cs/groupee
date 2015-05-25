@@ -54,7 +54,7 @@ function sendUpdates(request, response, params, checkForNew)
         response.write(updates[last].data + "\\");
         last++;
     }
-    if(params.allUpdates)
+    if(params.allUpdates) 
         response.write("<>true");
     response.end();
 }
