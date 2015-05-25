@@ -16,10 +16,6 @@ function receivedUpdate(request, response, params)
     var i = 0;
     while(i < waitingRequests.length) {
         var curr = waitingRequests[i];
-        if(utils.getUser(request) == utils.getUser(curr.request)) {
-            i++;
-            continue;
-        }
         waitingRequests.splice(i, 1);
         if(curr.timedOut)
             continue;
@@ -53,10 +49,6 @@ function sendUpdates(request, response, params, checkForNew)
     response.write(lastUpdateNo + "<>");
     while(last < lastUpdateNo)
     {
-        if(updates[last].user == utils.getUser(request)) {
-            last++;
-            continue;
-        }
         response.write(updates[last].data + "\\");
         last++;
     }
