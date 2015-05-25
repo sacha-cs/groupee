@@ -72,7 +72,8 @@ function handleGroupInsertion(request, response, params) {
     var groupname = params.group_name.toLowerCase();
     var description = params.description;
     var username = utils.getUser(request);
-    var privacy = "SECRET"; // TODO: Get the actual privacy from params.
+    var privacy = params.privacy.toLowerCase();
+
     // Check if the group name entered exists in the DB.
     var groupIdQuery = "SELECT group_id " +
                        "FROM groups " +
