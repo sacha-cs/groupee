@@ -112,7 +112,7 @@ body {
 
 .chat-space {
     background-color: #4B6B8B;
-    overflow-y: auto;
+    overflow-x: auto;
     width: 300px;
     position: absolute;
     top: 0;
@@ -272,11 +272,13 @@ li {
 
 .self .messages p {
   font-size: 0.8rem;
+  word-wrap: break-word;
   margin: 0 0 0.2rem 0;
 }
 
 .other .messages p {
   font-size: 0.8rem;
+  word-wrap: break-word;
   margin: 0 0 0.2rem 0;
 }
 
