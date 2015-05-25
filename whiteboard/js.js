@@ -24,6 +24,9 @@ var sendInterval;
 var toSend;
 var lastUpdate;
 var updatesToDraw = [];
+var playingBack = false;
+var playbackStartTime;
+var playbackEndTime;
 
 function startWhiteboard() {
     //Get the canvas and the context so we can draw stuff!
@@ -48,6 +51,8 @@ function startWhiteboard() {
     lastUpdate = 0;
 
     setInterval(drawUpdates, 33);
+    playingBack = true;
+    updateWhiteboard(true);
 
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
@@ -100,7 +105,6 @@ function startWhiteboard() {
     textHidden.addEventListener("keydown", function() {
         setTimeout(drawTextTemp, 10)});
 
-    updateWhiteboard();
 } 
 
 function drawTextTemp(e, isCaretFlash) {
@@ -229,18 +233,34 @@ function sendToolUpdates() {
     aClient.post('update', payload, function (repsonse) {});
 }
 
-function updateWhiteboard() {
+function updateWhiteboard(allUpdates) {
     var client = new HttpClient();
-    client.get('getUpdate?last=' + lastUpdate, function(response) {
+    var query = "last=" + lastUpdate;
+    if(allUpdates)
+        query+="&allUpdates=true";
+    client.get('getUpdate?' + query, function(response) {
+        /*The response is the form:
+          lastUpdate<>response1\response2\...\responseN(<>allUpdates)
+          where a response is of the form:
+          key-value@key-value@...@data-updateData
+          where updateData has a form dependent on the tool, but usually
+          key:value;key:value;...;key:value\n */
         var res = response.split("<>");
         lastUpdate = parseInt(res[0]);
+        var allUpdates = false;
+        if(res[2]) {
+            allUpdates = true;
+            playbackEndTime = 0;
+        }
         var responses = res[1].split("\\");
+        if(allUpdates) {
+            playbackStartTime = (new Date()).getTime();
+        }
         for(var k = 0; k < responses.length; k++) {
             var update = {};
             res = responses[k].split("@");
             for(var i = 0; i < res.length; i++) {
                 var keyAndValue = res[i].split("-");
-                console.log("Key and Value: " + keyAndValue);
                 update[keyAndValue[0]] = keyAndValue[1];
             }
             if(update.data) {
@@ -255,7 +275,14 @@ function updateWhiteboard() {
                                       time:info[2].split(":")[1]} );
                 }
                 update.last = update.data[0];
-                update.start = (new Date()).getTime();
+
+                if(playingBack) {
+                    update.playback = true;
+                    update.start=playbackEndTime;
+                    playbackEndTime+=parseInt(update.data[update.data.length-1].time);
+                } else {
+                    update.start = (new Date()).getTime();
+                }
                 updatesToDraw.push(update);
             }
         }
@@ -264,15 +291,22 @@ function updateWhiteboard() {
 }
 
 function drawUpdates() {
+    if(playingBack && updatesToDraw.length == 0)
+        playingBack = false;
     var time = (new Date()).getTime();
     for(var i = 0; i < updatesToDraw.length; i++) {
-        var timePassed = time - updatesToDraw[i].start;
+        var timePassed;
+        if(playingBack) {
+            timePassed = (time - playbackStartTime) * 5 - updatesToDraw[i].start;
+        } else {
+            timePassed = time - updatesToDraw[i].start;
+        }
+
         var data = updatesToDraw[i].data;
         while(data.length > 0 && data[0].time < timePassed) {
            if(updatesToDraw[i].tool == "Pen") {
                 ctx.strokeStyle = updatesToDraw[i].colour;
                 ctx.lineWidth = updatesToDraw[i].thickness;
-                console.log(updatesToDraw[i].thickness);
                 ctx.beginPath();
                 ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
                 ctx.lineTo(data[0].x, data[0].y);
@@ -280,5 +314,8 @@ function drawUpdates() {
                 updatesToDraw[i].last = data.shift();
            }
         }
+        //If the we are done with all the data, remove it
+        if(data.length == 0)
+            updatesToDraw.splice(i, 1);
     }
 }

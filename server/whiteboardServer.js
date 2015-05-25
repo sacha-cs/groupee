@@ -13,10 +13,9 @@ function receivedUpdate(request, response, params)
     lastUpdateNo++;
     utils.respondPlain(response, "");
 
-    var i = 0;
-    while(i < waitingRequests.length) {
-        var curr = waitingRequests[i];
-        waitingRequests.splice(i, 1);
+    while(waitingRequests.length > 0) {
+        var curr = waitingRequests[0];
+        waitingRequests.splice(0, 1);
         if(curr.timedOut)
             continue;
         clearTimeout(curr.timeoutID);
@@ -26,11 +25,10 @@ function receivedUpdate(request, response, params)
 
 function sendUpdates(request, response, params, checkForNew)
 {
-   
     var last = parseInt(params.last);
     
     //If there are no more messages to send, add it to the waiting list 
-    if(!checkForNew && last == lastUpdateNo)
+    if(!params.allUpdates && !checkForNew && last == lastUpdateNo)
     {
         var requestData = {"request":request,
                            "response":response,
@@ -49,9 +47,15 @@ function sendUpdates(request, response, params, checkForNew)
     response.write(lastUpdateNo + "<>");
     while(last < lastUpdateNo)
     {
+        if(!params.allUpdates && updates[last].user == utils.getUser(request)) {
+            last++;
+            continue;
+        }
         response.write(updates[last].data + "\\");
         last++;
     }
+    if(params.allUpdates)
+        response.write("<>true");
     response.end();
 }
 
