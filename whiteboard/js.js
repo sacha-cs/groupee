@@ -141,8 +141,7 @@ function setUserPenThickness(thickness) {
     userPen.thickness = thickness;
 }
 
-function setUserTextSize() {
-    size = parseInt(document.getElementById("textSize").value);
+function setUserTextSize(size) {
     if(size)
         userPen.textSize = size;
 
