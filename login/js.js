@@ -42,7 +42,7 @@ function login()
             var parts = response.slice(1).split('#');
             document.cookie="seshCookie="+parts[0]+";path=/";
             document.cookie="username="+parts[1]+";path=/";
-            window.location = "/groups/create.html";
+            window.location = "/groups/index.html";
         } else {
             switch(response.slice(1)) {
                 case "IncorrectPassword":

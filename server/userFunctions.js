@@ -103,7 +103,7 @@ function handleGroupInsertion(request, response, params) {
                     // We must now extract the group id that was just created.
                     // 
                     extractGroupId(request, response, client, done, function(request, response, client, done, group_id) {
-                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); },
+                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); utils.respondPlain(response, "Y") },
                                                group_id, username );
                     }, groupname);
                 });
@@ -131,7 +131,7 @@ function insertUserIntoMemberOf(request, response, client, done, callback, newGr
         if(err) { return respondError(err, response); }
     
         if(result.rows.length > 0) {
-            return utils.respondPlain(response, "NUsernameTaken");
+            return utils.respondPlain(response, "NUserExistsInGroup");
         }
         
         var groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";

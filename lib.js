@@ -32,3 +32,9 @@ function getCookie(cname) {
     }
     return "";
 }
+
+function setErrorText(error) {
+
+    document.getElementById("error").innerHTML = error;
+    return;
+}
