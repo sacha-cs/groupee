@@ -1,4 +1,4 @@
-postHandler.addHandler("whiteboard/update", receivedUpdate);
+postHandler.addHandler("whiteboard/update", receivedUpdate, true);
 getHandler.addHandler("whiteboard/getUpdate", sendUpdates);
 
 var TIMEOUT_TIME = 10*1000;
@@ -8,10 +8,10 @@ var waitingRequests = [];
 
 function receivedUpdate(request, response, params)
 {
-    console.log("" + utils.getUser(request) + " sent whiteboard data.");
     updates.push({data:params.data, user:utils.getUser(request)});
     lastUpdateNo++;
     utils.respondPlain(response, "");
+    console.log(params.data);
 
     while(waitingRequests.length > 0) {
         var curr = waitingRequests[0];

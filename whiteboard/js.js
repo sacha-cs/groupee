@@ -5,6 +5,8 @@ var canvas;
 var ctx;
 var tempCanvas;
 var tempCtx;
+var networkTempCanvas;
+var networkTempCtx;
 
 //The hidden text input that is used for text input.
 var textHidden;
@@ -27,6 +29,7 @@ var updatesToDraw = [];
 var playingBack = false;
 var playbackStartTime;
 var playbackEndTime;
+var writtenToNetworkTemp = false;
 
 function startWhiteboard() {
     //Get the canvas and the context so we can draw stuff!
@@ -37,6 +40,9 @@ function startWhiteboard() {
     tempCanvas = document.getElementById("tempBoard");
     if(tempCanvas.getContext)
         tempCtx = tempCanvas.getContext('2d');
+    networkTempCanvas = document.getElementById("tempBoard");
+    if(networkTempCanvas.getContext)
+        networkTempCtx = networkTempCanvas.getContext('2d');
     textHidden = document.getElementById("textHidden");
 
     userPen = {colour: "rgb(255, 0, 0)", 
@@ -81,6 +87,7 @@ function startWhiteboard() {
             if(started)
                 drawTextPermenent();
             textPos = mousePos;
+            startedUsingTool();
             setTimeout(function () { textHidden.focus() }, 100);
             textHidden.value = "";
         } else if(tool == "Pen") {
@@ -120,6 +127,8 @@ function drawTextTemp(e, isCaretFlash) {
         textToShow = textToShow.substr(0, caretPos) + caret + textToShow.substr(caretPos);
         fillTextMultiLine(tempCtx, textToShow, textPos.x, textPos.y);
         started = true;
+        if(textToShow)
+            toSend.data += "x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";time:"+toolSendTime() +";finished:false\n";
 }
 
 function drawTextPermenent() {
@@ -129,6 +138,10 @@ function drawTextPermenent() {
         ctx.fillStyle = userPen.fillColour;
         ctx.font = "" + userPen.textSize + "px Arial";
         fillTextMultiLine(ctx, textHidden.value, textPos.x, textPos.y);
+        console.log(encodeURIComponent(textHidden.value));
+        if(textHidden.value)
+            toSend.data += "x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";time:"+toolSendTime() + ";finished:true";
+        finishedUsingTool();
     }
 }
 
@@ -228,6 +241,7 @@ function sendToolUpdates() {
     toSend.data = "";
     lastSentTime = (new Date()).getTime();
     var aClient = new HttpClient();
+    encodeURIComponent(payload);
     aClient.post('update', payload, function (repsonse) {});
 }
 
@@ -268,9 +282,17 @@ function updateWhiteboard(allUpdates) {
                     var info = points[j].split(";");
                     if(!info || info == "")
                         continue;
+                    if(update.tool == "Pen") {
                     update.data.push({x:info[0].split(":")[1],
                                       y:info[1].split(":")[1],
                                       time:info[2].split(":")[1]} );
+                    } else if(update.tool == "Text") {
+                    update.data.push({x:info[0].split(":")[1],
+                                      y:info[1].split(":")[1],
+                                      text:info[2].split(":")[1],
+                                      time:info[3].split(":")[1],
+                                      finished:info[4].split(":")[1]});
+                    }
                 }
                 update.last = update.data[0];
 
@@ -290,6 +312,9 @@ function updateWhiteboard(allUpdates) {
 }
 
 function drawUpdates() {
+    if(writtenToNetworkTemp) {
+        writtenToNetworkTemp = false;
+    }
     if(playingBack && updatesToDraw.length == 0)
         playingBack = false;
     var time = (new Date()).getTime();
@@ -303,7 +328,7 @@ function drawUpdates() {
 
         var data = updatesToDraw[i].data;
         while(data.length > 0 && data[0].time < timePassed) {
-           if(updatesToDraw[i].tool == "Pen") {
+            if(updatesToDraw[i].tool == "Pen") {
                 ctx.strokeStyle = updatesToDraw[i].colour;
                 ctx.lineWidth = updatesToDraw[i].thickness;
                 ctx.beginPath();
@@ -311,7 +336,29 @@ function drawUpdates() {
                 ctx.lineTo(data[0].x, data[0].y);
                 ctx.stroke();
                 updatesToDraw[i].last = data.shift();
-           }
+            } else if(updatesToDraw[i].tool == "Text") {
+                if(data[1] && timePassed > data[1].time) {
+                    data.shift();
+                    continue;
+                }
+                if(!writtenToNetworkTemp)
+                    networkTempCtx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                writtenToNetworkTemp = true;
+                var textCtx = networkTempCtx;
+                if(data[0].finished == "true")
+                    textCtx = ctx;
+                textCtx.fillStyle = updatesToDraw[i].fillColour;
+                textCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
+                fillTextMultiLine(textCtx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
+
+                if(data[1]) 
+                    data[0].time = data[1].time;
+                else
+                    data.shift();
+
+            }
+           console.log(updatesToDraw[i].tool);
         }
         //If the we are done with all the data, remove it
         if(data.length == 0)
