@@ -1,6 +1,7 @@
 
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
+postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
 
 function login(request, response, params) {
@@ -67,46 +68,68 @@ function checkParams(response, params) {
     }
 }
 
-function handleGroupInsertion(request, response, params, client, done) {
-    var groupname = params.group.toLowerCase();    
-    var username = params.username.toLowerCase();
-    //Check if the group name entered exists in the DB.
+function handleGroupInsertion(request, response, params) {
+    var groupname = params.group_name.toLowerCase();
+    var description = params.description;
+    var username = utils.getUser(request);
+    var privacy = "SECRET"; // TODO: Get the actual privacy from params.
+    // Check if the group name entered exists in the DB.
     var groupIdQuery = "SELECT group_id " +
-                "FROM groups " +
-                "WHERE group_name='" + groupname + "'";
-
-    // Handle group insertion/creation.
-    console.log("Gonna handle group insertion");
-    client.query(groupIdQuery, function(err, checkResult) {
-        if(err) { console.log("GOT HERE"); return respondError(err, response); }
-      
-        var newGroupId = 0;
-
-        // If the group already exists, set the group id to the existing one.
-        if (checkResult.rows.length > 0) {
-            newGroupId = checkResult.rows[0].group_id;
-            insertUserIntoMemberOf(request, response, newGroupId, username, client, done);
-        } else {
-            // Group does not already exist, so we create a new one.
-            var groupDesc = "This group has no description.";
-            newGroupId = Math.floor((Math.random() * 100) + 1);
-            var newGroupQuery = "INSERT INTO groups VALUES('" + newGroupId + "', '" + groupname + "', '" + groupDesc + "')";
-            client.query(newGroupQuery, function(err, checkResult) {
-                if(err) { return respondError(err, response); }
-                insertUserIntoMemberOf(request, response, newGroupId, username, client, done);
-            });
+                       "FROM groups " +
+                       "WHERE group_name='" + groupname + "'";
+  
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) {
+            console.log(err);
+            return utils.respondPlain(response, "NServerError");
         }
+        // Handle group insertion/creation.
+        client.query(groupIdQuery, function(err, checkResult) {
+            if(err) { return respondError(err, response); }
+          
+            // If the group already exists, set the group id to the existing one.
+            if (checkResult.rows.length > 0) {
+                newGroupId = checkResult.rows[0].group_id;
+                insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); }, newGroupId, username);
+            } else {
+                // Group does not already exist, so we create a new one.
+                var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
+                                    "VALUES('" + groupname + "', '" + privacy + 
+                                    "', '" + description + "')";
+                client.query(newGroupQuery, function(err, checkResult) {
+                    if(err) { return respondError(err, response); }
+
+                    // We must now extract the group id that was just created.
+                    // 
+                    extractGroupId(request, response, client, done, function(request, response, client, done, group_id) {
+                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); },
+                                               group_id, username );
+                    }, groupname);
+                });
+            }
+        });
     });
 }
 
-function insertUserIntoMemberOf(request, response, newGroupId, username, client, done) {
+function extractGroupId(request, response, client, done, callback, group_name) {
+    var idExtractQuery = "SELECT group_id FROM groups WHERE group_name='" + group_name + "'";
+    client.query(idExtractQuery, function(err, result) {
+        if(err) {return respondError(err, response); } 
+        
+        if (result.rows.length > 0) {
+            callback(request, response, client, done, result.rows[0].group_id);
+        }
+    });
+    
+}
+
+function insertUserIntoMemberOf(request, response, client, done, callback, newGroupId, username) {
     // Insert user into the group.
-    groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
-    client.query(groupInsertQuery, function(err, checkResult) {
+    var groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
+    client.query(groupInsertQuery, function(err, result) {
         if(err) { return respondError(err, response); }
         // User has been inserted into appropriate group.
-        done(client);
-        return utils.respondPlain(response, "YInsertedIntoGroupSuccessfully");
+        callback(request, response, client, done);
     });
 }
 
@@ -145,8 +168,6 @@ function register(request, response, params) {
                 
                 // New user has just been created. 
                 createAvatar(username);
-      
-                handleGroupInsertion(request, response, params, client, done);
       
                 return utils.respondPlain(response, "YRegisteredSuccessfully");
           
