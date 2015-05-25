@@ -59,6 +59,8 @@ function sendMessage() {
 }
 
 function addMessageToChat(user, message) {
+    var chatMessages = document.getElementById("chat-messages");
+    var isScrolledToBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 1;
     var messenger;
     if (getCookie("username") == user) {
         messenger = "self";
@@ -67,13 +69,16 @@ function addMessageToChat(user, message) {
     }
 
     var htmlMsg = "<li class=\"" + messenger + "\">" + 
-                        "<div class=\"avatar\">" +
-                            "<img id=\"avatar\" src='" + filePath + "avatars/" + user + ".png'/>" +
-                        "</div>" +
-                        "<div class=\"messages\">" +
+                        "<span class=\"avatar\">" +
+                            "<img class=\"avatarimage\" src='" + filePath + "avatars/" + user + ".png'/>" +
+                        "</span>" +
+                        "<span class=\"messages\">" +
                             "<p><u>" + user + ":</u> " + message + "</p>" +
-                        "</div>" +
+                        "</span>" +
                     "</li>";
 
     chat.innerHTML += htmlMsg;    
+
+    if(isScrolledToBottom)
+              chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }

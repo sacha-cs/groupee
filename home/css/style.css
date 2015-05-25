@@ -150,7 +150,7 @@ label {
     position: absolute;
     top: 10px;
     left: 310px;
-    -webkit-transition: left 0.5s ease;
+    -webkit-transition: left -1.5s ease;
     -moz-transition: left 0.5s ease;
     -o-transition: left 0.5s ease;
     transition: left 0.5s ease;
@@ -199,6 +199,7 @@ label {
   /*height: calc(100% - 30px);*/
   list-style: none;
   margin: 0;
+  padding-left:0px;
 }
 
 li {
@@ -208,41 +209,33 @@ li {
 }
 
 .avatar {
-  width: 40px; 
   position: relative;
 }
 
-#avatar {
-  display: block;
+.avatarimage {
   width: 40px;
 }
 
-.other .avatar:after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 0;
-      height: 0;
-      border: 5px solid white;
-      border-left-color: transparent;
-      border-bottom-color: transparent;
+.other .avatarimage {
+    position:absolute;
 }
 
+/*Align the self comments to the right*/
 .self {
   justify-content: flex-end;
   align-items: flex-end;
 }
 
+/*Flip around the order of the messages and avatar*/
 .self .messages {
-    order: 1;
-    border-bottom-right-radius: 0;
+    order:1;
 }
 
 .self .avatar {
-    order: 2;
+    order:2;
 }
 
+/*SELF TRIANGLE*/
 .self .avatar:after {
   content: "";
   position: absolute;
@@ -255,11 +248,25 @@ li {
   border-top-color: transparent;
 }
 
+/*OTHER TRIANGLE*/
+.other .avatar:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -40px;
+      width: 0;
+      height: 0;
+      border: 5px solid white;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+}
+
 .self .messages {
   max-width: 220px;
   background: #C6D9FF;
   padding: 5px;
   border-radius: 2px;
+  -webkit-border-bottom-right-radius: 0px;
 }
 
 .other .messages {
@@ -267,6 +274,8 @@ li {
   background: white;
   padding: 5px;
   border-radius: 2px;
+  -webkit-border-top-left-radius: 0px;
+  margin-left:40px;
 }
 
 .self .messages p {
