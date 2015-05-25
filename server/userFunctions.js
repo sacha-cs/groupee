@@ -115,7 +115,7 @@ function extractGroupId(request, response, client, done, callback, group_name) {
     var idExtractQuery = "SELECT group_id FROM groups WHERE group_name='" + group_name + "'";
     client.query(idExtractQuery, function(err, result) {
         if(err) {return respondError(err, response); } 
-        
+           
         if (result.rows.length > 0) {
             callback(request, response, client, done, result.rows[0].group_id);
         }
@@ -124,12 +124,21 @@ function extractGroupId(request, response, client, done, callback, group_name) {
 }
 
 function insertUserIntoMemberOf(request, response, client, done, callback, newGroupId, username) {
-    // Insert user into the group.
-    var groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
-    client.query(groupInsertQuery, function(err, result) {
+    // Given that the user does not already exist in the group, insert user into the group.
+    var getUserQuery = "SELECT username FROM member_of WHERE username='" + username + "' AND group_id='" + newGroupId + "'";
+    client.query(getUserQuery, function(err, result) {
         if(err) { return respondError(err, response); }
-        // User has been inserted into appropriate group.
-        callback(request, response, client, done);
+    
+        if(result.rows.length > 0) {
+            return utils.respondPlain(response, "NUsernameTaken");
+        }
+        
+        var groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
+        client.query(groupInsertQuery, function(err, result) {
+            if(err) { return respondError(err, response); }
+            // User has been inserted into appropriate group.
+            callback(request, response, client, done);
+        });
     });
 }
 
@@ -170,7 +179,6 @@ function register(request, response, params) {
                 createAvatar(username);
       
                 return utils.respondPlain(response, "YRegisteredSuccessfully");
-          
             });
         });
     });
