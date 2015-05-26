@@ -84,18 +84,32 @@ function addGroupsToPage() {
                 var info = {name : nameInfo.split("=")[1],  
                             description : escapeHtml(decodeURIComponent(descInfo.split("=")[1])),   
                             id : idInfo.split("=")[1] 
-                }; 
-                var groupHtml = '<a href="#">' +
-		            '<div id="group"> ' + 
-		               '<div class="group-name">' + info.name + '</div>' +
-		               '<div class="group-description">' + info.description + '</div>' +
-		            '</div>' +
-	            '</a>';
+                };
+    
+                /* Crate a HTML element with containing the above information. */
+                /* When one clicks on a group, remember the group's id and move to Home. */
+                var groupHtml = '<div onclick="setGroup(' + info.id + ')" class="groupButton">' +
+                    '<div id="group"> ' + 
+                       '<div class="group-name">' + info.name + '</div>' +
+                       '<div class="group-description">' + info.description + '</div>' +
+                    '</div>' +
+                '</div>';
                 
                 groups.innerHTML += groupHtml;
             }  
         }
     );
+}
+
+function setGroup(groupId) {
+    var aClient = new HttpClient();
+    aClient.get('/groups/set_viewing_group?group_id=' + groupId, function(response) {
+        console.log(response);
+        var correct = response[0]; // User wants to view this group.
+        if(correct == "Y") {    
+            window.location = "/home/";
+        }
+    });
 }
 
 function escapeHtml(text) {

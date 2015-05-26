@@ -5,6 +5,7 @@ postHandler.addHandler("fileupload/upload", uploadAvatar);
 postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
+getHandler.addHandler("groups/set_viewing_group", setGroup);
 
 function login(request, response, params) {
 
@@ -18,7 +19,7 @@ function login(request, response, params) {
     
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
-            console.log(err);
+            console.log(err);ndreea
             return utils.respondPlain(response, "NServerError");
         }
         
@@ -272,7 +273,23 @@ function addUserToGroup(request, response, params) {
 }
 
 function setAddUsersGroup(request, response, params) {
-    var groupID = params.group_id;
+    pg.connect(connectionString, function(err, client, done) {
+        doesUserExistInGroup(request, response, client, done,
+            function(request, response, client, done, userExists) {
+                if(userExists) {
+                    // Safety check done
+                    // Remember that the user is viewing that group from session cookie before redirecting
+                    utils.setViewingGroup(request, groupID);
+                    response.writeHead("307", {'Location' : 'add_users.html' });
+                } else {
+                    response.writeHead("307", {'Location' : '/404.html' });
+                }
+                response.end();
+            }, params.group_id);
+        });
+}
+
+function doesUserExistInGroup(request, response, client, done, callback, groupID) {
     var username = utils.getUser(request);
 
     // Check user is member of the group
@@ -280,20 +297,16 @@ function setAddUsersGroup(request, response, params) {
                                "FROM member_of " +
                                "WHERE username='" + username + "' AND group_id=" + groupID;
 
-    pg.connect(connectionString, function(err, client, done) {
-        client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
-            if(err) { return respondError(err, response); }
+    client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
+        if(err) { return respondError(err, response); }
 
-            if(checkUserMemberResult.rows.length == 1) {
-                // Safety check done
-                // Remember that the user is viewing that group from session cookie before redirecting
-                utils.setViewingGroup(request, groupID);
-                response.writeHead("307", {'Location' : 'add_users.html' });
-            } else {
-                response.writeHead("307", {'Location' : '/404.html' });
-            }
-            response.end();
-        });
+        if(checkUserMemberResult.rows.length == 1) {
+            // Safety check done
+            // Remember that the user is viewing that group from session cookie before redirecting
+            callback(request, response, client, done, true);
+        } else {
+            callback(request, response, client, done, false);
+        }
     });
 }
 
@@ -341,4 +354,21 @@ function checkUserExists(request, response, client, done, callback, username) {
 
         callback(request, response, client, done);
     });
+}
+
+function setGroup(request, response, params) {
+    console.log(params);
+    pg.connect(connectionString, function(err, client, done) {
+        doesUserExistInGroup(request, response, client, done,
+            function(request, response, client, done, userExists) {
+                if(userExists) {
+                    // Safety check done
+                    // Remember that the user is viewing that group from session cookie before redirecting
+                    utils.setViewingGroup(request, params.group_id);
+                    utils.respondPlain(response, "Y");
+                } else {
+                    utils.respondPlain(response, "N");
+                }
+            }, params.group_id);
+        });
 }
