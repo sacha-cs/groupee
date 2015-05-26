@@ -28,18 +28,18 @@ function createGroup() {
                         break;
                 }
             } else { // No problems.
-                window.location = "add_users.html"; 
+               window.location = "add_users?group_id=" + response.slice(1); 
             } 
         }
     );
 }
 
-function loaded() {
 
-}
-
-/* Adds a user to an existing group. */
+/* To be called when the 'Add!' button is clicked in the Add Users page. */
 function addUser() {
+    var username = document.getElementById("username").value;
 
+    var aClient = new HttpClient();
+    // TODO
 }
 

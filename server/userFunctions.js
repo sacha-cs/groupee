@@ -1,8 +1,9 @@
-
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
+postHandler.addHandler("groups/add", addUserToGroup);
+getHandler.addHandler("groups/add_users", setAddUsersGroup);
 
 function login(request, response, params) {
 
@@ -119,7 +120,7 @@ function handleGroupInsertion(request, response, params) {
                     // We must now extract the group id that was just created.
                     // 
                     extractGroupId(request, response, client, done, function(request, response, client, done, group_id) {
-                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); utils.respondPlain(response, "Y") },
+                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); utils.respondPlain(response, "Y" + group_id) },
                                                group_id, username );
                     }, groupname);
                 });
@@ -259,4 +260,33 @@ function createSessionCookie(user_info) {
 function respondError(err, response) {
     console.log(err);
     return utils.respondPlain(response);
+}
+
+function addUserToGroup(request, response, params) {
+    // TODO
+}
+
+function setAddUsersGroup(request, response, params) {
+    // TODO
+    // var groupID = params.group_id;
+    // var username = utils.getUser(request);
+
+    // Check user is member of the group
+    // var checkUserMemberQuery = "SELECT *" +
+    //                            "FROM member_of" +
+    //                            "WHERE username='" + username + "' AND group_id=" + groupID;
+
+    // pg.connect(connectionString, function(err, client, done) {
+    //     client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
+    //         if(err) { return respondError(err, response); }
+
+    //         if(checkUserMemberResult.rows.length > 0) {
+    //             window.location = "/404.html";
+    //             return;
+    //         }
+
+    //     });
+    // }
+    // Remember that the user is viewing that group from session cookie
+    // Redirect to add_users.html
 }
