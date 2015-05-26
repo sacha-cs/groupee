@@ -8,8 +8,7 @@ function addTodoItem(request, response, params) {
 	pg.connect(connectionString, function(err, client, done) {
 		if(err) { return respondError(err); }
 
-		// TODO: need to get correct group_id
-		var group_id = 1;
+		var group_id = utils.getViewingGroup(request);
 		var username = utils.getUser(request);
 		
 		var insertTodoQuery = "INSERT INTO todos(group_id, item, category, created_by) " +

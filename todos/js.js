@@ -1,5 +1,13 @@
 function addTodo() { 
+
+	setSuccessText("");
+	setErrorText("");
+	
 	var todoItem = document.getElementById("todo-item").value;
+
+	if (todoItem == "") {
+		setErrorText("Please enter a task");
+	}
 
 	aClient = new HttpClient();
 	aClient.post('add_todo', 'todoItem=' + todoItem, 
@@ -7,9 +15,11 @@ function addTodo() {
 			var correct = response[0];
 			if (correct == "Y") {
 				document.getElementById("todo-item").value = "";
-				// TODO: tell the user it succeeded with setSuccessText
+				setSuccessText("Item added successfully");
+				return;
 			} else {
-				// TODO: tell the user it failed with setErrorText
+				setErrorText("Please enter a task");
+				return;
 			}
 		});
 }
