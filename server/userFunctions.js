@@ -4,6 +4,7 @@ postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
 postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
+getHandler.addHandler("groups/get_all_groups", getAllGroups);
 
 function login(request, response, params) {
 
@@ -232,11 +233,7 @@ function passwordIsValid(password) {
 function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
     var cookieString = user_info.username;
-    /*var groups = user_info["groups"];
-    var viewing_group = user_info["viewing_group"];
-    for(i = 0; i < user_info["groups"].length; i++) {
-        cookieString += ";" + groups[i];    
-    }*/
+
     //TODO: have a not in group global const
     sessionKeys["" + seshCookie] = { username: user_info.username, groupViewing:-1 }
     return seshCookie;
@@ -273,6 +270,35 @@ function setAddUsersGroup(request, response, params) {
             } else {
                 response.writeHead("307", {'Location' : '/404.html' });
             }
+            response.end();
+        });
+    });
+}
+
+function getAllGroups(request, response) {
+    var currentUser = utils.getUser(request);
+    var getGroupInfoQuery = "SELECT group_name, description, group_id " + 
+                            "FROM groups NATURAL JOIN member_of " + 
+                            "WHERE username='" + currentUser + "'";
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(getGroupInfoQuery, function(err, result) {
+            if(err) { return respondError(err, response); }
+            
+            var responseString = "";
+            if(result.rows.length > 0) {
+              /* Populate the groupInfo array with information about the groups associated with
+                 the current user. */
+                for(var i = 0; i < result.rows.length; i++) {
+                    var row = result.rows[i];
+                    var name = row.group_name;
+                    var desc = encodeURIComponent(row.description);
+                    var id = row.group_id;
+                    responseString += "name=" + name + "&description=" + desc + "&group_id=" + id + "#";
+                }
+            } else {
+                /* User doesn't have any groups associated with it. */
+            }
+            response.write(responseString);
             response.end();
         });
     });
