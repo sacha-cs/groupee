@@ -12,7 +12,7 @@ getHandler = require('./getHandlers.js');
 
 require('./userFunctions');
 require('./chatServer');
-
+require('./todosServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
 uploadPath = "/vol/project/2014/271/g1427136/"
