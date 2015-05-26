@@ -90,10 +90,14 @@ body {
   font-size: 14px;
 }
 
-.add-card p {
+#error {
     color: #c33;
     font-weight: 400;
     opacity: 0.7;
 }
 
-
+#success {
+  color: blue;
+  font-weight: 400;
+  opacity: 0.7;
+}

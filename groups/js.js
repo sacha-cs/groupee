@@ -6,7 +6,7 @@ function createGroup() {
     var privacy = e.options[e.selectedIndex].text;
 
     setErrorText("");
-    if(groupname == "" || description == "")
+    if(groupname == "" || description == "" || e.selectedIndex == 0)
     {
         setErrorText("Please fill out all fields.");
         return;
@@ -23,9 +23,6 @@ function createGroup() {
                     case "UserExistsInGroup":
                         setErrorText("You are already a member of this group.");
                         break;
-                    case "EmptyFields":
-                        setErrorText("Please fill out all the fields.");
-                        break;
                 }
             } else { // No problems.
                window.location = "add_users?group_id=" + response.slice(1); 
@@ -39,8 +36,33 @@ function createGroup() {
 function addUser() {
     var username = document.getElementById("username").value;
 
+    setErrorText("");
+    setSuccessText("");
+
+    if (username == "") {
+        setErrorText("Please enter a username");
+        return;
+    }
+
     var aClient = new HttpClient();
-    // TODO
+    aClient.post('add', 'username=' + username, 
+        function (response) {
+            var correct = response[0];
+            if (correct == "N") {
+                switch(response.slice(1)) {
+                    case "UserExistsInGroup":
+                        setErrorText("The user is already a member of this group.");
+                        break;
+                    case "UserDoesNotExist":
+                        setErrorText("The user does not exist");
+                        break;
+                }
+            } else {
+                document.getElementById("username").value = "";
+                setSuccessText("User added successfully");
+            }
+        }
+    );
 }
 
 /* Function to add the groups that the current user is a member of to the index page. */

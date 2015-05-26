@@ -141,19 +141,26 @@ function extractGroupId(request, response, client, done, callback, group_name) {
     
 }
 
-function insertUserIntoMemberOf(request, response, client, done, callback, newGroupId, username) {
+function insertUserIntoMemberOf(request, response, client, done, callback, groupId, username) {
     // Given that the user does not already exist in the group, insert user into the group.
-    var getUserQuery = "SELECT username FROM member_of WHERE username='" + username + "' AND group_id='" + newGroupId + "'";
+    var getUserQuery = "SELECT username FROM member_of WHERE username='" + username + "' AND group_id='" + groupId + "'";
     client.query(getUserQuery, function(err, result) {
-        if(err) { return respondError(err, response); }
+        if(err) { 
+            done(client);
+            return respondError(err, response); 
+        }
     
         if(result.rows.length > 0) {
+            done(client);
             return utils.respondPlain(response, "NUserExistsInGroup");
         }
         
-        var groupInsertQuery = "INSERT INTO member_of VALUES('" + newGroupId + "', '" + username + "')";
+        var groupInsertQuery = "INSERT INTO member_of VALUES('" + groupId + "', '" + username + "')";
         client.query(groupInsertQuery, function(err, result) {
-            if(err) { return respondError(err, response); }
+            if(err) { 
+                done(client);
+                return respondError(err, response); 
+            }
             // User has been inserted into appropriate group.
             callback(request, response, client, done);
         });
@@ -245,11 +252,26 @@ function respondError(err, response) {
 }
 
 function addUserToGroup(request, response, params) {
-    // TODO
+    var username = params.username.toLowerCase();
+    var groupID = utils.getViewingGroup(request);
+
+
+    pg.connect(connectionString, function(err, client, done) {
+        checkUserExists(request, response, client, done,
+            function(request, response, client, done) {
+                insertUserIntoMemberOf(request, response, client, done, 
+                    function(request, response, client, done) {
+                        done(client);
+                        utils.respondPlain(response, "YUserAddedSuccessfully");
+                    },
+                groupID, username);
+            }, 
+        username);
+    });
+
 }
 
 function setAddUsersGroup(request, response, params) {
-    // TODO
     var groupID = params.group_id;
     var username = utils.getUser(request);
 
@@ -296,10 +318,27 @@ function getAllGroups(request, response) {
                     responseString += "name=" + name + "&description=" + desc + "&group_id=" + id + "#";
                 }
             } else {
-                /* User doesn't have any groups associated with it. */
+                /* TODO: Handle case when user isn't associated with any groups. */
             }
             response.write(responseString);
             response.end();
         });
+    });
+}
+
+function checkUserExists(request, response, client, done, callback, username) {
+    var getUserQuery = "SELECT username FROM users WHERE username='" + username + "'";
+    client.query(getUserQuery, function(err, result) {
+        if(err) { 
+            done(client);
+            return respondError(err, response); 
+        }
+    
+        if(result.rows.length == 0) {
+            done(client);
+            return utils.respondPlain(response, "NUserDoesNotExist");
+        }
+
+        callback(request, response, client, done);
     });
 }
