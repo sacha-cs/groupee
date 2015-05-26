@@ -15,10 +15,9 @@ function chatSendMessage(request, response, params) {
     messageNo++;
     utils.respondPlain(response, "MessageRecieved");
 
-    var i = 0;
-    while(i < waitingRequests.length) {
-        var curr = waitingRequests[i];
-        waitingRequests.splice(i, 1);
+    while(waitingRequests.length > 0) {
+        var curr = waitingRequests[0];
+        waitingRequests.splice(0, 1);
         if(curr.timedOut)
             continue;
         clearTimeout(curr.timeoutID);

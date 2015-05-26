@@ -201,31 +201,17 @@ function register(request, response, params) {
     });
 }
 
-function uploadAvatar(request, response, data) {
-    var form = new formidable.IncomingForm();
-    form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
-    form.keepExtensions = true;
-    form.on("error", function(error) {
-        console.log(error);
-    });
-    form.parse(request, function(err, fields, files) {
-        if(err)
-        {
-            response.writeHead(500, { 'Content-Type': 'text/plain' });
-            response.end("Upload failed. :(");
-            return;
-        }
-        utils.respondPlain(response, "File Uploaded successfully!");
+function uploadAvatar(request, response, fields, files) {
+    utils.respondPlain(response, "File Uploaded successfully!");
 
-        var file = files.avatar;
-        //TODO: pass around user? think about this.
-        var user = utils.getUser(request);
-        if(user)
-        {
-            fs.rename(file.path, uploadPath + "avatars/" + user + ".png");
-        }
-        return;
-    });
+    var file = files.avatar;
+    //TODO: pass around user? think about this.
+    var user = utils.getUser(request);
+    if(user)
+    {
+        fs.rename(file.path, uploadPath + "avatars/" + user + ".png");
+    }
+    return;
 }
 
 function createAvatar(username) {
