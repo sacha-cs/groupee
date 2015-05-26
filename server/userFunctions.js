@@ -317,6 +317,7 @@ function getAllGroups(request, response) {
                             "WHERE username='" + currentUser + "'";
     pg.connect(connectionString, function(err, client, done) {
         client.query(getGroupInfoQuery, function(err, result) {
+            done(client);
             if(err) { return respondError(err, response); }
             
             var responseString = "";
