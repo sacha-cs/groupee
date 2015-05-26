@@ -47,7 +47,7 @@ body {
   -moz-box-sizing: border-box;
 }
 
-.create-card input[type=text]:hover, select:hover {
+.create-card input[type=text]:hover {
   border: 1px solid #b9b9b9;
   border-top: 1px solid #a0a0a0;
   -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
