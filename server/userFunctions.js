@@ -1,4 +1,4 @@
-pstHandler.addHandler("login/login", login);
+postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
