@@ -7,7 +7,7 @@
 	<body>
 
 	<div id="new-todo">
-    	<input type="text" id="todo-item" placeholder="Enter a new to-do item"></br>
+    	<input type="text" id="todo-item" placeholder="Enter a new to-do item">
     	<input type="submit" name="submit" id="add-todo" value="Add" onclick="addTodo()">
     	<div class="todo-text">
             <p id="error"></p>
@@ -19,6 +19,21 @@
 
 	        <div id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
 	            <div class="name">To Do</div>
+            	<div draggable="true" ondragstart="drag(event)" class="task" id="task1">
+            		Buy milk
+            	</div>
+            	<div draggable="true" ondragstart="drag(event)" class="task" id="task2">
+            		Do this
+            	</div>
+            	<div draggable="true" ondragstart="drag(event)" class="task" id="task3">
+            		This is one very long and boring task to do
+            	</div>
+            	<div draggable="true" ondragstart="drag(event)" class="task" id="task4">
+            		Do that
+            	</div>
+            	<div draggable="true" ondragstart="drag(event)" class="task" id="task5">
+            		Sleep
+            	</div>
 	        </div>
 
 	        <div id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -31,6 +46,5 @@
 
     </div>
 
-        <!-- <img id="drag1" src="images.jpeg" draggable="true" ondragstart="drag(event)" width="125" height="75"> -->
 	</body>
 </html>
