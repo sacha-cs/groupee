@@ -1,0 +1,36 @@
+<html>
+
+    <head>
+        <title>Create a group</title>
+        <link rel="stylesheet" href="css/create.css">
+        <script src="js.js"></script>
+    </head>
+
+    <body>
+
+    <div class="create-card">
+
+    <h1>Create a Group</h1><br>
+
+        <input type="text" name="group_name" id="group_name" placeholder="Your Group Name">
+        <input type="text" name="description" id="description" placeholder="Enter a short description...">
+
+        <div class="privacy">
+            <select class="privacy-dropdown">
+                <option selected="selected" disabled="disabled">Select your privacy level</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+        </div>
+
+
+
+        <input type="submit" name="submit" class="create create-submit" value="Create!" onclick=createGroup()>
+        <div class="create-text">
+            <p id="error"></p>
+        </div>
+    <div>
+
+    </body>
+
+</html>

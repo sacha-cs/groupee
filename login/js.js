@@ -21,12 +21,11 @@ function keyListener(e) {
     }
 }
 
-
 function login()
 {
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
-    
+
     setErrorText("");
     if(username == "" || password == "")
     {
@@ -36,14 +35,14 @@ function login()
 
     aClient = new HttpClient();
     aClient.post('login', 'username=' + username + 
-                         '&password=' + password, 
+                          '&password=' + password, 
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
             var parts = response.slice(1).split('#');
             document.cookie="seshCookie="+parts[0]+";path=/";
             document.cookie="username="+parts[1]+";path=/";
-            window.location = "/home/";
+            window.location = "/groups/index.html";
         } else {
             switch(response.slice(1)) {
                 case "IncorrectPassword":
@@ -57,7 +56,6 @@ function login()
                     break;
             }
         }
-                    
     });
 }
 
@@ -89,7 +87,7 @@ function register()
     aClient = new HttpClient();
     aClient.post('register', 'username=' + username + 
                          '&password=' + password +
-                         '&passwordconfirm=' + passwordconfirm, 
+                         '&passwordconfirm=' + passwordconfirm,
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
@@ -113,7 +111,5 @@ function register()
                     break;
             }
         }
-                    
     });
-
 }
