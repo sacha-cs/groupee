@@ -105,15 +105,3 @@ body {
     height: 100%;
     vertical-align: middle;
 }
-
-
-#go {
-  position: absolute;
-  margin-left: 75px;
-  bottom: 20px;
-  margin-bottom: 0px;
-  font-weight: 300;
-  font-size: 15px;
-  width: 30%;
-  height: auto;
-}
