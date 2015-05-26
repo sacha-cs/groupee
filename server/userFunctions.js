@@ -25,7 +25,6 @@ function login(request, response, params) {
                     "FROM users " +
                     "WHERE username='" + username + "'";
         client.query(query, function(err, result) {
-
             if(err) {
                 console.log(err);
                 return utils.respondPlain(response, "NServerError");
@@ -59,12 +58,12 @@ function login(request, response, params) {
                     grouplist.push(result.rows[i].group_id);
                 }
                 user_info = {"username" : username, "groups" : grouplist};
+                
+                //Create a new session cookie for the user and send it to them
+                //seshCookie encodes the username and the groups that the user resides in.
+                var seshCookie = createSessionCookie(user_info);
+                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
             });
-
-            //Create a new session cookie for the user and send it to them
-            //seshCookie encodes the username and the groups that the user resides in.
-            var seshCookie = createSessionCookie(user_info);
-            return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
         });
     });
 }
@@ -248,10 +247,8 @@ function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
     var cookieString = user_info["username"];
     var groups = user_info["groups"];
-    if (groups) {
-        for(i = 0; i < user_info["groups"].length; i++) {
-            cookieString += ";" + groups[i];    
-        }
+    for(i = 0; i < user_info["groups"].length; i++) {
+        cookieString += ";" + groups[i];    
     }
     sessionKeys["" + seshCookie] = cookieString;
     return seshCookie;
