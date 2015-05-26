@@ -24,12 +24,14 @@ var showCursor;
 var lastSentTime;
 var sendInterval;
 var toSend;
-var lastUpdate;
-var updatesToDraw = [];
+var lastUpdateNo;
+var updatesToDraw = {};
 var playingBack = false;
 var playbackStartTime;
 var playbackEndTime;
 var writtenToNetworkTemp = false;
+var lastData;
+
 
 function startWhiteboard() {
     //Get the canvas and the context so we can draw stuff!
@@ -54,7 +56,7 @@ function startWhiteboard() {
 
     tool = "Pen";
 
-    lastUpdate = 0;
+    lastUpdateNo = 0;
 
     setInterval(drawUpdates, 33);
     updateWhiteboard(true);
@@ -76,7 +78,7 @@ function startWhiteboard() {
                 ctx.lineTo(mousePos.x, mousePos.y);
                 ctx.stroke();
                 lastMousePos = mousePos;
-                toSend.data += ("x:"+mousePos.x+";y:"+mousePos.y+";time:"+toolSendTime() + "\n");
+                addDataToSend("x:"+mousePos.x+";y:"+mousePos.y);
             }
         }
     });
@@ -94,7 +96,7 @@ function startWhiteboard() {
             started = true;
             startedUsingTool();
             lastMousePos = mousePos;
-            toSend.data += ("x:"+mousePos.x+";y:"+mousePos.y+";time:"+toolSendTime()+"\n");
+            addDataToSend("x:"+mousePos.x+";y:"+mousePos.y);
         }
 
     });
@@ -114,21 +116,28 @@ function startWhiteboard() {
 } 
 
 function drawTextTemp(e, isCaretFlash) {
-        tempCtx.fillStyle = userPen.fillColour;
-        tempCtx.font = "" + userPen.textSize + "px Arial";
-        tempCtx.clearRect(0, 0, canvas.width, canvas.height);
-        var textToShow = textHidden.value;
-        var caret = " ";
-        if(showCursor || !isCaretFlash)
-        {
-            var caret = "|";
-        }
-        var caretPos = textHidden.selectionStart;
-        textToShow = textToShow.substr(0, caretPos) + caret + textToShow.substr(caretPos);
-        fillTextMultiLine(tempCtx, textToShow, textPos.x, textPos.y);
-        started = true;
-        if(textToShow)
-            toSend.data += "x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";time:"+toolSendTime() +";finished:false\n";
+    started = true;
+    //Set the correct text style
+    tempCtx.fillStyle = userPen.fillColour;
+    tempCtx.font = "" + userPen.textSize + "px Arial";
+    tempCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+    //Get the text with the caret in the right place
+    var textToShow = textHidden.value;
+    var caret = " ";
+    if(showCursor || !isCaretFlash)
+    {
+        var caret = "|";
+    }
+    var caretPos = textHidden.selectionStart;
+    textToShow = textToShow.substr(0, caretPos) + caret + textToShow.substr(caretPos);
+    
+    //Write the text
+    fillTextMultiLine(tempCtx, textToShow, textPos.x, textPos.y);
+
+    //Add data to send.
+    if(textToShow)
+        addDataToSend("x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";finished:false");
 }
 
 function drawTextPermenent() {
@@ -138,9 +147,8 @@ function drawTextPermenent() {
         ctx.fillStyle = userPen.fillColour;
         ctx.font = "" + userPen.textSize + "px Arial";
         fillTextMultiLine(ctx, textHidden.value, textPos.x, textPos.y);
-        console.log(encodeURIComponent(textHidden.value));
         if(textHidden.value)
-            toSend.data += "x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";time:"+toolSendTime() + ";finished:true";
+            addDataToSend("x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value) + ";finished:true");
         finishedUsingTool();
     }
 }
@@ -217,29 +225,41 @@ function startedUsingTool() {
               fillColour:userPen.fillColour,
               textSize:userPen.textSize,
               tool:tool,
-              data:""};
+              data:"",
+              justStarted:true};
     lastSentTime = (new Date()).getTime();
     sendInterval = setInterval(sendToolUpdates, TOOL_INTERVAL);
 }
 
 function finishedUsingTool() {
     clearInterval(sendInterval);
-    sendToolUpdates();    
+    sendToolUpdates(true);    
 }
 
 function toolSendTime() {
     return (new Date()).getTime() - lastSentTime;
 }
 
-function sendToolUpdates() {
-    var payload = "data=colour-" + toSend.colour +
+function addDataToSend(data) {
+    if(data == lastData) return;
+    lastData = data;
+    toSend.data += data + ";time:"+toolSendTime() + "\n";
+}
+
+function sendToolUpdates(lastUpdate) {
+    var payload = "justStarted=" + toSend.justStarted +
+                 "&data=colour-" + toSend.colour +
                  "@thickness-" + toSend.thickness +
                  "@fillColour-" + toSend.fillColour +
                  "@textSize-" + toSend.textSize +
                  "@tool-" + tool +
                  "@data-" + toSend.data;
+
+    if(lastUpdate)
+        payload += "&lastUpdate=true";
+
     toSend.data = "";
-    lastSentTime = (new Date()).getTime();
+    toSend.justStarted = false;
     var aClient = new HttpClient();
     encodeURIComponent(payload);
     aClient.post('update', payload, function (repsonse) {});
@@ -247,7 +267,7 @@ function sendToolUpdates() {
 
 function updateWhiteboard(allUpdates) {
     var client = new HttpClient();
-    var query = "last=" + lastUpdate;
+    var query = "last=" + lastUpdateNo;
     if(allUpdates)
         query+="&allUpdates=true";
     client.get('getUpdate?' + query, function(response) {
@@ -258,7 +278,7 @@ function updateWhiteboard(allUpdates) {
           where updateData has a form dependent on the tool, but usually
           key:value;key:value;...;key:value\n */
         var res = response.split("<>");
-        lastUpdate = parseInt(res[0]);
+        lastUpdateNo = parseInt(res[0]);
         var allUpdates = false;
         if(res[2]) {
             allUpdates = true;
@@ -268,43 +288,86 @@ function updateWhiteboard(allUpdates) {
         if(allUpdates) {
             playbackStartTime = (new Date()).getTime();
         }
+        var totalToolUseTime = 0;
         for(var k = 0; k < responses.length; k++) {
+            //The new update object.
             var update = {};
+
+            //Split up the update information.
             res = responses[k].split("@");
             for(var i = 0; i < res.length; i++) {
                 var keyAndValue = res[i].split("-");
                 update[keyAndValue[0]] = keyAndValue[1];
             }
+
+            //Correct some strings
+            if(update.lastUpdate == "true") update.lastUpdate = true;
+            else update.lastUpdate = false;
+
+
+            //If we have data
             if(update.data) {
+                //Split the points
                 var points = update.data.split('\n');
-                update.data = [];
+                
+                //Check if it's a new set of points or just a continuation.
+                var appending = true;
+                if(!updatesToDraw[update.id]) {
+                    appending = false;
+                    updatesToDraw[update.id] = update;
+                    update.data = [];
+                    console.log("new update!");
+                } else {
+                    if(update.lastUpdate == true) 
+                        updatesToDraw[update.id].lastUpdate = true;
+                    update = updatesToDraw[update.id];
+                }
+                
+                //Loop through each of the points
                 for(var j = 0; j < points.length; j++) {
                     var info = points[j].split(";");
-                    if(!info || info == "")
+                    
+                    if(!info)
                         continue;
+
+                    //TODO: get keys and values automatically
                     if(update.tool == "Pen") {
-                    update.data.push({x:info[0].split(":")[1],
-                                      y:info[1].split(":")[1],
-                                      time:info[2].split(":")[1]} );
+                        update.data.push({x:info[0].split(":")[1],
+                                          y:info[1].split(":")[1],
+                                          time:info[2].split(":")[1]} );
+                        update.last = update.data[0];
                     } else if(update.tool == "Text") {
-                    update.data.push({x:info[0].split(":")[1],
-                                      y:info[1].split(":")[1],
-                                      text:info[2].split(":")[1],
-                                      time:info[3].split(":")[1],
-                                      finished:info[4].split(":")[1]});
+                        if(update.data.length==0) {
+                            console.log("Start time: " + info[4].split(":")[1]);
+                            console.log("data: " + info[2]);
+                        }
+                        update.data.push({x:info[0].split(":")[1],
+                                          y:info[1].split(":")[1],
+                                          text:info[2].split(":")[1],
+                                          time:info[4].split(":")[1],
+                                          finished:info[3].split(":")[1]});
+                        if(allUpdates) {
+                            update.data[update.data.length -1].time = (update.data.length - 1) * 50;
+                        }
                     }
                 }
-                update.last = update.data[0];
 
+                //If we're playing back/getting all updates
                 if(allUpdates) {
                     playingBack = true;
                     update.playback = true;
                     update.start=playbackEndTime;
-                    playbackEndTime+=parseInt(update.data[update.data.length-1].time);
+                    if(update.lastUpdate == true) {
+                        playbackEndTime+=parseInt(update.data[update.data.length-1].time);
+                    }
                 } else {
-                    update.start = (new Date()).getTime();
+                    if(!appending) {
+                        console.log("Set start time!");
+                        update.start = (new Date()).getTime();
+                    }
                 }
-                updatesToDraw.push(update);
+            } else {
+                console.log("no data but " + update.id);
             }
         }
         updateWhiteboard();
@@ -315,53 +378,62 @@ function drawUpdates() {
     if(writtenToNetworkTemp) {
         writtenToNetworkTemp = false;
     }
-    if(playingBack && updatesToDraw.length == 0)
-        playingBack = false;
     var time = (new Date()).getTime();
-    for(var i = 0; i < updatesToDraw.length; i++) {
-        var timePassed;
-        if(playingBack) {
-            timePassed = (time - playbackStartTime) * 5 - updatesToDraw[i].start;
-        } else {
-            timePassed = time - updatesToDraw[i].start;
-        }
-
-        var data = updatesToDraw[i].data;
-        while(data.length > 0 && data[0].time < timePassed) {
-            if(updatesToDraw[i].tool == "Pen") {
-                ctx.strokeStyle = updatesToDraw[i].colour;
-                ctx.lineWidth = updatesToDraw[i].thickness;
-                ctx.beginPath();
-                ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
-                ctx.lineTo(data[0].x, data[0].y);
-                ctx.stroke();
-                updatesToDraw[i].last = data.shift();
-            } else if(updatesToDraw[i].tool == "Text") {
-                if(data[1] && timePassed > data[1].time) {
-                    data.shift();
-                    continue;
-                }
-                if(!writtenToNetworkTemp)
-                    networkTempCtx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                writtenToNetworkTemp = true;
-                var textCtx = networkTempCtx;
-                if(data[0].finished == "true")
-                    textCtx = ctx;
-                textCtx.fillStyle = updatesToDraw[i].fillColour;
-                textCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
-                fillTextMultiLine(textCtx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
-
-                if(data[1]) 
-                    data[0].time = data[1].time;
-                else
-                    data.shift();
-
+    var length = 0;
+    for (var i in updatesToDraw) {
+        if (updatesToDraw.hasOwnProperty(i)) {
+            length++;
+            var timePassed;
+            if(playingBack) {
+                timePassed = (time - playbackStartTime) * 5 - updatesToDraw[i].start;
+            } else {
+                timePassed = time - updatesToDraw[i].start;
             }
-           console.log(updatesToDraw[i].tool);
+
+            var data = updatesToDraw[i].data;
+            while(data.length > 0 && data[0].time < timePassed) {
+                if(updatesToDraw[i].tool == "Pen") {
+                    ctx.strokeStyle = updatesToDraw[i].colour;
+                    ctx.lineWidth = updatesToDraw[i].thickness;
+                    ctx.beginPath();
+                    ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
+                    ctx.lineTo(data[0].x, data[0].y);
+                    ctx.stroke();
+                    updatesToDraw[i].last = data.shift();
+                } else if(updatesToDraw[i].tool == "Text") {
+                    if(data[1] && timePassed > data[1].time) {
+                        data.shift();
+                        continue;
+                    }
+                    if(!writtenToNetworkTemp)
+                        networkTempCtx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    writtenToNetworkTemp = true;
+                    var textCtx = networkTempCtx;
+                    if(data[0].finished == "true") {
+                         textCtx = ctx;
+                    }
+                    textCtx.fillStyle = updatesToDraw[i].fillColour;
+                    textCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
+                    fillTextMultiLine(textCtx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
+
+                    if(data[1]) {
+                        data[0].time = data[1].time;
+                    }
+                    else if (updatesToDraw[i].lastUpdate) {
+                        data.shift();
+                    } else {
+                        data[0].time = parseInt(data[0].time) + 33;
+                    }
+
+                }
+            }
+            if(updatesToDraw[i].lastUpdate == true && data.length == 0) {
+                delete updatesToDraw[i];
+            }
+            //If the we are done with all the data, remove it
         }
-        //If the we are done with all the data, remove it
-        if(data.length == 0)
-            updatesToDraw.splice(i, 1);
     }
+    if(playingBack && length == 0)
+        playingBack = false;
 }

@@ -5,13 +5,24 @@ var TIMEOUT_TIME = 10*1000;
 var updates = [];
 var lastUpdateNo = 0;
 var waitingRequests = [];
+var currentToolIds = {};
 
 function receivedUpdate(request, response, params)
 {
-    updates.push({data:params.data, user:utils.getUser(request)});
+    var seshCookie = utils.getSessionCookie(request)
+    if(params.justStarted == "true") {
+        currentToolIds[seshCookie] = Math.floor(Math.random() * 100000);
+    }
+    var lastUpdate = false;
+    if(params.lastUpdate)
+        lastUpdate = true;
+
+    updates.push({data:params.data, user:utils.getUser(request), id:currentToolIds[seshCookie], lastUpdate:lastUpdate});
     lastUpdateNo++;
     utils.respondPlain(response, "");
     console.log(params.data);
+    console.log("??:" + params.lastUpdate);
+
 
     while(waitingRequests.length > 0) {
         var curr = waitingRequests[0];
@@ -47,11 +58,18 @@ function sendUpdates(request, response, params, checkForNew)
     response.write(lastUpdateNo + "<>");
     while(last < lastUpdateNo)
     {
-        if(!params.allUpdates && updates[last].user == utils.getUser(request)) {
+        console.log("update.");
+        console.log(params.allUpdates);
+        console.log(params.allUpdates == undefined);
+        if((params.allUpdates == undefined) && updates[last].user == utils.getUser(request)) {
+            console.log(updates[last].user)
+            console.log(utils.getUser(request));
             last++;
+            console.log("NOT sending...");
             continue;
         }
-        response.write(updates[last].data + "\\");
+        response.write("id-" + updates[last].id + "@" + "lastUpdate-" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
+        console.log("id-" + updates[last].id + "@" + "lastUpdate-" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
         last++;
     }
     if(params.allUpdates) 
@@ -61,5 +79,5 @@ function sendUpdates(request, response, params, checkForNew)
 
 function requestTimedOut(requestData) {
     requestData.timedOut = true;
-    sendUpdates(requestData.request, requestData.response, requestData.params, true);
+    sendUpdates(requestData.request, requestData.response, requestData.params,true);
 }
