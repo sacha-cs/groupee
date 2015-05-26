@@ -20,17 +20,23 @@ function createGroup() {
             if(correct == "N") {
                 waitingForResponse = false;
                 switch(response.slice(1)) {
-                    case "NUserExistsInGroup":
+                    case "UserExistsInGroup":
                         setErrorText("You are already a member of this group.");
                         break;
                 }
             } else { // No problems.
-               window.location = "add_users.html"; 
+               window.location = "add_users?group_id=" + response.slice(1); 
             } 
         }
     );
 }
 
-function loaded() {
 
+/* To be called when the 'Add!' button is clicked in the Add Users page. */
+function addUser() {
+    var username = document.getElementById("username").value;
+
+    var aClient = new HttpClient();
+    // TODO
 }
+
