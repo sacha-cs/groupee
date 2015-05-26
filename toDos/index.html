@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="css/style.css">
+		<title> To Do's </title>
+		<script src = "js.js"></script> 
+	</head>
+	<body>
+
+	<div id="todo-app">
+    <label class="todo-label" for="new-todo">Add a new to do: </label>
+    <input type="text" id="new-todo" class="todo-input"
+        placeholder="to do">
+
+    <ul id="todo-list"></ul>
+    <div id="todo-stats"></div>
+	</div>
+
+	<div id="wrapper">
+
+
+	        <div id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+	            <div class="name">To Do</div>
+
+	        </div>
+
+	        <div id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
+	            <div class="name">Doing</div>
+	        </div>
+
+	        <div id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+	            <div class="name">Done</div>  
+	        </div>  
+
+        </div>
+
+        <img id="drag1" src="images.jpeg" draggable="true"
+ondragstart="drag(event)" width="125" height="75">
+	</body>
+</html>
