@@ -20,7 +20,7 @@ function createGroup() {
             var correct = response[0];
             if(correct == "N") {
                 switch(response.slice(1)) {
-                    case "NUserExistsInGroup":
+                    case "UserExistsInGroup":
                         setErrorText("You are already a member of this group.");
                         break;
                     case "EmptyFields":
@@ -37,3 +37,9 @@ function createGroup() {
 function loaded() {
 
 }
+
+/* Adds a user to an existing group. */
+function addUser() {
+
+}
+

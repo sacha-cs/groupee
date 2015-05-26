@@ -24,7 +24,6 @@ function login(request, response, params) {
                     "FROM users " +
                     "WHERE username='" + username + "'";
         client.query(query, function(err, result) {
-            done(client);
 
             if(err) {
                 console.log(err);
@@ -44,9 +43,26 @@ function login(request, response, params) {
             if(!passwordHash.verify(params.password, expected)) {
                 return utils.respondPlain(response, "NIncorrectPassword");
             }
+            
+            //Check if the user is already in a group.
+            var inGroupQuery = "SELECT group_id FROM member_of WHERE username='" + username + "'";
+            var user_info = {};
+            client.query(inGroupQuery, function(err, result) {
+                done(client);
+                if(err) {
+                    console.log(err);
+                    return utils.respondPlain(response, "NServerError");
+                }
+                var grouplist = [];
+                for (i = 0; i < result.rows.length; i++) {
+                    grouplist.push(result.rows[i].group_id);
+                }
+                user_info = {"username" : username, "groups" : grouplist};
+            });
 
             //Create a new session cookie for the user and send it to them
-            var seshCookie = createSessionCookie(username);
+            //seshCookie encodes the username and the groups that the user resides in.
+            var seshCookie = createSessionCookie(user_info);
             return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
         });
     });
@@ -227,9 +243,16 @@ function passwordIsValid(password) {
     return /^[0-9a-zA-Z_.-]+$/.test(password);
 }
 
-function createSessionCookie(user) {
+function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
-    sessionKeys["" + seshCookie] = user;
+    var cookieString = user_info["username"];
+    var groups = user_info["groups"];
+    if (groups) {
+        for(i = 0; i < user_info["groups"].length; i++) {
+            cookieString += ";" + groups[i];    
+        }
+    }
+    sessionKeys["" + seshCookie] = cookieString;
     return seshCookie;
 }
 

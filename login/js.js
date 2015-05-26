@@ -35,7 +35,7 @@ function login()
 
     aClient = new HttpClient();
     aClient.post('login', 'username=' + username + 
-                         '&password=' + password, 
+                          '&password=' + password, 
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
