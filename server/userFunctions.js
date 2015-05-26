@@ -1,4 +1,4 @@
-postHandler.addHandler("login/login", login);
+pstHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
@@ -19,7 +19,7 @@ function login(request, response, params) {
     
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
-            console.log(err);ndreea
+            console.log(err);
             return utils.respondPlain(response, "NServerError");
         }
         
