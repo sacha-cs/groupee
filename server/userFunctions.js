@@ -245,12 +245,14 @@ function passwordIsValid(password) {
 
 function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
-    var cookieString = user_info["username"];
-    var groups = user_info["groups"];
+    var cookieString = user_info.username;
+    /*var groups = user_info["groups"];
+    var viewing_group = user_info["viewing_group"];
     for(i = 0; i < user_info["groups"].length; i++) {
         cookieString += ";" + groups[i];    
-    }
-    sessionKeys["" + seshCookie] = cookieString;
+    }*/
+    //TODO: have a not in group global const
+    sessionKeys["" + seshCookie] = { username: user_info.username, groupViewing:-1 }
     return seshCookie;
 }
 
@@ -265,25 +267,27 @@ function addUserToGroup(request, response, params) {
 
 function setAddUsersGroup(request, response, params) {
     // TODO
-    // var groupID = params.group_id;
-    // var username = utils.getUser(request);
+    var groupID = params.group_id;
+    var username = utils.getUser(request);
 
     // Check user is member of the group
-    // var checkUserMemberQuery = "SELECT *" +
-    //                            "FROM member_of" +
-    //                            "WHERE username='" + username + "' AND group_id=" + groupID;
+    var checkUserMemberQuery = "SELECT * " +
+                               "FROM member_of " +
+                               "WHERE username='" + username + "' AND group_id=" + groupID;
 
-    // pg.connect(connectionString, function(err, client, done) {
-    //     client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
-    //         if(err) { return respondError(err, response); }
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
+            if(err) { return respondError(err, response); }
 
-    //         if(checkUserMemberResult.rows.length > 0) {
-    //             window.location = "/404.html";
-    //             return;
-    //         }
-
-    //     });
-    // }
-    // Remember that the user is viewing that group from session cookie
-    // Redirect to add_users.html
+            if(checkUserMemberResult.rows.length == 1) {
+                // Safety check done
+                // Remember that the user is viewing that group from session cookie before redirecting
+                utils.setViewingGroup(request, groupID);
+                response.writeHead("307", {'Location' : 'add_users.html' });
+            } else {
+                response.writeHead("307", {'Location' : '/404.html' });
+            }
+            response.end();
+        });
+    });
 }

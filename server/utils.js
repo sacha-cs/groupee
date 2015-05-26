@@ -8,13 +8,32 @@ this.getUser = function(request) {
     //Yes, there is a cookie that has the client's username, but rule #1:
     //NEVER TRUST THE USER. The user can't fake the session cookie, they can
     //fake the username cookie!!
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        return sessionKeys[seshCookie].username;
+    }
+}
+
+this.getViewingGroup = function(request) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        return sessionKeys[seshCookie].groupViewing;
+    }
+}
+
+this.setViewingGroup = function(request, group) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        sessionKeys[seshCookie].groupViewing = group;
+    }
+}
+
+this.getSessionCookie = function(request) {
     var cookie = request.headers.cookie;
     if(!cookie) return;
     var cookies = this.splitParams(cookie, ';');
     var seshCookie = cookies.seshCookie;
-    if(!seshCookie) return;
-    var user = sessionKeys[seshCookie];
-    return user;
+    return seshCookie;
 }
 
 this.splitParams = function(string, splitOn) {
