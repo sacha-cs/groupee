@@ -9,7 +9,7 @@ function addTodo() {
 		setErrorText("Please enter a task");
 	}
 
-	aClient = new HttpClient();
+	var aClient = new HttpClient();
 	aClient.post('add_todo', 'todoItem=' + todoItem, 
 		function(response) {
 			var correct = response[0];
@@ -38,49 +38,92 @@ function drag(ev) {
 
 function dropInTodo(ev) {
    	ev.preventDefault();
-   	var data = ev.dataTransfer.getData("text");
-   	ev.target.appendChild(document.getElementById(data));
+   	ev.stopPropagation();
+   	var id = ev.dataTransfer.getData("text");
+   	if (ev.fromParent) {
+   		ev.target.children[1].appendChild(document.getElementById(id));
+   	} else {	
+   		ev.target.appendChild(document.getElementById(id));
+   	}
+   	var aClient = new HttpClient();
+   	aClient.post('switch_to_todo', 'taskId=' + id,
+   		function(response){});
 }
 
 function dropInDoing(ev) {
    	ev.preventDefault();
-   	var data = ev.dataTransfer.getData("text");
-   	ev.target.appendChild(document.getElementById(data));
+   	ev.stopPropagation();
+   	var id = ev.dataTransfer.getData("text");
+   	if (ev.fromParent) {
+   		ev.target.children[1].appendChild(document.getElementById(id));
+   	} else {	
+   		ev.target.appendChild(document.getElementById(id));
+   	}
+   	var aClient = new HttpClient();
+   	aClient.post('switch_to_doing', 'taskId=' + id,
+   		function(response){});
 }
 
 function dropInDone(ev) {
    	ev.preventDefault();
-   	var data = ev.dataTransfer.getData("text");
-   	ev.target.appendChild(document.getElementById(data));
+   	ev.stopPropagation();
+   	var id = ev.dataTransfer.getData("text");
+   	if (ev.fromParent) {
+   		ev.target.children[1].appendChild(document.getElementById(id));
+   	} else {	
+   		ev.target.appendChild(document.getElementById(id));
+   	}
+   	var aClient = new HttpClient();
+   	aClient.post('switch_to_done', 'taskId=' + id,
+   		function(response){});
 }
 
 function bubbleDrop(ev) {
 	ev.preventDefault();
-	event.stopPropagation()
-
+	ev.stopPropagation()
    	var data = ev.dataTransfer.getData("text");
-
    	ev.target.parentElement.appendChild(document.getElementById(data));
 }
 
-function getTodoItems() {
+function dropToChild(ev) {
+	ev.preventDefault();
+	ev.stopPropagation();
+	ev.fromParent = true;
+   	ev.target.children[1].ondrop(ev);
+}
+
+function getAllTodoItems() {
 	var todos = document.getElementById("todos");
+	var doings = document.getElementById("doings");
+	var dones = document.getElementById("dones");
 
 	var aClient = new HttpClient();
 	aClient.get('get_todos', function(response) {
 		var todoItemList = response.split("#");
 		for (var i = 0 ; i < todoItemList.length-1 ; i++) {
 			var todoItem = todoItemList[i].split("&");
-			var taskInfo = todoItem[0];
-			var taskIdInfo = todoItem[1];
-            var info = {task : escapeHtml(decodeURIComponent(taskInfo.split("=")[1])),   
+			var taskCategoryInfo = todoItem[0];
+			var taskInfo = todoItem[1];
+			var taskIdInfo = todoItem[2];
+            var info = {category : escapeHtml(decodeURIComponent(taskCategoryInfo.split("=")[1])),
+            	        task : escapeHtml(decodeURIComponent(taskInfo.split("=")[1])),   
                         taskId : taskIdInfo.split("=")[1]};
 
             var taskHtml = "<div draggable='true' ondragstart='drag(event)' ondrop='bubbleDrop(event)' class='task' id='" + info.taskId + "'>" +
             				info.task +
             			   "</div>";
 
-           	todos.innerHTML += taskHtml;
+           	switch(info.category) {
+           		case "todo" :
+           			todos.innerHTML += taskHtml;
+           			break;
+           		case "doing" :
+           			doings.innerHTML += taskHtml;
+           			break;
+           		case "done" :
+           			dones.innerHTML += taskHtml;
+           			break;
+           	}
 		}
 	});
 }
