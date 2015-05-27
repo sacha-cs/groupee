@@ -2,6 +2,8 @@ var postHandlers = {
 };
 
 this.getHandler = function(uri) {
+    if(!postHandlers[uri])
+        return null;
     return postHandlers[uri].handler;
 }
 
@@ -10,6 +12,7 @@ this.addHandler = function(uri, handler, useOwn) {
 }
 
 this.useOwn = function (uri) {
-    console.log(postHandlers[uri].useOwn);
+    if(!postHandlers[uri])
+        return null;
     return postHandlers[uri].useOwn;
 }

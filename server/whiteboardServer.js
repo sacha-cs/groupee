@@ -20,7 +20,6 @@ function receivedUpdate(request, response, params)
     updates.push({data:params.data, user:utils.getUser(request), id:currentToolIds[seshCookie], lastUpdate:lastUpdate});
     lastUpdateNo++;
     utils.respondPlain(response, "");
-    console.log(params.data);
     console.log("??:" + params.lastUpdate);
 
 
@@ -58,18 +57,11 @@ function sendUpdates(request, response, params, checkForNew)
     response.write(lastUpdateNo + "<>");
     while(last < lastUpdateNo)
     {
-        console.log("update.");
-        console.log(params.allUpdates);
-        console.log(params.allUpdates == undefined);
         if((params.allUpdates == undefined) && updates[last].user == utils.getUser(request)) {
-            console.log(updates[last].user)
-            console.log(utils.getUser(request));
             last++;
-            console.log("NOT sending...");
             continue;
         }
         response.write("id-" + updates[last].id + "@" + "lastUpdate-" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
-        console.log("id-" + updates[last].id + "@" + "lastUpdate-" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
         last++;
     }
     if(params.allUpdates) 
