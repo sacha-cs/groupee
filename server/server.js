@@ -108,7 +108,7 @@ function returnFile(request, response) {
             break;
     }
 
-    fs.readFile(filePath, function(error, content) {
+    fs.readFile(filePath, 'utf-8', function(error, content) {
         if (error) {
             if(error.code == 'ENOENT') {
                 console.log("404ing! " + filePath);
@@ -142,6 +142,18 @@ function returnFile(request, response) {
                     response.write(libcontent, 'utf-8');
                     response.end(content, 'utf-8');
                 });
+            } else if (contentType == "text/html") {
+                var chatIndex = content.search("<\\?chat\\?>"); 
+                console.log(chatIndex); 
+                if (chatIndex != -1) {
+                    fs.readFile("../chat/chat.html", function(error,chatContent){
+                        console.log("About to replace chat");
+                        content = content.replace("<?chat?>", chatContent);
+                        response.end(content, 'utf-8');
+                    });
+                } else {
+                    response.end(content, 'utf-8');
+                } 
             } else {
                 response.end(content, 'utf-8');
             }
