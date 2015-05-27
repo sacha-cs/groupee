@@ -381,7 +381,6 @@ function setGroup(request, response, params) {
                         if (result.rows.length > 0) {
                             viewingGroupName = encodeURIComponent(result.rows[0].group_name);
                         }
-                        console.log(result);       
                         utils.respondPlain(response, "Y" + viewingGroupName);   
                     });
                 } else {

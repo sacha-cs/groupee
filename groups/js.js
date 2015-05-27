@@ -108,7 +108,6 @@ function setGroup(groupId) {
         if(correct == "Y") { 
             /* Get the groupName from the response. */
             var groupName = escapeHtml(decodeURIComponent(response.slice(1)));
-            console.log(response);
             document.cookie = "group-name=" + groupName + ";path=/";
             window.location = "/home/";
         }
