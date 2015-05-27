@@ -359,7 +359,6 @@ function checkUserExists(request, response, client, done, callback, username) {
 }
 
 function setGroup(request, response, params) {
-    console.log(params);
     pg.connect(connectionString, function(err, client, done) {
         doesUserExistInGroup(request, response, client, done,
             function(request, response, client, done, userExists) {
