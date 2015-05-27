@@ -143,22 +143,28 @@ function returnFile(request, response) {
                     response.end(content, 'utf-8');
                 });
             } else if (contentType == "text/html") {
-                var chatIndex = content.search("<\\?chat\\?>"); 
-                console.log(chatIndex); 
-                if (chatIndex != -1) {
-                    fs.readFile("../chat/chat.html", function(error,chatContent){
-                        console.log("About to replace chat");
-                        content = content.replace("<?chat?>", chatContent);
-                        response.end(content, 'utf-8');
+                replaceTag(content, "chat", "../chat/chat.html", function(newContent){
+                    replaceTag(newContent, "chatHeaders", "../chat/chatHeaders.html", function(finalContent) {
+                        response.end(finalContent, 'utf-8');
                     });
-                } else {
-                    response.end(content, 'utf-8');
-                } 
+                });
             } else {
                 response.end(content, 'utf-8');
             }
         }
     });
+}
+
+function replaceTag(content, tag, file, callback) {
+    var index = content.search("<\\?" + tag + "\\?>");
+    if (index != -1) {
+        fs.readFile(file, function(error, newContent) {
+            content = content.replace("<?" + tag + "?>", newContent);
+            callback(content);
+        });
+    } else {
+        callback(content);
+    }
 }
 
 function POSTDataTooBig(response) {
