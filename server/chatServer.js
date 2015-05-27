@@ -1,23 +1,29 @@
 var TIMEOUT_TIME = 10 * 1000;
 var messageNo=0;
-var messages = [];
 
-var waitingRequests = [];
+var groups = {};
 
 postHandler.addHandler("chat/send_message", chatSendMessage);
-getHandler.addHandler("chat/last_chat_no", lastChatNo);
 getHandler.addHandler("chat/chat_update", chatUpdate);
+
+function createGroupData(group) {
+    groups[group] = { messageNo: 0,
+                     messages : [],
+                     waitingRequests: [] };
+}
 
 function chatSendMessage(request, response, params) {
     var username = utils.getUser(request);
+    var group = utils.getViewingGroup(request);
     var safeMessage = encodeURIComponent(escapeHtml(decodeURIComponent(params.chatmessage)));
-    messages.push({user:username, message:safeMessage});
-    messageNo++;
+    if(!groups[group])
+        createGroupData(group);
+    groups[group].messages.push({user:username, message:safeMessage});
+    groups[group].messageNo++;
     utils.respondPlain(response, "MessageRecieved");
 
-    while(waitingRequests.length > 0) {
-        var curr = waitingRequests[0];
-        waitingRequests.splice(0, 1);
+    while(groups[group].waitingRequests.length > 0) {
+        var curr = groups[group].waitingRequests.shift();
         if(curr.timedOut)
             continue;
         clearTimeout(curr.timeoutID);
@@ -25,15 +31,16 @@ function chatSendMessage(request, response, params) {
     }
 }
 
-function lastChatNo(request, response) {
-    utils.respondPlain(response, "" + messageNo);
-}
-
 function chatUpdate(request, response, params, checkForNew) {
     var last = parseInt(params.last);
     
+    var group = utils.getViewingGroup(request);
+
+    if(!groups[group]) 
+        createGroupData(group);
+
     //If there are no more messages to send, add it to the waiting list 
-    if(!checkForNew && last == messageNo)
+    if(!checkForNew && last == groups[group].messageNo)
     {
         var requestData = {"request":request,
                            "response":response,
@@ -43,16 +50,17 @@ function chatUpdate(request, response, params, checkForNew) {
         var timeoutID = setTimeout(requestTimedOut, TIMEOUT_TIME, requestData);
 
         requestData.timeoutID = timeoutID;
-        waitingRequests.push(requestData);
+        groups[group].waitingRequests.push(requestData);
         
         return;
     }
     
     response.writeHead(200, { "Content-Type": 'text/plain' });
-    response.write(messageNo + "#");
-    while(last < messageNo)
+    response.write(groups[group].messageNo + "#");
+    while(last < groups[group].messageNo)
     {
-        response.write("user=" + messages[last].user + ";message=" + messages[last].message + "\n");
+        var message = groups[group].messages[last];
+        response.write("user=" + message.user + ";message=" + message.message + "\n");
         last++;
     }
     response.end();

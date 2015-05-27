@@ -19,7 +19,6 @@ function login(request, response, params) {
     
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
-            console.log(err);ndreea
             return utils.respondPlain(response, "NServerError");
         }
         
