@@ -4,7 +4,7 @@
 		<title> To Do's </title>
 		<script src = "js.js"></script> 
 	</head>
-	<body>
+	<body onload="getTodoItems()">
 
 	<div id="new-todo">
     	<input type="text" id="todo-item" placeholder="Enter a new to-do item">
@@ -17,31 +17,22 @@
 
 	<div id="wrapper">
 
-	        <div id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+	        <div id="todo">
 	            <div class="name">To Do</div>
-            	<div draggable="true" ondragstart="drag(event)" class="task" id="task1">
-            		Buy milk
-            	</div>
-            	<div draggable="true" ondragstart="drag(event)" class="task" id="task2">
-            		Do this
-            	</div>
-            	<div draggable="true" ondragstart="drag(event)" class="task" id="task3">
-            		This is one very long and boring task to do
-            	</div>
-            	<div draggable="true" ondragstart="drag(event)" class="task" id="task4">
-            		Do that
-            	</div>
-            	<div draggable="true" ondragstart="drag(event)" class="task" id="task5">
-            		Sleep
-            	</div>
+                <div id="todos" ondrop="dropInTodo(event)" ondragover="allowDrop(event)">
+                </div> 
 	        </div>
 
-	        <div id="doing" ondrop="drop(event)" ondragover="allowDrop(event)">
+	        <div id="doing">
 	            <div class="name">Doing</div>
+                <div id="doings" ondrop="dropInDoing(event)" ondragover="allowDrop(event)">
+                </div> 
 	        </div>
 
-	        <div id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+	        <div id="done">
 	            <div class="name">Done</div>  
+                <div id="dones" ondrop="dropInDone(event)" ondragover="allowDrop(event)">
+                </div> 
 			</div>  
 
     </div>

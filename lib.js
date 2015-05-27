@@ -44,3 +44,17 @@ function setSuccessText(success) {
     document.getElementById("success").innerHTML = success;
     return;
 }
+
+
+function escapeHtml(text) {
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+        "=": '&#061;'
+    };
+
+    return text.replace(/[&<>"'=]/g, function(m) { return map[m]; });
+}

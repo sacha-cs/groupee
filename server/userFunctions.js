@@ -104,7 +104,7 @@ function handleGroupInsertion(request, response, params) {
         }
         // Handle group insertion/creation.
         client.query(groupIdQuery, function(err, checkResult) {
-            if(err) { return respondError(err, response); }
+            if(err) { return utils.respondError(err, response); }
           
             // If the group already exists, set the group id to the existing one.
             if (checkResult.rows.length > 0) {
@@ -116,7 +116,7 @@ function handleGroupInsertion(request, response, params) {
                                     "VALUES('" + groupname + "', '" + privacy + 
                                     "', '" + description + "')";
                 client.query(newGroupQuery, function(err, checkResult) {
-                    if(err) { return respondError(err, response); }
+                    if(err) { return utils.respondError(err, response); }
 
                     // We must now extract the group id that was just created.
                     // 
@@ -133,7 +133,7 @@ function handleGroupInsertion(request, response, params) {
 function extractGroupId(request, response, client, done, callback, group_name) {
     var idExtractQuery = "SELECT group_id FROM groups WHERE group_name='" + group_name + "'";
     client.query(idExtractQuery, function(err, result) {
-        if(err) {return respondError(err, response); } 
+        if(err) {return utils.respondError(err, response); } 
            
         if (result.rows.length > 0) {
             callback(request, response, client, done, result.rows[0].group_id);
@@ -148,7 +148,7 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
     client.query(getUserQuery, function(err, result) {
         if(err) { 
             done(client);
-            return respondError(err, response); 
+            return utils.respondError(err, response); 
         }
     
         if(result.rows.length > 0) {
@@ -160,7 +160,7 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
         client.query(groupInsertQuery, function(err, result) {
             if(err) { 
                 done(client);
-                return respondError(err, response); 
+                return utils.respondError(err, response); 
             }
             // User has been inserted into appropriate group.
             callback(request, response, client, done);
@@ -177,7 +177,7 @@ function register(request, response, params) {
     var username = params.username.toLowerCase();
 
     pg.connect(connectionString, function(err, client, done) {
-        if(err) { return respondError(err, response); }
+        if(err) { return utils.respondError(err, response); }
 
         //Check username isn't taken
         var usernameQuery = "SELECT * " +
@@ -186,7 +186,7 @@ function register(request, response, params) {
 
         // Handle user insertion.
         client.query(usernameQuery, function(err, checkResult) {
-            if(err) { return respondError(err, response); }
+            if(err) { return utils.respondError(err, response); }
             
             if(checkResult.rows.length > 0) {
                 return utils.respondPlain(response, "NUsernameTaken");
@@ -199,7 +199,7 @@ function register(request, response, params) {
             usernameQuery = "INSERT INTO users(username, pwdhash) " +
                     "VALUES('" + username + "', '" + hashedPassword + "')";
             client.query(usernameQuery, function(err, checkResult) {
-                if(err) { return respondError(err, response); }
+                if(err) { return utils.respondError(err, response); }
                 
                 // New user has just been created. 
                 createAvatar(username);
@@ -245,11 +245,6 @@ function createSessionCookie(user_info) {
     //TODO: have a not in group global const
     sessionKeys["" + seshCookie] = { username: user_info.username, groupViewing:-1 }
     return seshCookie;
-}
-
-function respondError(err, response) {
-    console.log(err);
-    return utils.respondPlain(response);
 }
 
 function addUserToGroup(request, response, params) {
@@ -298,7 +293,7 @@ function doesUserExistInGroup(request, response, client, done, callback, groupID
                                "WHERE username='" + username + "' AND group_id=" + groupID;
 
     client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
-        if(err) { return respondError(err, response); }
+        if(err) { return utils.respondError(err, response); }
 
         if(checkUserMemberResult.rows.length == 1) {
             // Safety check done
@@ -318,7 +313,7 @@ function getAllGroups(request, response) {
     pg.connect(connectionString, function(err, client, done) {
         client.query(getGroupInfoQuery, function(err, result) {
             done(client);
-            if(err) { return respondError(err, response); }
+            if(err) { return utils.respondError(err, response); }
             
             var responseString = "";
             if(result.rows.length > 0) {
@@ -345,7 +340,7 @@ function checkUserExists(request, response, client, done, callback, username) {
     client.query(getUserQuery, function(err, result) {
         if(err) { 
             done(client);
-            return respondError(err, response); 
+            return utils.respondError(err, response); 
         }
     
         if(result.rows.length == 0) {
