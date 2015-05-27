@@ -8,6 +8,7 @@ function loaded() {
     userText.innerHTML = "<p>Welcome, " + userName + "!</p>";
 }
 
-function logout() {
-    /* TODO: Clear session cookie. */
+/* Log out the current user, and clear the session cookie. */
+function logout() { 
+    document.cookie="seshCookie=;path=/";
 }
