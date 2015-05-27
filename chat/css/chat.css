@@ -1,5 +1,12 @@
+body {
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	overflow-x: hidden;
+}
 .content {
-	  position: absolute;
+	position: absolute;
     top: 0;
     left: 300px;
     right: 0;
@@ -8,6 +15,7 @@
     -moz-transition: left 0.5s ease;
     -o-transition: left 0.5s ease;
     transition: left 0.5s ease;
+  	background: #2c3e50;
 }
 
 

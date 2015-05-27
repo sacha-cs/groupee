@@ -3,37 +3,42 @@
 		<link rel="stylesheet" href="css/style.css">
 		<title> To Do's </title>
 		<script src = "js.js"></script> 
+		<?chatHeaders?>
 	</head>
-	<body onload="getAllTodoItems()">
+	<body onload="getAllTodoItems(); startChat()">
 
-	<div id="new-todo">
-    	<input type="text" id="todo-item" placeholder="Enter a new to-do item">
-    	<input type="submit" name="submit" id="add-todo" value="Add" onclick="addTodo()">
-    	<div class="todo-text">
-            <p id="error"></p>
-            <p id="success"></p>
-        </div>
-	</div>	
-
-	<div id="wrapper">
-
-	        <div id="todo" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
-	            <div class="name">To Do</div>
-                <div id="todos" ondrop="dropInTodo(event)" ondragover="allowDrop(event)">
-                </div> 
+	<?chat?>
+	
+	<div class="content">
+		<div id="new-todo">
+	    	<input type="text" id="todo-item" placeholder="Enter a new to-do item">
+	    	<input type="submit" name="submit" id="add-todo" value="Add" onclick="addTodo()">
+	    	<div class="todo-text">
+	            <p id="error"></p>
+	            <p id="success"></p>
 	        </div>
+		</div>	
 
-	        <div id="doing" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
-	            <div class="name">Doing</div>
-                <div id="doings" ondrop="dropInDoing(event)" ondragover="allowDrop(event)">
-                </div> 
-	        </div>
+		<div id="wrapper">
 
-	        <div id="done" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
-	            <div class="name">Done</div>  
-                <div id="dones" ondrop="dropInDone(event)" ondragover="allowDrop(event)">
-                </div>
-			</div>  
+		        <div id="todo" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
+		            <div class="name">To Do</div>
+	                <div id="todos" ondrop="dropInTodo(event)" ondragover="allowDrop(event)">
+	                </div> 
+		        </div>
+
+		        <div id="doing" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
+		            <div class="name">Doing</div>
+	                <div id="doings" ondrop="dropInDoing(event)" ondragover="allowDrop(event)">
+	                </div> 
+		        </div>
+
+		        <div id="done" ondrop="dropToChild(event)" ondragover="allowDrop(event)">
+		            <div class="name">Done</div>  
+	                <div id="dones" ondrop="dropInDone(event)" ondragover="allowDrop(event)">
+	                </div>
+				</div> 
+		</div> 
 
     </div>
 
