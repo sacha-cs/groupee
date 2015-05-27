@@ -21,10 +21,11 @@ this.getViewingGroup = function(request) {
     }
 }
 
-this.setViewingGroup = function(request, group) {
+/* Store the group that the user is currently viewing in the cookie. */
+this.setViewingGroup = function(request, groupId) {
     var seshCookie = this.getSessionCookie(request);
     if(seshCookie && sessionKeys[seshCookie]) {
-        sessionKeys[seshCookie].groupViewing = group;
+        sessionKeys[seshCookie].groupViewing = groupId;
     }
 }
 

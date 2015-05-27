@@ -2,64 +2,84 @@
     <head>
         <link rel="stylesheet" href="css/style.css">
         <script src="../chat/js.js"></script>
+        <script src="js.js"></script>
         <title>Home</title>
     </head>
 
-    <body onload="startChat()">
+    <body onload="startChat(); loaded()">
         <!-- <div id="group"></div> -->
 
-    <input id="slide-chat" type="checkbox" role="button" />
-        <label for="slide-chat"><a class="chat-button">Chat!</a></label>
 
-    <div class="chat-space" id="chat-space">
-        <div id="chat-messages">
-            <ol id="chat" class="discussion">
-                <!-- Chat messages get added here -->
-            </ol>
+    <div class="navbar" id="navbar">
+        <div id="navbar-home">
+            <p>Go Home </p>
         </div>
-        <div id="chat-box">
-            <input id="message"></input>
-            <button onclick="sendMessage()">Send</button>
-        </div> 
+        <div id="navbar-group">
+            <p>My group is...</p>
+        </div>
+        <div id="navbar-right">
+            <div id="navbar-self">
+                <p>Welcome, Person!</p>
+            </div>
+            <div id="navbar-logout">
+                <p>Log out</p>
+            </div>  
+        </div>
     </div>
 
-    <div class="content">
+    <div class="main-body" id="main-body">
+        <input id="slide-chat" type="checkbox" role="button" />
+            <label for="slide-chat"><a class="chat-button">Chat!</a></label>
 
-        <div id="wrapper">
-            <div id="todo">
-                <div class="label">To-Do List</div>
+        <div class="chat-space" id="chat-space">
+            <div id="chat-messages">
+                <ol id="chat" class="discussion">
+                    <!-- Chat messages get added here -->
+                </ol>
             </div>
-
-            <div id="whiteboard">
-                <div class="label">Whiteboard</div>
-            </div>
-
-            <div id="timetable">
-                <div class="label">Timetable</div>  
-            </div>  
-  
-            <div id="posts">
-                <div class="label">Posts</div>
-            </div>
-  
-            <div id="documents">
-                <div class="label">Documents</div>
-            </div>
-  
-            <div id="photos">
-                <div class="label">Photos</div>
-            </div>
-
-            <div id="code-viewer">
-                <div class="label">Code Viewer</div>
-            </div>
-
-            <div id="settings">
-                <div class="label">Settings</div>
-            </div>
+            <div id="chat-box">
+                <input id="message"></input>
+                <button onclick="sendMessage()">Send</button>
+            </div> 
         </div>
 
-    </div>  
+        <div class="content">
+
+            <div id="wrapper">
+                <div id="todo">
+                    <div class="label">To-Do List</div>
+                </div>
+
+                <div id="whiteboard">
+                    <div class="label">Whiteboard</div>
+                </div>
+
+                <div id="timetable">
+                    <div class="label">Timetable</div>  
+                </div>  
+      
+                <div id="posts">
+                    <div class="label">Posts</div>
+                </div>
+      
+                <div id="documents">
+                    <div class="label">Documents</div>
+                </div>
+      
+                <div id="photos">
+                    <div class="label">Photos</div>
+                </div>
+
+                <div id="code-viewer">
+                    <div class="label">Code Viewer</div>
+                </div>
+
+                <div id="settings">
+                    <div class="label">Settings</div>
+                </div>
+            </div>
+        </div>  
+    </div>
 
     </body>
 

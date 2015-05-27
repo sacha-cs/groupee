@@ -55,12 +55,8 @@ function login(request, response, params) {
                     console.log(err);
                     return utils.respondPlain(response, "NServerError");
                 }
-                var grouplist = [];
-                for (i = 0; i < result.rows.length; i++) {
-                    grouplist.push(result.rows[i].group_id);
-                }
-                user_info = {"username" : username, "groups" : grouplist};
-                
+
+                user_info = {"username" : username};
                 //Create a new session cookie for the user and send it to them
                 //seshCookie encodes the username and the groups that the user resides in.
                 var seshCookie = createSessionCookie(user_info);
@@ -109,7 +105,10 @@ function handleGroupInsertion(request, response, params) {
             // If the group already exists, set the group id to the existing one.
             if (checkResult.rows.length > 0) {
                 newGroupId = checkResult.rows[0].group_id;
-                insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); }, newGroupId, username);
+                insertUserIntoMemberOf(request, response, client, done,
+                    function(request, response, client, done) { 
+                        done(client);
+                    }, newGroupId, username);
             } else {
                 // Group does not already exist, so we create a new one.
                 var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
@@ -120,9 +119,13 @@ function handleGroupInsertion(request, response, params) {
 
                     // We must now extract the group id that was just created.
                     // 
-                    extractGroupId(request, response, client, done, function(request, response, client, done, group_id) {
-                        insertUserIntoMemberOf(request, response, client, done, function(request, response, client, done) { done(client); utils.respondPlain(response, "Y" + group_id) },
-                                               group_id, username );
+                    extractGroupId(request, response, client, done,
+                        function(request, response, client, done, group_id) {
+                            insertUserIntoMemberOf(request, response, client, done, 
+                                function(request, response, client, done) { 
+                                    done(client);
+                                    utils.respondPlain(response, "Y" + group_id) },
+                            group_id, username );
                     }, groupname);
                 });
             }
@@ -144,7 +147,10 @@ function extractGroupId(request, response, client, done, callback, group_name) {
 
 function insertUserIntoMemberOf(request, response, client, done, callback, groupId, username) {
     // Given that the user does not already exist in the group, insert user into the group.
-    var getUserQuery = "SELECT username FROM member_of WHERE username='" + username + "' AND group_id='" + groupId + "'";
+    var getUserQuery = "SELECT username " + 
+                       "FROM member_of " +
+                       "WHERE username='" + username + "' " +
+                       "AND group_id='" + groupId + "'";
     client.query(getUserQuery, function(err, result) {
         if(err) { 
             done(client);
@@ -272,6 +278,7 @@ function addUserToGroup(request, response, params) {
 
 }
 
+//TODO: Factor out - duplication with setGroup.
 function setAddUsersGroup(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         doesUserExistInGroup(request, response, client, done,
@@ -287,7 +294,7 @@ function setAddUsersGroup(request, response, params) {
                 }
                 response.end();
             }, params.group_id);
-        });
+        }); 
 }
 
 function doesUserExistInGroup(request, response, client, done, callback, groupID) {
@@ -349,7 +356,7 @@ function checkUserExists(request, response, client, done, callback, username) {
             return respondError(err, response); 
         }
     
-        if(result.rows.length == 0) {
+        if(result.rows[0].length == 0) {
             done(client);
             return utils.respondPlain(response, "NUserDoesNotExist");
         }
@@ -366,7 +373,17 @@ function setGroup(request, response, params) {
                     // Safety check done
                     // Remember that the user is viewing that group from session cookie before redirecting
                     utils.setViewingGroup(request, params.group_id);
-                    utils.respondPlain(response, "Y");
+                    var viewingGroupName = "";
+                    var getGroupNameQuery = "SELECT group_name FROM groups WHERE group_id='" + params.group_id + "'";
+                    client.query(getGroupNameQuery, function(err, result) {
+                        if(err) { return respondError(err, response); }
+                        done(client);
+                        if (result.rows.length > 0) {
+                            viewingGroupName = encodeURIComponent(result.rows[0].group_name);
+                        }
+                        console.log(result);       
+                        utils.respondPlain(response, "Y" + viewingGroupName);   
+                    });
                 } else {
                     utils.respondPlain(response, "N");
                 }

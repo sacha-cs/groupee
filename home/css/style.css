@@ -8,11 +8,16 @@ body {
   overflow-x: hidden;
 }
 
+.main-body {
+  height: 95%;
+  position: relative;
+}
+
 #wrapper {
   position: relative;
   display: block;
-  width: 1000px;
-  height: 500px;
+  width: 80%;
+  height: auto;
   margin-left: auto;
   margin-right: auto;
   margin-top: 100px;
@@ -110,6 +115,34 @@ body {
   height: 16px;
 }*/
 
+.navbar {
+    background-color: white;
+    width: 100%;
+    height: auto;
+    text-align: center;
+}
+
+#navbar-right {
+    float:right;
+}
+
+#navbar-home {
+    float:left; 
+}
+
+#navbar-group {
+    display: inline-block;
+}
+
+#navbar-logout {
+    display: inline-block;
+}
+
+#navbar-self {
+    display: inline-block;
+}
+
+
 .chat-space {
     background-color: #4B6B8B;
     /*overflow-y: auto;*/
@@ -118,6 +151,7 @@ body {
     top: 0;
     left: 0;
     bottom: 0;
+    height: 100%;
 }
 
 .content {
