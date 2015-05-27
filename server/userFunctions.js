@@ -19,7 +19,7 @@ function login(request, response, params) {
     
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
-            console.log(err);ndreea
+            console.log(err);
             return utils.respondPlain(response, "NServerError");
         }
         
@@ -271,10 +271,11 @@ function setAddUsersGroup(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         doesUserExistInGroup(request, response, client, done,
             function(request, response, client, done, userExists) {
+                done(client);
                 if(userExists) {
                     // Safety check done
                     // Remember that the user is viewing that group from session cookie before redirecting
-                    utils.setViewingGroup(request, groupID);
+                    utils.setViewingGroup(request, params.group_id);
                     response.writeHead("307", {'Location' : 'add_users.html' });
                 } else {
                     response.writeHead("307", {'Location' : '/404.html' });
@@ -353,7 +354,6 @@ function checkUserExists(request, response, client, done, callback, username) {
 }
 
 function setGroup(request, response, params) {
-    console.log(params);
     pg.connect(connectionString, function(err, client, done) {
         doesUserExistInGroup(request, response, client, done,
             function(request, response, client, done, userExists) {
