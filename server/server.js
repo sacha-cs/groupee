@@ -25,7 +25,7 @@ var anonAvailable = ["login"];
 
 var port = process.argv[2];
 if(!port)
-    port = 8080;
+    port = process.env.PORT | 8080;
 else
     port = parseInt(port);
 
