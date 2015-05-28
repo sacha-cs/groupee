@@ -14,7 +14,7 @@ require('./userFunctions');
 require('./chatServer');
 require('./todosServer');
 
-connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u';
+connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';
 uploadPath = "/vol/project/2014/271/g1427136/"
 filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 
