@@ -1,0 +1,16 @@
+{
+  "name": "WebApps",
+  "version": "0.0.0",
+  "description": "Group 36 WebApp",
+  "main": "server.js",
+  "scripts": {
+      "start": "node server.js"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies" : {
+      "pg": "~4.3.0",
+      "formidable": "~1.0.17",
+      "password-hash": "~1.2.2"
+  }
+}
