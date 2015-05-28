@@ -1,0 +1,47 @@
+body {
+	width: 100%;
+	margin: 0px;
+}
+
+/* NAVBAR STYLING */
+
+#navbar {
+	z-index: 2;
+	position: fixed;
+    background-color: red;
+    width: 100%;
+    height: 50px;
+    text-align: center;
+}
+
+#navbar-right {
+    float:right;
+    margin-right: 10px;
+}
+
+#navbar-home {
+    float:left; 
+    margin-left: 10px;
+}
+
+#navbar span {
+	display: inline-block;
+}
+
+
+/* CHAT STYLING */
+
+#chat-left {
+	width: 300px;
+	position: fixed;
+	margin-top: 50px;
+}
+
+
+/* CONTENT STYLING */
+
+#content {
+	position: absolute;
+	top:50px;
+	left: 300px;
+}
