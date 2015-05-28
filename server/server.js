@@ -165,9 +165,7 @@ function replaceAllTags(content, callback) {
     tags.shift();
     var templateFile = tags[0].split("?>")[1];
     fs.readFile(".." + templateFile, 'utf-8', function(err, template) {
-        console.log(err);
         if(err) { callback(content); }
-        console.log(template);
         for(var i = 1; i < tags.length; i++) {
             var keyAndValue = tags[i].split("?>");
             var key = keyAndValue[0];

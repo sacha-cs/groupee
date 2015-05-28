@@ -142,3 +142,7 @@ function deleteTask(taskId) {
         }
       });
 }
+
+function loaded() {
+  getAllTodoItems();
+}
