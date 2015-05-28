@@ -1,70 +1,40 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="css/style.css">
-        <script src="js.js"></script>
-        <?chatHeaders?>
-        <title>Home</title>
-    </head>
-
-    <body onload="startChat(); loaded()">
-        <!-- <div id="group"></div> -->
-
-    <div class="navbar" id="navbar">
-        <div id="navbar-home">
-            <p>Go Home </p>
-        </div>
-        <div id="navbar-group">
-            <p>My group is...</p>
-        </div>
-        <div id="navbar-right">
-            <div id="navbar-self">
-                <p>Welcome, Person!</p>
-            </div>
-              <div onclick="logout(); window.location='/login/index.html' "id="navbar-logout">
-
-                  <p>Log out</p>
-              </div> 
-        </div>
+<?template?>
+/template/main_template.html
+<?title?>
+Home
+<?headers?>
+<link rel="stylesheet" href="css/style.css">
+<script src="js.js"></script>
+<?content?>
+<div id="wrapper">
+    <div id="todo" onclick="goTo('todos')">
+        <div class="label">To-Do List</div>
+    </div>
+    <div id="whiteboard">
+        <div class="label">Whiteboard</div>
     </div>
 
-    <div class="main-body" id="main-body">
-        <?chat?>
-        <div class="content">
-            <div id="wrapper">
-                <div id="todo" onclick="goTo('todos')">
-                    <div class="label">To-Do List</div>
-                </div>
-                <div id="whiteboard">
-                    <div class="label">Whiteboard</div>
-                </div>
+    <div id="timetable">
+        <div class="label">Timetable</div>  
+    </div>  
 
-                <div id="timetable">
-                    <div class="label">Timetable</div>  
-                </div>  
-      
-                <div id="posts">
-                    <div class="label">Posts</div>
-                </div>
-      
-                <div id="documents">
-                    <div class="label">Documents</div>
-                </div>
-      
-                <div id="photos">
-                    <div class="label">Photos</div>
-                </div>
-
-                <div id="code-viewer">
-                    <div class="label">Code Viewer</div>
-                </div>
-
-                <div id="settings">
-                    <div class="label">Settings</div>
-                </div>
-            </div>
-        </div>  
+    <div id="posts">
+        <div class="label">Posts</div>
     </div>
 
-    </body>
+    <div id="documents">
+        <div class="label">Documents</div>
+    </div>
 
-</html>
+    <div id="photos">
+        <div class="label">Photos</div>
+    </div>
+
+    <div id="code-viewer">
+        <div class="label">Code Viewer</div>
+    </div>
+
+    <div id="settings">
+        <div class="label">Settings</div>
+    </div>
+</div>

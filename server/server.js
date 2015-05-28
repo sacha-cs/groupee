@@ -143,15 +143,38 @@ function returnFile(request, response) {
                     response.end(content, 'utf-8');
                 });
             } else if (contentType == "text/html") {
-                replaceTag(content, "chat", "../chat/chat.html", function(newContent){
-                    replaceTag(newContent, "chatHeaders", "../chat/chatHeaders.html", function(finalContent) {
-                        response.end(finalContent, 'utf-8');
-                    });
-                });
+                var templateTag = "<?template?>"
+                if(content.slice(0, templateTag.length) == templateTag) {
+                    replaceAllTags(content, function(replacedContent) {
+                        response.end(replacedContent);
+                    })
+                } else {
+                    response.end(content, 'utf-8');
+                }
             } else {
                 response.end(content, 'utf-8');
             }
         }
+    });
+}
+
+function replaceAllTags(content, callback) {
+    content = content.replace(new RegExp("\n", "g"), "");
+    var tags = content.split("<?");
+    //First element will be empty so get rid of it
+    tags.shift();
+    var templateFile = tags[0].split("?>")[1];
+    fs.readFile(".." + templateFile, 'utf-8', function(err, template) {
+        console.log(err);
+        if(err) { callback(content); }
+        console.log(template);
+        for(var i = 1; i < tags.length; i++) {
+            var keyAndValue = tags[i].split("?>");
+            var key = keyAndValue[0];
+            var value = keyAndValue[1];
+            template = template.replace("<?" + key + "?>", value);
+        }
+        callback(template);
     });
 }
 

@@ -1,16 +1,12 @@
-<html>
-	<head>
-		<link rel="stylesheet" href="css/style.css">
-		<title> To Do's </title>
-		<script src = "js.js"></script> 
-		<?chatHeaders?>
-	</head>
-	<body onload="getAllTodoItems(); startChat()">
-
-	<?chat?>
-	
-	<div class="content">
-		<div id="new-todo">
+<?template?>
+/template/main_template.html
+<?title?>
+To Do's
+<?headers?>
+<link rel="stylesheet" href="css/style.css">
+<script src = "js.js"></script> 
+<?content?>
+<div id="new-todo">
 	    	<input type="text" id="todo-item" placeholder="Enter a new to-do item">
 	    	<input type="submit" name="submit" id="add-todo" value="Add" onclick="addTodo()">
 	    	<div class="todo-text">
@@ -39,8 +35,3 @@
 	                </div>
 				</div> 
 		</div> 
-
-    </div>
-
-	</body>
-</html>

@@ -1,9 +1,10 @@
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="css/template.css">
-        <script type="text/javascript" src="template.js"></script>
+        <link rel="stylesheet" type="text/css" href="/template/css/template.css">
+        <script type="text/javascript" src="/template/template.js"></script>
         <script type="text/javascript" src="/chat/js.js"></script>
-        <title>Template</title>
+        <?headers?>
+        <title><?title?></title>
     </head>
 
     <body onload="startChat(); templateLoaded()">
@@ -39,6 +40,7 @@
     </div>
 
     <div id="content">
+        <?content?>
     </div>  
     </body>
 
