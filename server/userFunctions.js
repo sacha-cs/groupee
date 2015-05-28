@@ -83,7 +83,7 @@ function checkParams(response, params) {
 }
 
 function handleGroupInsertion(request, response, params) {
-    var groupname = params.group_name.toLowerCase();
+    var groupname = params.group_name;
     var description = params.description;
     var username = utils.getUser(request);
     var privacy = params.privacy.toLowerCase();
