@@ -97,7 +97,6 @@ body {
   margin-top: 20px;
   margin-left: 150px;
   width: 300px;
-
 }
 
 #todo-item {
@@ -169,6 +168,17 @@ body {
   margin-right: auto;
   width: 80%;
   word-break: break-word;
+}
+
+#delete {
+  display:none;
+}
+
+.task:hover #delete {
+  display: initial;
+  float:right;
+  width:20px;
+  height:20px;
 }
 
 div ::-webkit-scrollbar {
