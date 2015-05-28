@@ -19,7 +19,8 @@ function addTodo() {
 				document.getElementById("todos").innerHTML += 
 							"<div draggable='true' ondragstart='drag(event)' class='task' id='" + response.slice(1) + "'>" +
             				 todoItem +
-            			    "</div>";
+                  "<img onclick='deleteTask(" + response.slice(1) + ")' id='delete' src='https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/128x128/Close_Box_Red.png'>" + 
+              "</div>";
 				return;
 			} else {
 				setErrorText("Please enter a task");
@@ -111,6 +112,7 @@ function getAllTodoItems() {
 
             var taskHtml = "<div draggable='true' ondragstart='drag(event)' ondrop='bubbleDrop(event)' class='task' id='" + info.taskId + "'>" +
             				info.task +
+                    "<img onclick='deleteTask(" + info.taskId + ")' id='delete' src='https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/128x128/Close_Box_Red.png'>" + 
             			   "</div>";
 
            	switch(info.category) {
@@ -126,4 +128,17 @@ function getAllTodoItems() {
            	}
 		}
 	});
+}
+
+
+function deleteTask(taskId) {
+  var aClient = new HttpClient();
+  aClient.post('delete_todo', 'taskId=' + taskId,
+      function(response){
+        if (response[0] == "Y") {
+          var deletedTask = document.getElementById(taskId);
+          deletedTask.parentNode.removeChild(deletedTask);
+          console.log("deleted successfully");
+        }
+      });
 }

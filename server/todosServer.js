@@ -3,6 +3,7 @@ getHandler.addHandler("todos/get_todos", getTodoItems);
 postHandler.addHandler("todos/switch_to_doing", switchToDoing);
 postHandler.addHandler("todos/switch_to_todo", switchToTodo);
 postHandler.addHandler("todos/switch_to_done", switchToDone);
+postHandler.addHandler("todos/delete_todo", deleteTodoItem);
 
 function addTodoItem(request, response, params) {
 	if (!params.todoItem) {
@@ -14,10 +15,11 @@ function addTodoItem(request, response, params) {
 
 		var group_id = utils.getViewingGroup(request);
 		var username = utils.getUser(request);
-		
+		var task = params.todoItem.replace("'", "''")
+
 		var insertTodoQuery = "INSERT INTO todos(group_id, item, category, created_by) " +
 							  "VALUES(" + group_id + ", '" + 
-							  	params.todoItem + "', 'todo', '" 
+							  	task + "', 'todo', '" 
 							  	+ username + "') RETURNING task_id";  
 
 		client.query(insertTodoQuery, function(err, insertTodoResult) {
@@ -106,4 +108,19 @@ function switchToDone(request, response, params) {
 		});
 	});
 }
+
+function deleteTodoItem(request, response, params) {
+	var task_id = params.taskId;
+	var deleteTodoQuery = "DELETE FROM todos " +
+						  "WHERE task_id=" + task_id;
+
+	pg.connect(connectionString, function(err, client, done) {
+		client.query(deleteTodoQuery, function(err, result) {
+			done(client);
+			if (err) { return utils.respondError(err, response); }
+			return utils.respondPlain(response, "Y");			
+		});
+	});
+}
+
 
