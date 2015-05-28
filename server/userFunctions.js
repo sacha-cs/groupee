@@ -208,7 +208,7 @@ function register(request, response, params) {
                 if(err) { return utils.respondError(err, response); }
                 
                 // New user has just been created. 
-                createAvatar(username);
+                //createAvatar(username);
       
                 return utils.respondPlain(response, "YRegisteredSuccessfully");
             });
