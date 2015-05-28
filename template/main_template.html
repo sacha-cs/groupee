@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="css/template.css">
+        <script type="text/javascript" src="template.js"></script>
         <title>Template</title>
     </head>
 
@@ -25,8 +26,8 @@
 
 
     <div id="chat-left">
-        <input id="slide-chat" type="checkbox" role="button" />
-            <label for="slide-chat"><a class="chat-button">Chat!</a></label>
+            <div id="chat-toggle" onclick="toggleChat()">
+            </div>
 
         <div class="chat-space" id="chat-space">
             <div id="chat-messages">
