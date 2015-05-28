@@ -52,101 +52,38 @@ body {
   -webkit-backface-visibility: hidden; /*fixes Flash bug*/
 }
 
-#mail:hover, #contacts:hover, #calender:hover, #notes:hover, #reminders:hover, #find:hover, #pages:hover, #numbers:hover, #keynote:hover {
-/*  -webkit-filter: blur(10px);
-  -webkit-transition: -webkit-filter .50s; 
-  box-shadow: 0px 0px 30px 0px rgba(0,0,0,0);*/
-}
-
 #todo:active, #whiteboard:active, #timetable:active, #posts:active, #documents:active, #photos:active, #code-viewer:active, #settings:active {
   opacity: 0.8; 
 }
 
 #todo {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/todo.png);
-  /*background-image: url(https://lh5.ggpht.com/5aMofcRnMdrYe0ytYyRNcGn9iPiPJjBHUeI4hUfnRfihDtoR5ZxpXjA83Um0stg9-odQ=w300);*/
 }
 
 #whiteboard {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/whiteboard.png);
-  /*background-image: url(http://www.ten90group.com/images/who_we_are/brainstorm_icon.png); */
 }
 
 #timetable {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/timetable.png);
-  /*background-image: url(https://cdn4.iconfinder.com/data/icons/flat-icon-set/2133/flat_icons-graficheria.it-06.png);*/
 }
 
 #posts {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/posts.png);
-  /*background-image: url(https://cdn2.iconfinder.com/data/icons/metro-ui-dock/512/Sticky_Notes.png);*/
 }
 
 #documents {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/documents.png);
-  /*background-image: url(https://cdn2.iconfinder.com/data/icons/squareplex/512/documents.png);*/
 }
 
 #photos {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/photos.png);
-  /*background-image: url(http://icons.iconarchive.com/icons/tristan-edwards/sevenesque/1024/Preview-icon.png);*/
 }
 
 #code-viewer {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/code.png);
-  /*background-image: url(https://cdn3.iconfinder.com/data/icons/seo-internet-marketing-flat-icons/128/web-code.png);*/
 }
 
 #settings {
   background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/settings.png);
-  /*background-image: url(http://icons.iconarchive.com/icons/grafikartes/flat-retro-modern/256/settings-icon.png);*/
 }
-
-/* additional */
-/*#group {
-  margin-left: 15px;
-  margin-top: 15px;
-  width:56px;
-  height: 16px;
-}*/
-
-.navbar {
-    background-color: white;
-    width: 100%;
-    height: auto;
-    text-align: center;
-}
-
-#navbar-right {
-    float:right;
-}
-
-#navbar-home {
-    float:left; 
-}
-
-#navbar-group {
-    display: inline-block;
-}
-
-#navbar-logout {
-    display: inline-block;
-}
-
-#navbar-self {
-    display: inline-block;
-}
-
-
-.chat-space {
-    background-color: #4B6B8B;
-    /*overflow-y: auto;*/
-    width: 300px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    height: 100%;
-}
-
-
