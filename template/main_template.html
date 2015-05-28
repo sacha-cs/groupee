@@ -2,6 +2,7 @@
     <head>
         <link rel="stylesheet" type="text/css" href="css/template.css">
         <script type="text/javascript" src="template.js"></script>
+        <script type="text/javascript" src="/chat/js.js"></script>
         <title>Template</title>
     </head>
 
@@ -26,20 +27,18 @@
 
 
     <div id="chat-left">
-            <div id="chat-toggle" onclick="toggleChat()">
-            </div>
-
-        <div class="chat-space" id="chat-space">
-            <div id="chat-messages">
-                <ol id="chat" class="discussion">
-                    <!-- Chat messages get added here -->
-                </ol>
-            </div>
-            <div id="chat-box">
-                <input id="message"></input>
-                <button onclick="sendMessage()">Send</button>
-            </div> 
+        <div id="chat-toggle" onclick="toggleChat()">
         </div>
+
+        <div id="chat-messages">
+            <ol id="chat">
+                <!-- Chat messages get added here -->
+            </ol>
+        </div>
+        <div id="chat-box">
+            <input id="message"></input>
+            <button onclick="sendMessage()">Send</button>
+        </div> 
     </div>
 
     <div id="content">
@@ -91,7 +90,6 @@ The distance from the riverbank to the island was not great, but at this time of
 “I see it! There—pulled up on the bank of the island, almost hidden among those leaves,” said Po, whose eyes were sharp. “Someone must have used it to cross over.”
 “Perhaps they’re still on the island,” said Larth. He did not begrudge others the use of the rafts, and the island was large enough to share. Nonetheless, the situation required caution. He cupped his hands to his mouth and gave a shout. It was not long before a man appeared on the bank of the island. The man waved.
     </div>  
-
     </body>
 
 </html>

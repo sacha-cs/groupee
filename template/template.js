@@ -13,3 +13,18 @@ function toggleChat() {
 	}
 
 }
+function loaded() {
+	document.getElementById("chat").addEventListener("mousewheel", function (e) {
+	    var delta = e.wheelDelta || -e.detail;
+	    
+	    this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+	    e.preventDefault();
+	});
+	document.getElementById("chat").addEventListener("DOMMouseScroll", function (e) {
+	    var delta = e.wheelDelta || -e.detail;
+	    
+	    this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+	    e.preventDefault();
+	});
+
+}
