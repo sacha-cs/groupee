@@ -12,3 +12,7 @@ function loaded() {
 function logout() { 
     document.cookie="seshCookie=;path=/";
 }
+
+function goTo(page) {
+	window.location = "/" + page;
+}

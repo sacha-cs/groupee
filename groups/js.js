@@ -77,7 +77,6 @@ function addGroupsToPage() {
             var groupInfoList = response.split("#");
             for(var i = 0; i < groupInfoList.length-1; i++) {
                 var part = groupInfoList[i].split("&");
-                console.log(part);
                 var nameInfo = part[0];
                 var descInfo = part[1];
                 var idInfo = part[2];
@@ -113,4 +112,3 @@ function setGroup(groupId) {
         }
     });
 }
-

@@ -1,14 +1,13 @@
 <html>
     <head>
         <link rel="stylesheet" href="css/style.css">
-        <script src="../chat/js.js"></script>
         <script src="js.js"></script>
+        <?chatHeaders?>
         <title>Home</title>
     </head>
 
     <body onload="startChat(); loaded()">
         <!-- <div id="group"></div> -->
-
 
     <div class="navbar" id="navbar">
         <div id="navbar-home">
@@ -29,28 +28,12 @@
     </div>
 
     <div class="main-body" id="main-body">
-        <input id="slide-chat" type="checkbox" role="button" />
-            <label for="slide-chat"><a class="chat-button">Chat!</a></label>
-
-        <div class="chat-space" id="chat-space">
-            <div id="chat-messages">
-                <ol id="chat" class="discussion">
-                    <!-- Chat messages get added here -->
-                </ol>
-            </div>
-            <div id="chat-box">
-                <input id="message"></input>
-                <button onclick="sendMessage()">Send</button>
-            </div> 
-        </div>
-
+        <?chat?>
         <div class="content">
-
             <div id="wrapper">
-                <div id="todo">
+                <div id="todo" onclick="goTo('todos')">
                     <div class="label">To-Do List</div>
                 </div>
-
                 <div id="whiteboard">
                     <div class="label">Whiteboard</div>
                 </div>

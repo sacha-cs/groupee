@@ -4,6 +4,11 @@ this.respondPlain = function (response, text) {
     response.end(text);
 }
 
+function respondError(err, response) {
+    console.log(err);
+    return utils.respondPlain(response);
+}
+
 this.getUser = function(request) {
     //Yes, there is a cookie that has the client's username, but rule #1:
     //NEVER TRUST THE USER. The user can't fake the session cookie, they can

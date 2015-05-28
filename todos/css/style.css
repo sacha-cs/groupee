@@ -1,0 +1,184 @@
+body {
+  background: #2c3e50;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: 'Helvetica', sans-serif;
+  overflow-x: hidden;
+}
+
+#wrapper {
+  /*text-align: center;*/
+  position: relative;
+  width: 100%;
+  height: 60%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  display:block;
+}
+
+.name {
+  word-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  font-weight: 300;
+  font-size: 21px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  width: 142px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  text-shadow: rgba(0, 0, 0, 0.247059) 0px 7px 15px;
+}
+
+
+#todo {
+  float: left;
+  position: relative;
+  background-color: #4B6B8B;
+  width: 300px;
+  height: 500px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 80px;
+  box-shadow: 0px 0px 30px 0px black; 
+  border-radius: 10px;
+}
+
+#todos, #doings, #dones {
+    overflow:auto;
+    height: 85%;
+}
+
+#doing {
+  float: left;
+  position: relative;
+  background-color: #4B6B8B;
+  width: 300px;
+  height: 500px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 80px;
+  box-shadow: 0px 0px 30px 0px black; 
+  border-radius: 10px;
+}
+
+#done {
+  float: left;
+  position: relative;
+  background-color: #4B6B8B;
+  width: 300px;
+  height: 500px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 80px;
+  box-shadow: 0px 0px 30px 0px black; 
+  border-radius: 10px;
+}
+
+#done .task {
+  text-decoration: line-through;
+}
+
+#new-todo {
+  padding: 10px;
+  background-color: #F7F7F7;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  margin-top: 20px;
+  margin-left: 50px;
+  width: 300px;
+
+}
+
+#todo-item {
+  height: 44px;
+  font-size: 16px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+#todo-item:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+#add-todo {
+  height: 36px;
+  font-size: 14px;
+  font-weight: 700;
+  width: 30%;
+  margin-top: 10px;
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #4d90fe;
+}
+
+#add-todo:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #357ae8;
+}
+
+.todo-text {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+
+#error {
+  text-shadow: 0px 0px 30px 0px white; 
+  color: #c33;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+#success {
+  color: blue;
+  font-weight: 400;
+  opacity: 0.7;
+}
+
+.task {
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #F7F7F7;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  word-break: break-word;
+}
+
+div ::-webkit-scrollbar {
+  width: 5px;  /* for vertical scrollbars */
+}
+
+div ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+div ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+}
