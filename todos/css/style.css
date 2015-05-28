@@ -168,6 +168,7 @@ body {
   margin-right: auto;
   width: 80%;
   word-break: break-word;
+  position:relative;
 }
 
 #delete {
@@ -176,7 +177,8 @@ body {
 
 .task:hover #delete {
   display: initial;
-  float:right;
+  right:5px;
+  position: absolute;
   width:20px;
   height:20px;
 }
