@@ -25,7 +25,9 @@ var anonAvailable = ["login"];
 
 var port = process.argv[2];
 if(!port)
-    port = process.env.PORT | 8080;
+    port = 8080;
+else if(port == "heroku")
+    port = process.env.PORT 
 else
     port = parseInt(port);
 
