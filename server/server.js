@@ -29,8 +29,7 @@ if(!port)
 else
     port = parseInt(port);
 
-console.log(process.env.PORT);
-http.createServer(serverListener).listen(port);
+http.createServer(serverListener).listen(process.env.PORT);
 console.log("Listening on port " + port);
 
 function serverListener(request, response) {
