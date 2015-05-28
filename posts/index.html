@@ -1,15 +1,21 @@
 <html>
     <head>
         <link rel="stylesheet" href="css/style.css">
+        <script src="js.js"></script>
         <title>Posts</title>
     </head>
     
     <body>
         <div class="content">
-            <ul>
+            <div id="controller">
+                <div id="new-note" onclick="addNote()"><p>New Note</p></div>
+                <div id="save"><p>Save</p></div>
+            </div>        
+            <ul id="notes">
+                <!-- .. INSERT NOTES HERE ..
                 <li>
                     <a href="#">
-                        <h2>Title #1</h2>
+                        <textarea rows="1" cols="18">Title #1</textarea>
                         <p>Text Content</p>
                     </a>
                 </li>
@@ -42,7 +48,7 @@
                         <h2>Title #2</h2>
                         <p>Text Content</p>
                     </a>
-                </li>
+                </li>!-->
             </ul>
         </div>
     </body>
