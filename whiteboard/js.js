@@ -367,6 +367,10 @@ function updateWhiteboard(allUpdates) {
             if (!appending && update.tool == "Pen") {
                 update.last = update.data[0]
             }
+
+            if(!appending) {
+                update.start = (new Date()).getTime();
+            }
             //If we're playing back/getting all updates
             if(playingBack) {
                 update.start=playbackEndTime;
@@ -402,35 +406,22 @@ function drawUpdates() {
                     ctx.stroke();
                     updatesToDraw[i].last = data.shift();
                 } else if(updatesToDraw[i].tool == "Text") {
-                    if(updatesToDraw[i].lastUpdate && !data[1]) {
+                    tempToDraw[i] = {data: data.shift(),
+                                     pen: updatesToDraw[i].pen,
+                                     func: function(data, ctx) {
                         fillTextMultiLine(ctx, 
-                                          decodeURIComponent(data[0].text), 
-                                          data[0].x, data[0].y);
-                        delete tempToDraw[i];
-                    } else {
-                        tempToDraw[i] = function(data, ctx) {
-                            fillTextMultiLine(ctx, 
-                                              decodeURIComponent(data.text), 
-                                              data.x, data.y);
-                        }
-                    }
-                    data.shift();
+                                          decodeURIComponent(data.text), 
+                                          data.x, data.y);
+                    }};
                 } else if(updatesToDraw[i].tool == "Rectangle") {
-                    tempToDraw[i] = function(data, ctx) {
+                    tempToDraw[i] = {data: data.shift(),
+                                     pen: updatesToDraw[i].pen,
+                                     func: function(data, ctx) {
                         ctx.beginPath();
                         ctx.rect(data.x, data.y, parseFloat(data.width), parseFloat(data.height));
                         ctx.fill();
                         ctx.stroke();
-                    }
-                    var last = data.shift();
-                    if(updatesToDraw[i].lastUpdate && !data[0]) {
-                        setPen(ctx, updatesToDraw[i].pen);
-                        ctx.beginPath();
-                        ctx.rect(last.x, last.y, parseFloat(last.width), parseFloat(last.height));
-                        ctx.fill();
-                        ctx.stroke();
-                        delete tempToDraw[i];
-                    }
+                    }};
                 }
             }
             if(updatesToDraw[i].lastUpdate == true && data.length == 0) {
@@ -444,9 +435,15 @@ function drawUpdates() {
     clearCtx(netCtx);
     for (var i in tempToDraw) {
         if (tempToDraw.hasOwnProperty(i)) {
-
-            setPen(netCtx, updatesToDraw[i].pen);
-            tempToDraw[i](updatesToDraw[i].data[0], netCtx);
+            var ctxToUse = netCtx;
+            if(!updatesToDraw[i]) {
+                ctxToUse = ctx;
+            }
+            setPen(ctxToUse, tempToDraw[i].pen);
+            tempToDraw[i].func(tempToDraw[i].data, ctxToUse);
+            if(!updatesToDraw[i]) {
+                delete tempToDraw[i];
+            }
         }
     }
 }
