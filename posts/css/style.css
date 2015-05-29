@@ -145,18 +145,7 @@ ul li textarea {
     margin-right:15px;
 }
 
-#save {
-    display:block;
-    float:left;
-}
-
 #new-note:hover, #new-note:focus {
-    -webkit-transform: scale(1.2);
-    -webkit-transition:-webkit-transform .15s linear;
-    position:relative;
-}
-
-#save:hover, #save:focus {
     -webkit-transform: scale(1.2);
     -webkit-transition:-webkit-transform .15s linear;
     position:relative;

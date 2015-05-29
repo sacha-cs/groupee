@@ -1,4 +1,5 @@
 postHandler.addHandler("login/login", login);
+postHandler.addHandler("posts/add_note", addNote);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("fileupload/upload", uploadAvatar);
@@ -368,3 +369,31 @@ function setGroup(request, response, params) {
             }, params.group_id);
         });
 }
+
+function addNote(request, response, params) {
+
+	pg.connect(connectionString, function(err, client, done) {
+		if(err) { return utils.respondError(err, response); }
+
+		var groupId = utils.getViewingGroup(request);
+		var username = utils.getUser(request);
+        var noteTitle = params.noteTitle;
+        var noteContent = params.noteContent;
+
+		var insertNoteQuery = "INSERT INTO note_taker(group_id, username) " +
+							  "VALUES('" + groupId + "', '" + username + "') RETURNING note_id";
+
+	 	client.query(insertNoteQuery, function(err, result) {
+			var noteId = result.rows[0].note_id;
+			if (err) { return utils.respondError(err, response); }
+            var insertNoteInfoQuery = "INSERT INTO note(note_id, note_title, note_content) " +
+                                      "VALUES(" + noteId + ", '" + noteTitle + "', '" + noteContent + "')";
+            client.query(insertNoteInfoQuery, function(err, result) {
+                done(client);
+                if (err) { return utils.respondError(err, response); }
+                return utils.respondPlain(response, "Y");
+            })
+		})
+	})
+}
+
