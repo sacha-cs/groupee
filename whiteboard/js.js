@@ -56,6 +56,10 @@ function startWhiteboard() {
                textSize: 20};
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
+    tempCtx.lineJoin = "round";
+    tempCtx.lineCap = "round";
+    netCtx.lineJoin = "round";
+    netCtx.lineCap = "round";
 
     tool = "Pen";
 
@@ -98,6 +102,17 @@ function startWhiteboard() {
                 addDataToSend();
             }
         }
+        if (tool == "Line") {
+            if(mouseDown) {
+                clearCtx(tempCtx);
+                setUserPreferences(tempCtx);
+                tempCtx.beginPath();
+                tempCtx.moveTo(clickPos.x, clickPos.y);
+                tempCtx.lineTo(mousePos.x, mousePos.y);
+                tempCtx.stroke();
+                addDataToSend();
+            }
+        }
     });
 
     tempCanvas.addEventListener("mousedown", function() {
@@ -112,6 +127,8 @@ function startWhiteboard() {
             started = true;
             lastMousePos = mousePos;
         } else if(tool == "Rectangle") {
+            started = true;
+        } else if(tool == "Line") {
             started = true;
         }
         startedUsingTool();
@@ -130,6 +147,15 @@ function startWhiteboard() {
             ctx.rect(clickPos.x, clickPos.y, width, height);
             ctx.fill();
             ctx.stroke();
+        }
+        if(tool == "Line") {
+            clearCtx(tempCtx);
+            setUserPreferences(ctx);
+            ctx.beginPath();
+            ctx.moveTo(clickPos.x, clickPos.y);
+            ctx.lineTo(mousePos.x, mousePos.y);
+            ctx.stroke();
+            addDataToSend();
         }
 
 
@@ -195,6 +221,12 @@ function selectText() {
 
 function selectRectangle() {
     tool = "Rectangle";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor="crosshair";
+}
+
+function selectLine() {
+    tool = "Line";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="crosshair";
 }
@@ -304,6 +336,11 @@ function addDataToSend() {
         data.y = clickPos.y;
         data.width = mousePos.x - clickPos.x;
         data.height = (mousePos.y - clickPos.y);
+    } else if(tool == "Line") {
+        data.x = clickPos.x;
+        data.y = clickPos.y;
+        data.mouseX = mousePos.x;
+        data.mouseY = mousePos.y;
     }
     data.time = toolSendTime();
     toSend.data.push(data);
@@ -420,6 +457,15 @@ function drawUpdates() {
                         ctx.beginPath();
                         ctx.rect(data.x, data.y, parseFloat(data.width), parseFloat(data.height));
                         ctx.fill();
+                        ctx.stroke();
+                    }};
+                } else if(updatesToDraw[i].tool == "Line") {
+                    tempToDraw[i] = {data: data.shift(),
+                                     pen: updatesToDraw[i].pen,
+                                     func: function(data, ctx) {
+                        ctx.beginPath();
+                        ctx.moveTo(data.x, data.y);
+                        ctx.lineTo(data.mouseX, data.mouseY);
                         ctx.stroke();
                     }};
                 }
