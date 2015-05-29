@@ -59,7 +59,7 @@ function sendUpdates(request, response, params, checkForNew)
             last++;
             continue;
         }
-        response.write("id-" + updates[last].id + "@" + "lastUpdate-" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
+        response.write("id+" + updates[last].id + "@" + "lastUpdate+" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
         last++;
     }
     if(params.allUpdates) 

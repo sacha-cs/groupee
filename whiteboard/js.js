@@ -366,12 +366,14 @@ function updateWhiteboard(allUpdates) {
             for(var i = 0; i < res.length; i++) {
                 var keyAndValue = res[i].split("+");
                 update[keyAndValue[0]] = keyAndValue[1];
+                console.log(keyAndValue[0] + "=" + keyAndValue[1]);
             }
 
             //Correct some strings
             if(update.lastUpdate == "true") update.lastUpdate = true;
             else update.lastUpdate = false;
 
+            console.log("Last update? " + update.lastUpdate);
 
             //If we have data
             if(update.data) {
@@ -412,8 +414,11 @@ function updateWhiteboard(allUpdates) {
                 }
                 if(!appending)
                     update.start = playbackStartTime;
+
                 if (!appending && update.tool == "Pen") {
+                    console.log("Setting last...");
                     update.last = update.data[0]
+                    console.log(update.last);
                 }
                 //If we're playing back/getting all updates
                 if(playingBack) {
@@ -482,7 +487,7 @@ function drawUpdates() {
                     var last = data.shift();
                     if(updatesToDraw[i].lastUpdate && !data[0]) {
                         ctx.beginPath();
-                        ctx.rect(last.x, last.y, parseFloat(last.width), parseFloat(ddataata.height));
+                        ctx.rect(last.x, last.y, parseFloat(last.width), parseFloat(last.height));
                         ctx.fill();
                         ctx.stroke();
                         delete tempToDraw[i];
