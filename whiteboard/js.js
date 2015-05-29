@@ -113,6 +113,21 @@ function startWhiteboard() {
                 addDataToSend();
             }
         }
+        if (tool == "Circle") {
+            if(mouseDown) {
+                clearCtx(tempCtx);
+                setUserPreferences(tempCtx);
+                var centre = {};
+                centre.x = (clickPos.x + mousePos.x) / 2;
+                centre.y = (clickPos.y + mousePos.y) / 2;
+                var xDiff = mousePos.x - clickPos.x;
+                var yDiff = mousePos.y - clickPos.y;
+                var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
+                drawCircle(tempCtx, centre, radius);
+                drawCircleOutline(tempCtx, centre, radius);
+                addDataToSend();
+            }
+        }
     });
 
     tempCanvas.addEventListener("mousedown", function() {
@@ -129,6 +144,8 @@ function startWhiteboard() {
         } else if(tool == "Rectangle") {
             started = true;
         } else if(tool == "Line") {
+            started = true;
+        } else if(tool ==  "Circle") {
             started = true;
         }
         startedUsingTool();
@@ -157,10 +174,21 @@ function startWhiteboard() {
             ctx.stroke();
             addDataToSend();
         }
-
-
         if(tool != "Text") {
             finishedUsingTool();
+        }
+        if(tool == "Circle") {
+            clearCtx(tempCtx);
+            setUserPreferences(ctx);
+            var centre = {};
+            centre.x = (clickPos.x + mousePos.x) / 2;
+            centre.y = (clickPos.y + mousePos.y) / 2;
+            var xDiff = mousePos.x - clickPos.x;
+            var yDiff = mousePos.y - clickPos.y;
+            var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
+            drawCircle(ctx, centre, radius);
+            drawCircleOutline(ctx, centre, radius);
+            addDataToSend();
         }
     });
     textHidden.addEventListener("input", drawTextTemp);
@@ -227,6 +255,12 @@ function selectRectangle() {
 
 function selectLine() {
     tool = "Line";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor="crosshair";
+}
+
+function selectCircle() {
+    tool = "Circle";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="crosshair";
 }
@@ -341,6 +375,13 @@ function addDataToSend() {
         data.y = clickPos.y;
         data.mouseX = mousePos.x;
         data.mouseY = mousePos.y;
+    } else if(tool == "Circle") {
+        data.x = (clickPos.x + mousePos.x) / 2;
+        data.y = (clickPos.y + mousePos.y) / 2;
+        var xDiff = mousePos.x - clickPos.x;
+        var yDiff = mousePos.y - clickPos.y;
+        data.radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
+        console.log(data.radius);
     }
     data.time = toolSendTime();
     toSend.data.push(data);
@@ -467,6 +508,14 @@ function drawUpdates() {
                         ctx.moveTo(data.x, data.y);
                         ctx.lineTo(data.mouseX, data.mouseY);
                         ctx.stroke();
+                    }};
+                } else if(updatesToDraw[i].tool == "Circle") {
+                    tempToDraw[i] = {data: data.shift(),
+                                     pen: updatesToDraw[i].pen,
+                                     func: function(data, ctx) {
+                        console.log(data);
+                        drawCircle(ctx, data, data.radius);
+                        drawCircleOutline(ctx, data, data.radius);
                     }};
                 }
             }
