@@ -54,23 +54,32 @@ body {
 }
 
 #chat-toggle {
+  background-color: #c3d7df;
 	display: block;
-	background-image: url(https://cdn0.iconfinder.com/data/icons/glyphpack/26/double-arrow-right-128.png);
-	background-size: 100%;
-	background-position: center; 
-	background-repeat: no-repeat;
-    /*background-attachment: fixed;*/
-	/*background-color: gray;*/
-	width: 15px;
+	width: 50px;
 	height: 100%;
   z-index: 2;
   position: absolute;
   left: 285px;
-  -webkit-transition: left -1.5s ease;
+  -webkit-transition: left 0.5s ease;
   -moz-transition: left 0.5s ease;
   -o-transition: left 0.5s ease;
   transition: left 0.5s ease;
 }
+
+#chat-toggle-icon {
+  height:50px;
+  background-color: #4C687C;
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+
+#chat-toggle-icon img {
+  width: 40px;
+  margin: 5px;
+}
+
 
 li {
   padding: 0.5rem;
@@ -193,14 +202,14 @@ li {
 #content {
 	position: absolute;
 	top: 50px;
-	left: 300px;
+	left: 350px;
 	min-height: calc(100% - 50px);
 	min-width: 350px;
-	-webkit-transition: left 0.5s ease;
-    -moz-transition: left 0.5s ease;
-    -o-transition: left 0.5s ease;
-    transition: left 0.5s ease;
-  	background: #c3d7df;
+	-webkit-transition: left 1.5s ease;
+  -moz-transition: left 0.5s ease;
+  -o-transition: left 0.5s ease;
+  transition: left 0.5s ease;
+  background: #c3d7df;
 }
 
 
