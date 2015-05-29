@@ -18,7 +18,7 @@ var userPen;
 var tool;
 
 var lastMousePos;
-var textPos;
+var clickPos;
 var showCursor;
 
 //Data for sending to server
@@ -70,45 +70,70 @@ function startWhiteboard() {
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
         if(tool == "Pen") {
-            tempCtx.clearRect(0, 0, canvas.width, canvas.height);
+            clearCtx(tempCtx);
             tempCtx.fillStyle = userPen.colour;
             tempCtx.strokeStyle = "black";
             tempCtx.lineWidth = 1;
             drawCircle(tempCtx, mousePos, userPen.thickness/2);
             drawCircleOutline(tempCtx, mousePos, userPen.thickness/2);
             if(mouseDown) {
-                ctx.strokeStyle = userPen.colour;
-                ctx.lineWidth = userPen.thickness;
+                setUserPreferences(ctx);
                 ctx.beginPath();
                 ctx.moveTo(lastMousePos.x, lastMousePos.y);
                 ctx.lineTo(mousePos.x, mousePos.y);
                 ctx.stroke();
                 lastMousePos = mousePos;
-                addDataToSend("x:"+mousePos.x+";y:"+mousePos.y);
+                addDataToSend();
+            }
+        }
+        if (tool == "Rectangle") {
+            if(mouseDown) {
+                clearCtx(tempCtx);
+                setUserPreferences(tempCtx);
+                var width = mousePos.x - clickPos.x;
+                var height = mousePos.y - clickPos.y;
+                tempCtx.beginPath();
+                tempCtx.rect(clickPos.x, clickPos.y, width, height);
+                tempCtx.fill();
+                tempCtx.stroke();
+                addDataToSend();
             }
         }
     });
 
     tempCanvas.addEventListener("mousedown", function() {
         mouseDown = true;
+        clickPos = mousePos;
         if(tool == "Text") {
             if(started)
                 drawTextPermenent();
-            textPos = mousePos;
-            startedUsingTool();
             setTimeout(function () { textHidden.focus() }, 100);
             textHidden.value = "";
         } else if(tool == "Pen") {
             started = true;
-            startedUsingTool();
             lastMousePos = mousePos;
-            addDataToSend();
+        } else if(tool == "Rectangle") {
+            started = true;
         }
+        startedUsingTool();
+        addDataToSend();
 
     });
 
     tempCanvas.addEventListener("mouseup", function(evt) {
         mouseDown = false;
+        if(tool == "Rectangle") {
+            setUserPreferences(ctx);
+            clearCtx(tempCtx);
+            var width = mousePos.x - clickPos.x;
+            var height = mousePos.y - clickPos.y;
+            ctx.beginPath();
+            ctx.rect(clickPos.x, clickPos.y, width, height);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+
         if(tool != "Text") {
             finishedUsingTool();
         }
@@ -146,6 +171,13 @@ function setUserTextSize(size) {
         userPen.textSize = size;
 }
 
+function setUserPreferences(ctx) {
+    ctx.strokeStyle = userPen.colour;
+    ctx.lineWidth = userPen.thickness;
+    ctx.fillStyle = userPen.fillColour;
+    ctx.font = "" + userPen.textSize + "px Arial";
+}
+
 function selectPen() {
     tool = "Pen";
     document.getElementById("currTool").innerHTML = tool;
@@ -158,12 +190,17 @@ function selectText() {
     document.getElementById("wrapper").style.cursor="text";
 }
 
+function selectRectangle() {
+    tool = "Rectangle";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor="crosshair";
+}
+
 function drawTextTemp(e, isCaretFlash) {
     started = true;
     //Set the correct text style
-    tempCtx.fillStyle = userPen.fillColour;
-    tempCtx.font = "" + userPen.textSize + "px Arial";
-    tempCtx.clearRect(0, 0, canvas.width, canvas.height);
+    setUserPreferences(tempCtx);
+    clearCtx(tempCtx);
 
     //Get the text with the caret in the right place
     var textToShow = textHidden.value;
@@ -176,7 +213,7 @@ function drawTextTemp(e, isCaretFlash) {
     textToShow = textToShow.substr(0, caretPos) + caret + textToShow.substr(caretPos);
     
     //Write the text
-    fillTextMultiLine(tempCtx, textToShow, textPos.x, textPos.y);
+    fillTextMultiLine(tempCtx, textToShow, clickPos.x, clickPos.y);
 
     //Add data to send.
     if(textHidden.value)
@@ -191,10 +228,9 @@ var cursorInterval = setInterval(function() {
 
 function drawTextPermenent() {
     if(tool == "Text" && started) {
-        tempCtx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = userPen.fillColour;
-        ctx.font = "" + userPen.textSize + "px Arial";
-        fillTextMultiLine(ctx, textHidden.value, textPos.x, textPos.y);
+        clearCtx(tempCtx);
+        setUserPreferences(ctx);
+        fillTextMultiLine(ctx, textHidden.value, clickPos.x, clickPos.y);
         if(textHidden.value)
             addDataToSend();
         finishedUsingTool();
@@ -222,6 +258,9 @@ function drawCircleOutline(ctx, centre, radius) {
     ctx.stroke(circle);
 }
 
+function clearCtx(ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
 function startedUsingTool() {
     toSend = {colour:userPen.colour,
@@ -255,7 +294,12 @@ function addDataToSend() {
     if(tool == "Pen")
         data = "x:" + mousePos.x + ";y:" + mousePos.y;
     else if(tool == "Text")
-        data = "x:" + textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value);
+        data = "x:" + clickPos.x + ";y:" + clickPos.y + 
+               ";text:" + encodeURIComponent(textHidden.value);
+    else if(tool == "Rectangle")
+        data = "x:" + clickPos.x + ";y:" + clickPos.y + 
+               ";width:"+(mousePos.x - clickPos.x) +
+               ";height:"+(mousePos.y - clickPos.y);
     lastData = data;
     toSend.data += data + ";time:"+toolSendTime() + "\n";
 }
@@ -265,12 +309,12 @@ function sendToolUpdates(lastUpdate, ensureSent) {
         ensureSent = false;
 
     var payload = "justStarted=" + toSend.justStarted +
-                 "&data=colour-" + toSend.colour +
-                 "@thickness-" + toSend.thickness +
-                 "@fillColour-" + toSend.fillColour +
-                 "@textSize-" + toSend.textSize +
-                 "@tool-" + tool +
-                 "@data-" + toSend.data;
+                 "&data=colour+" + toSend.colour +
+                 "@thickness+" + toSend.thickness +
+                 "@fillColour+" + toSend.fillColour +
+                 "@textSize+" + toSend.textSize +
+                 "@tool+" + tool +
+                 "@data+" + toSend.data;
 
     if(lastUpdate)
         payload += "&lastUpdate=true";
@@ -283,7 +327,7 @@ function sendToolUpdates(lastUpdate, ensureSent) {
 
 
     var aClient = new HttpClient(ensureSent);
-    aClient.post('update', payload, function (repsonse) { }, ensureSent);
+    aClient.post('update', payload, function (response) { }, ensureSent);
 }
 
 function updateWhiteboard(allUpdates) {
@@ -296,7 +340,7 @@ function updateWhiteboard(allUpdates) {
         /*The response is the form:
           lastUpdate<>response1\response2\...\responseN(<>allUpdates)
           where a response is of the form:
-          key-value@key-value@...@data-updateData
+          key+value@key+value@...@data+updateData
           where updateData has a form dependent on the tool, but usually
           key:value;key:value;...;key:value\n */
         var res = response.split("<>");
@@ -313,13 +357,14 @@ function updateWhiteboard(allUpdates) {
 
         var responses = res[1].split("\\");
         for(var k = 0; k < responses.length; k++) {
+            console.log(responses[k]);
             //The new update object.
             var update = {};
 
             //Split up the update information.
             res = responses[k].split("@");
             for(var i = 0; i < res.length; i++) {
-                var keyAndValue = res[i].split("-");
+                var keyAndValue = res[i].split("+");
                 update[keyAndValue[0]] = keyAndValue[1];
             }
 
@@ -359,7 +404,6 @@ function updateWhiteboard(allUpdates) {
                         var keyAndValue = info[i].split(":");
                         infoObject[keyAndValue[0]] = keyAndValue[1];
                     }
-
                     update.data.push(infoObject);
                     //Speed up text typing in playback mode.
                     if(playingBack && update.tool == "Text") {
@@ -392,7 +436,7 @@ function drawUpdates() {
             length++;
             var timePassed;
             if(playingBack) {
-                timePassed = (time - playbackStartTime) * 10 - updatesToDraw[i].start;
+                timePassed = (time - playbackStartTime) * 5 - updatesToDraw[i].start;
             } else {
                 timePassed = time - updatesToDraw[i].start;
             }
@@ -410,10 +454,6 @@ function drawUpdates() {
                     ctx.stroke();
                     updatesToDraw[i].last = data.shift();
                 } else if(updatesToDraw[i].tool == "Text") {
-                    if(data[1] && timePassed > data[1].time) {
-                        data.shift();
-                        continue;
-                    }
                     
                     if(updatesToDraw[i].lastUpdate && !data[1]) {
                         fillTextMultiLine(ctx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
@@ -423,15 +463,30 @@ function drawUpdates() {
                             fillTextMultiLine(ctx, decodeURIComponent(data.text), data.x, data.y);
                         }
                     }
-
-                    if(data[1]) {
-                        data[0].time = data[1].time;
-                    } else if (updatesToDraw[i].lastUpdate) {
+                    
+                    data.shift();
+                } else if(updatesToDraw[i].tool == "Rectangle") {
+                    if(data[1] && data[1].time < timePassed) {
                         data.shift();
-                    } else {
-                        data[0].time = parseInt(data[0].time) + 33;
+                        continue;
                     }
-
+                    tempToDraw[i] = function(data, ctx) {
+                        ctx.beginPath();
+                        console.log(data);
+                        console.log(data.width);
+                        console.log(parseFloat(data.width));
+                        ctx.rect(data.x, data.y, parseFloat(data.width), parseFloat(data.height));
+                        ctx.fill();
+                        ctx.stroke();
+                    }
+                    var last = data.shift();
+                    if(updatesToDraw[i].lastUpdate && !data[0]) {
+                        ctx.beginPath();
+                        ctx.rect(last.x, last.y, parseFloat(last.width), parseFloat(ddataata.height));
+                        ctx.fill();
+                        ctx.stroke();
+                        delete tempToDraw[i];
+                    }
                 }
             }
             if(updatesToDraw[i].lastUpdate == true && data.length == 0) {
@@ -443,7 +498,7 @@ function drawUpdates() {
     if(playingBack && length == 0)
         playingBack = false;
 
-    netCtx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCtx(netCtx);
     for (var i in tempToDraw) {
         if (tempToDraw.hasOwnProperty(i)) {
             netCtx.strokeStyle = updatesToDraw[i].colour;
@@ -453,10 +508,7 @@ function drawUpdates() {
             tempToDraw[i](updatesToDraw[i].data[0], netCtx);
         }
     }
-
-    /*netCanvases[canvasOffScreen].style.top = 0;
-    canvasOffScreen = 1 - canvasOffScreen;
-    netCtxs[canvasOffScreen].clearRect(0, 0, canvas.width, canvas.height);*/
+    console.log(playingBack);
 }
 
 window.onbeforeunload = function() {
