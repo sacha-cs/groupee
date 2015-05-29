@@ -368,3 +368,4 @@ function setGroup(request, response, params) {
             }, params.group_id);
         });
 }
+

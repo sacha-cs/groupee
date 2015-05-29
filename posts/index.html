@@ -5,50 +5,13 @@
         <title>Posts</title>
     </head>
     
-    <body>
+    <body onload="getAllNotes()">
         <div class="content">
             <div id="controller">
                 <div id="new-note" onclick="addNote()"><p>New Note</p></div>
-                <div id="save"><p>Save</p></div>
+                <div id="error"></div>
             </div>        
             <ul id="notes">
-                <!-- .. INSERT NOTES HERE ..
-                <li>
-                    <a href="#">
-                        <textarea rows="1" cols="18">Title #1</textarea>
-                        <p>Text Content</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <h2>Title #2</h2>
-                        <p>Text Content</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <h2>Title #1</h2>
-                        <p>Text Content</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <h2>Title #2</h2>
-                        <p>Text Content</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <h2>Title #1</h2>
-                        <p>Text Content</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <h2>Title #2</h2>
-                        <p>Text Content</p>
-                    </a>
-                </li>!-->
             </ul>
         </div>
     </body>
