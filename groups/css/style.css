@@ -1,5 +1,6 @@
 body {
-  background: #2c3e50;
+  margin:0;
+  background: #c3d7df;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -21,7 +22,7 @@ body {
   word-wrap: break-word;
   -webkit-font-smoothing: antialiased;
   -webkit-user-select: none;
-  font-weight: 300;
+  font-weight: bold;
   font-size: 21px;
   color: rgb(255, 255, 255);
   text-align: center;
@@ -104,4 +105,26 @@ body {
     display: inline-block;
     height: 100%;
     vertical-align: middle;
+}
+
+#navbar {
+  z-index: 2;
+  background-color: #4C687C;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+}
+
+#navbar-home {
+    background-color: #3D5363;
+    float:left; 
+}
+
+#navbar-home img {
+  height:40px;
+  margin: 5px;
+}
+
+#navbar span {
+  display: inline-block;
 }
