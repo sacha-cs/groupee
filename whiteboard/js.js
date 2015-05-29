@@ -338,8 +338,8 @@ function updateWhiteboard(allUpdates) {
         
         lastUpdateNo = response.lastUpdateNo;
         
-        playbackStartTime = (new Date()).getTime();
         if(allUpdates) {
+            playbackStartTime = (new Date()).getTime();
             playingBack = true;
             playbackEndTime = 0;
         }
@@ -361,12 +361,12 @@ function updateWhiteboard(allUpdates) {
                     prev.lastUpdate = true;
                 }
                 prev.data = prev.data.concat(update.data);
+                update = prev;
             }
 
             if (!appending && update.tool == "Pen") {
                 update.last = update.data[0]
             }
-
             //If we're playing back/getting all updates
             if(playingBack) {
                 update.start=playbackEndTime;
@@ -387,7 +387,7 @@ function drawUpdates() {
             length++;
             var timePassed;
             if(playingBack) {
-                timePassed = (time - playbackStartTime) * 1 - updatesToDraw[i].start;
+                timePassed = (time - playbackStartTime) * 10 - updatesToDraw[i].start;
             } else {
                 timePassed = time - updatesToDraw[i].start;
             }
@@ -402,22 +402,20 @@ function drawUpdates() {
                     ctx.stroke();
                     updatesToDraw[i].last = data.shift();
                 } else if(updatesToDraw[i].tool == "Text") {
-                    
                     if(updatesToDraw[i].lastUpdate && !data[1]) {
-                        fillTextMultiLine(ctx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
+                        fillTextMultiLine(ctx, 
+                                          decodeURIComponent(data[0].text), 
+                                          data[0].x, data[0].y);
                         delete tempToDraw[i];
                     } else {
                         tempToDraw[i] = function(data, ctx) {
-                            fillTextMultiLine(ctx, decodeURIComponent(data.text), data.x, data.y);
+                            fillTextMultiLine(ctx, 
+                                              decodeURIComponent(data.text), 
+                                              data.x, data.y);
                         }
                     }
-                    
                     data.shift();
                 } else if(updatesToDraw[i].tool == "Rectangle") {
-                    if(data[1] && data[1].time < timePassed) {
-                        data.shift();
-                        continue;
-                    }
                     tempToDraw[i] = function(data, ctx) {
                         ctx.beginPath();
                         ctx.rect(data.x, data.y, parseFloat(data.width), parseFloat(data.height));
@@ -443,7 +441,6 @@ function drawUpdates() {
     }
     if(playingBack && length == 0)
         playingBack = false;
-
     clearCtx(netCtx);
     for (var i in tempToDraw) {
         if (tempToDraw.hasOwnProperty(i)) {
