@@ -209,8 +209,10 @@ function register(request, response, params) {
                 
                 // New user has just been created. 
                 //createAvatar(username);
-      
-                return utils.respondPlain(response, "YRegisteredSuccessfully");
+                // login automatically after registration
+                var user_info = {"username" : username};
+                var seshCookie = createSessionCookie(user_info);
+                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
             });
         });
     });

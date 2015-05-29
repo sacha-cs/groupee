@@ -2,7 +2,7 @@ body {
 	width: 100%;
 	margin: 0px;
 	font-family: 'Helvetica', sans-serif;
-	background: #2c3e50;
+	background: #c3d7df;
 }
 
 /* NAVBAR STYLING */
@@ -196,7 +196,7 @@ li {
     -moz-transition: left 0.5s ease;
     -o-transition: left 0.5s ease;
     transition: left 0.5s ease;
-  	background: #2c3e50;
+  	background: #c3d7df;
 }
 
 
