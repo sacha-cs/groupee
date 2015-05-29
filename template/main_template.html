@@ -10,13 +10,16 @@
     <body onload="startChat(); templateLoaded()">
 
     <div id="navbar">
-        <span id="navbar-home">
+        <span onclick="window.location='/home/'" id="navbar-home">
            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
         </span>
         <span id="navbar-group">
         </span>
         <span id="navbar-right">
             <span id="navbar-self">
+            </span>
+            <span onclick="window.location='/groups/'" id="navbar-groups">
+                Go to your groups
             </span>
             <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
                 <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/logout.png">
