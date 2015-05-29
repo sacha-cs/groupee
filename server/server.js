@@ -58,7 +58,6 @@ function serverListener(request, response) {
                 });
             } else {
                 var message = "";
-                console.log("NOT USING!");
                 request.on("data", function(data) {
                     message += data.toString('utf-8');
                     if(message.length > 1e7) {

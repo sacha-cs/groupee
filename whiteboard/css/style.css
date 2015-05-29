@@ -1,21 +1,13 @@
-canvas { border: 1px solid black; }
+canvas { 
+    border: 1px solid black; 
+    position:absolute;
+}
 
 #wrapper {
     position:relative;
     width:800px;
     height:500px;
     cursor:none;
-}
-
-#board {
-    position:absolute;
-    border: 3px solid red;
-}
-
-#tempBoard {
-    position:absolute;
-    border: 3px solid green;
-    top:0px;
 }
 
 #textHidden {

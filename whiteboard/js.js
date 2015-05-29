@@ -5,8 +5,9 @@ var canvas;
 var ctx;
 var tempCanvas;
 var tempCtx;
-var networkTempCanvas;
-var networkTempCtx;
+var netCanvas;
+var netCtx;
+var canvasOffScreen = 1;
 
 //The hidden text input that is used for text input.
 var textHidden;
@@ -31,6 +32,7 @@ var playbackStartTime;
 var playbackEndTime;
 var writtenToNetworkTemp = false;
 var lastData;
+var tempToDraw = {};
 
 
 function startWhiteboard() {
@@ -42,9 +44,11 @@ function startWhiteboard() {
     tempCanvas = document.getElementById("tempBoard");
     if(tempCanvas.getContext)
         tempCtx = tempCanvas.getContext('2d');
-    networkTempCanvas = document.getElementById("tempBoard");
-    if(networkTempCanvas.getContext)
-        networkTempCtx = networkTempCanvas.getContext('2d');
+
+    netCanvas = document.getElementById("networkTempBoard0");
+    if(netCanvas.getContext)
+        netCtx = netCanvas.getContext('2d');
+
     textHidden = document.getElementById("textHidden");
 
     userPen = {colour: "rgb(255, 0, 0)", 
@@ -61,6 +65,8 @@ function startWhiteboard() {
     setInterval(drawUpdates, 33);
     updateWhiteboard(true);
 
+
+    /* TODO: factor these out into their own function */
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
         if(tool == "Pen") {
@@ -96,7 +102,7 @@ function startWhiteboard() {
             started = true;
             startedUsingTool();
             lastMousePos = mousePos;
-            addDataToSend("x:"+mousePos.x+";y:"+mousePos.y);
+            addDataToSend();
         }
 
     });
@@ -113,6 +119,44 @@ function startWhiteboard() {
         setTimeout(drawTextTemp, 10)});
 
 } 
+
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+/* Set drawing variables */
+function setUserFillColour(colour) {
+    userPen.fillColour = colour;
+}
+
+function setUserPenColour(colour) {
+    userPen.colour = colour;
+}
+
+function setUserPenThickness(thickness) {
+    userPen.thickness = thickness;
+}
+
+function setUserTextSize(size) {
+    if(size)
+        userPen.textSize = size;
+}
+
+function selectPen() {
+    tool = "Pen";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor="none";
+}
+
+function selectText() {
+    tool = "Text";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor="text";
+}
 
 function drawTextTemp(e, isCaretFlash) {
     started = true;
@@ -136,8 +180,14 @@ function drawTextTemp(e, isCaretFlash) {
 
     //Add data to send.
     if(textHidden.value)
-        addDataToSend("x:" +textPos.x + ";y:" + textPos.y + ";text:" + encodeURIComponent(textHidden.value));
+        addDataToSend();
 }
+
+var cursorInterval = setInterval(function() { 
+    showCursor = !showCursor;
+    if(tool=="Text" && document.activeElement == textHidden)
+        drawTextTemp(null, true);
+     }, 500);
 
 function drawTextPermenent() {
     if(tool == "Text" && started) {
@@ -146,28 +196,18 @@ function drawTextPermenent() {
         ctx.font = "" + userPen.textSize + "px Arial";
         fillTextMultiLine(ctx, textHidden.value, textPos.x, textPos.y);
         if(textHidden.value)
-            addDataToSend("x:" +textPos.x + ";y:" + textPos.y + ";text:"  );
-        console.log("Finished drawing text.");
+            addDataToSend();
         finishedUsingTool();
     }
 }
 
-function setUserFillColour(colour) {
-    userPen.fillColour = colour;
-}
-
-function setUserPenColour(colour) {
-    userPen.colour = colour;
-}
-
-function setUserPenThickness(thickness) {
-    userPen.thickness = thickness;
-}
-
-function setUserTextSize(size) {
-    if(size)
-        userPen.textSize = size;
-
+function fillTextMultiLine(ctx, text, x, y) {
+    var lineHeight = ctx.measureText("M").width * 1.2;
+    var lines = text.split("\n");
+    for (var i = 0; i < lines.length; ++i) {
+        ctx.fillText(lines[i], x, y);
+        y += lineHeight;
+    }
 }
 
 function drawCircle(ctx, centre, radius) {
@@ -182,41 +222,6 @@ function drawCircleOutline(ctx, centre, radius) {
     ctx.stroke(circle);
 }
 
-function fillTextMultiLine(ctx, text, x, y) {
-    var lineHeight = ctx.measureText("M").width * 1.2;
-    var lines = text.split("\n");
-    for (var i = 0; i < lines.length; ++i) {
-        ctx.fillText(lines[i], x, y);
-        y += lineHeight;
-    }
-}
-
-
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-function selectPen() {
-    tool = "Pen";
-    document.getElementById("currTool").innerHTML = tool;
-    document.getElementById("wrapper").style.cursor="none";
-}
-
-function selectText() {
-    tool = "Text";
-    document.getElementById("currTool").innerHTML = tool;
-    document.getElementById("wrapper").style.cursor="text";
-}
-
-var cursorInterval = setInterval(function() { 
-    showCursor = !showCursor;
-    if(tool=="Text" && document.activeElement == textHidden)
-        drawTextTemp(null, true);
-     }, 500);
 
 function startedUsingTool() {
     toSend = {colour:userPen.colour,
@@ -233,10 +238,9 @@ function startedUsingTool() {
 function finishedUsingTool(ensureSent) {
     if(!started) return;
     started = false;
+    
     if(ensureSent !== true)
         ensureSent = false;
-
-    console.log("Finished and ensure?: " + ensureSent);
 
     sendToolUpdates(true, ensureSent);    
     clearInterval(sendInterval);
@@ -257,6 +261,9 @@ function addDataToSend() {
 }
 
 function sendToolUpdates(lastUpdate, ensureSent) {
+    if(ensureSent !== true)
+        ensureSent = false;
+
     var payload = "justStarted=" + toSend.justStarted +
                  "&data=colour-" + toSend.colour +
                  "@thickness-" + toSend.thickness +
@@ -267,21 +274,24 @@ function sendToolUpdates(lastUpdate, ensureSent) {
 
     if(lastUpdate)
         payload += "&lastUpdate=true";
+    encodeURIComponent(payload);
 
+    //Clear the data so we don't send twice, and the next update is definitely
+    //not the first.
     toSend.data = "";
     toSend.justStarted = false;
-    if(ensureSent !== true)
-        ensureSent = false;
+
+
     var aClient = new HttpClient(ensureSent);
-    encodeURIComponent(payload);
-    aClient.post('update', payload, function (repsonse) { console.log("Got update"); }, ensureSent);
+    aClient.post('update', payload, function (repsonse) { }, ensureSent);
 }
 
 function updateWhiteboard(allUpdates) {
-    var client = new HttpClient();
     var query = "last=" + lastUpdateNo;
     if(allUpdates)
         query+="&allUpdates=true";
+
+    var client = new HttpClient();
     client.get('getUpdate?' + query, function(response) {
         /*The response is the form:
           lastUpdate<>response1\response2\...\responseN(<>allUpdates)
@@ -290,18 +300,18 @@ function updateWhiteboard(allUpdates) {
           where updateData has a form dependent on the tool, but usually
           key:value;key:value;...;key:value\n */
         var res = response.split("<>");
+        
         lastUpdateNo = parseInt(res[0]);
+        
         var allUpdates = false;
+        playbackStartTime = (new Date()).getTime();
         if(res[2]) {
             allUpdates = true;
+            playingBack = true;
             playbackEndTime = 0;
         }
+
         var responses = res[1].split("\\");
-        if(allUpdates) {
-            playbackStartTime = (new Date()).getTime();
-            console.log(response);
-        }
-        var totalToolUseTime = 0;
         for(var k = 0; k < responses.length; k++) {
             //The new update object.
             var update = {};
@@ -324,16 +334,14 @@ function updateWhiteboard(allUpdates) {
                 var points = update.data.split('\n');
                 
                 //Check if it's a new set of points or just a continuation.
-                console.log("Last update?" + update.lastUpdate);
-                var appending = true;
+                var appending;
                 if(!updatesToDraw[update.id]) {
                     appending = false;
                     updatesToDraw[update.id] = update;
                     update.data = [];
-                    console.log("new update!");
                 } else {
+                    appending = true;
                     if(update.lastUpdate == true) {
-                        console.log("Is last update of " + update.id);
                         updatesToDraw[update.id].lastUpdate = true;
                     }
                     update = updatesToDraw[update.id];
@@ -342,47 +350,34 @@ function updateWhiteboard(allUpdates) {
                 //Loop through each of the points
                 for(var j = 0; j < points.length; j++) {
                     var info = points[j].split(";");
+                    var infoObject = {};
                     
                     if(!info)
                         continue;
 
-                    //TODO: get keys and values automatically
-                    if(update.tool == "Pen") {
-                        update.data.push({x:info[0].split(":")[1],
-                                          y:info[1].split(":")[1],
-                                          time:info[2].split(":")[1]} );
-                        update.last = update.data[0];
-                    } else if(update.tool == "Text") {
-                        if(update.data.length==0) {
-                            console.log("Start time: " + info[3].split(":")[1]);
-                            console.log("data: " + info[2]);
-                        }
-                        update.data.push({x:info[0].split(":")[1],
-                                          y:info[1].split(":")[1],
-                                          text:info[2].split(":")[1],
-                                          time:info[3].split(":")[1]});
-                        if(allUpdates) {
-                            update.data[update.data.length -1].time = (update.data.length - 1) * 50;
-                        }
+                    for(var i = 0; i < info.length; i++) {
+                        var keyAndValue = info[i].split(":");
+                        infoObject[keyAndValue[0]] = keyAndValue[1];
+                    }
+
+                    update.data.push(infoObject);
+                    //Speed up text typing in playback mode.
+                    if(playingBack && update.tool == "Text") {
+                        update.data[update.data.length -1].time = (update.data.length - 1) * 50;
                     }
                 }
-
+                if(!appending)
+                    update.start = playbackStartTime;
+                if (!appending && update.tool == "Pen") {
+                    update.last = update.data[0]
+                }
                 //If we're playing back/getting all updates
-                if(allUpdates) {
-                    playingBack = true;
-                    update.playback = true;
+                if(playingBack) {
                     update.start=playbackEndTime;
                     if(update.lastUpdate == true) {
                         playbackEndTime+=parseInt(update.data[update.data.length-1].time);
                     }
-                } else {
-                    if(!appending) {
-                        console.log("Set start time!");
-                        update.start = (new Date()).getTime();
-                    }
                 }
-            } else {
-                console.log("no data but " + update.id);
             }
         }
         updateWhiteboard();
@@ -390,9 +385,6 @@ function updateWhiteboard(allUpdates) {
 }
 
 function drawUpdates() {
-    if(writtenToNetworkTemp) {
-        writtenToNetworkTemp = false;
-    }
     var time = (new Date()).getTime();
     var length = 0;
     for (var i in updatesToDraw) {
@@ -400,16 +392,18 @@ function drawUpdates() {
             length++;
             var timePassed;
             if(playingBack) {
-                timePassed = (time - playbackStartTime) * 1 - updatesToDraw[i].start;
+                timePassed = (time - playbackStartTime) * 10 - updatesToDraw[i].start;
             } else {
                 timePassed = time - updatesToDraw[i].start;
             }
 
             var data = updatesToDraw[i].data;
+            ctx.strokeStyle = updatesToDraw[i].colour;
+            ctx.lineWidth = updatesToDraw[i].thickness;
+            ctx.fillStyle = updatesToDraw[i].fillColour;
+            ctx.font = "" + updatesToDraw[i].textSize + "px Arial";
             while(data.length > 0 && data[0].time < timePassed) {
                 if(updatesToDraw[i].tool == "Pen") {
-                    ctx.strokeStyle = updatesToDraw[i].colour;
-                    ctx.lineWidth = updatesToDraw[i].thickness;
                     ctx.beginPath();
                     ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
                     ctx.lineTo(data[0].x, data[0].y);
@@ -420,22 +414,19 @@ function drawUpdates() {
                         data.shift();
                         continue;
                     }
-                    if(!writtenToNetworkTemp)
-                        networkTempCtx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    writtenToNetworkTemp = true;
-                    var textCtx = networkTempCtx;
                     if(updatesToDraw[i].lastUpdate && !data[1]) {
-                         textCtx = ctx;
+                        fillTextMultiLine(ctx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
+                        delete tempToDraw[i];
+                    } else {
+                        tempToDraw[i] = function(data, ctx) {
+                            fillTextMultiLine(ctx, decodeURIComponent(data.text), data.x, data.y);
+                        }
                     }
-                    textCtx.fillStyle = updatesToDraw[i].fillColour;
-                    textCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
-                    fillTextMultiLine(textCtx, decodeURIComponent(data[0].text), data[0].x, data[0].y);
 
                     if(data[1]) {
                         data[0].time = data[1].time;
                     } else if (updatesToDraw[i].lastUpdate) {
-                        console.log("done");
                         data.shift();
                     } else {
                         data[0].time = parseInt(data[0].time) + 33;
@@ -444,7 +435,6 @@ function drawUpdates() {
                 }
             }
             if(updatesToDraw[i].lastUpdate == true && data.length == 0) {
-                console.log("deleting...");
                 delete updatesToDraw[i];
             }
             //If the we are done with all the data, remove it
@@ -452,13 +442,27 @@ function drawUpdates() {
     }
     if(playingBack && length == 0)
         playingBack = false;
+
+    netCtx.clearRect(0, 0, canvas.width, canvas.height);
+    for (var i in tempToDraw) {
+        if (tempToDraw.hasOwnProperty(i)) {
+            netCtx.strokeStyle = updatesToDraw[i].colour;
+            netCtx.lineWidth = updatesToDraw[i].thickness;
+            netCtx.fillStyle = updatesToDraw[i].fillColour;
+            netCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
+            tempToDraw[i](updatesToDraw[i].data[0], netCtx);
+        }
+    }
+
+    /*netCanvases[canvasOffScreen].style.top = 0;
+    canvasOffScreen = 1 - canvasOffScreen;
+    netCtxs[canvasOffScreen].clearRect(0, 0, canvas.width, canvas.height);*/
 }
 
 window.onbeforeunload = function() {
     if(started) {
         addDataToSend();
         finishedUsingTool(true);
-        console.log("Finsihed...");
         var i = 0;
     }
 }

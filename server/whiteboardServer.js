@@ -20,8 +20,6 @@ function receivedUpdate(request, response, params)
     updates.push({data:params.data, user:utils.getUser(request), id:currentToolIds[seshCookie], lastUpdate:lastUpdate});
     lastUpdateNo++;
     utils.respondPlain(response, "");
-    console.log("??:" + params.lastUpdate);
-
 
     while(waitingRequests.length > 0) {
         var curr = waitingRequests[0];
