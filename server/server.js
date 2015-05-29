@@ -66,7 +66,7 @@ function serverListener(request, response) {
                     }
                 });
                 request.on("end", function() {
-                    handler(request, response, utils.splitParams(message));
+                    handler(request, response, message);
                 });
             }
         }

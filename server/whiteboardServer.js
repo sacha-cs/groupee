@@ -7,17 +7,18 @@ var lastUpdateNo = 0;
 var waitingRequests = [];
 var currentToolIds = {};
 
-function receivedUpdate(request, response, params)
+function receivedUpdate(request, response, payload)
 {
-    var seshCookie = utils.getSessionCookie(request)
-    if(params.justStarted == "true") {
+    var seshCookie = utils.getSessionCookie(request);
+    payload = JSON.parse(payload);
+
+    if(payload.justStarted) {
         currentToolIds[seshCookie] = Math.floor(Math.random() * 100000);
     }
-    var lastUpdate = false;
-    if(params.lastUpdate)
-        lastUpdate = true;
 
-    updates.push({data:params.data, user:utils.getUser(request), id:currentToolIds[seshCookie], lastUpdate:lastUpdate});
+    payload.id = currentToolIds[seshCookie];
+    payload.user = utils.getUser(request);
+    updates.push(payload);
     lastUpdateNo++;
     utils.respondPlain(response, "");
 
@@ -51,20 +52,20 @@ function sendUpdates(request, response, params, checkForNew)
         return;
     }
     
-    response.writeHead(200, { "Content-Type": 'text/plain' });
-    response.write(lastUpdateNo + "<>");
+    response.writeHead(200, { "Content-Type": 'application/json' });
+    resObj = {};
+    resObj.lastUpdateNo = lastUpdateNo;
+    resObj.responses = [];
     while(last < lastUpdateNo)
     {
         if((params.allUpdates == undefined) && updates[last].user == utils.getUser(request)) {
             last++;
             continue;
         }
-        response.write("id+" + updates[last].id + "@" + "lastUpdate+" + updates[last].lastUpdate + "@" + updates[last].data + "\\");
+        resObj.responses.push(updates[last]);
         last++;
     }
-    if(params.allUpdates) 
-        response.write("<>true");
-    response.end();
+    response.end(JSON.stringify(resObj));
 }
 
 function requestTimedOut(requestData) {

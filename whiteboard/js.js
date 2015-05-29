@@ -31,7 +31,6 @@ var playingBack = false;
 var playbackStartTime;
 var playbackEndTime;
 var writtenToNetworkTemp = false;
-var lastData;
 var tempToDraw = {};
 
 
@@ -171,11 +170,15 @@ function setUserTextSize(size) {
         userPen.textSize = size;
 }
 
+function setPen(ctx, pen) {
+    ctx.strokeStyle = pen.colour;
+    ctx.lineWidth = pen.thickness;
+    ctx.fillStyle = pen.fillColour;
+    ctx.font = "" + pen.textSize + "px arial";
+}
+
 function setUserPreferences(ctx) {
-    ctx.strokeStyle = userPen.colour;
-    ctx.lineWidth = userPen.thickness;
-    ctx.fillStyle = userPen.fillColour;
-    ctx.font = "" + userPen.textSize + "px Arial";
+    setPen(ctx, userPen);
 }
 
 function selectPen() {
@@ -263,13 +266,11 @@ function clearCtx(ctx) {
 }
 
 function startedUsingTool() {
-    toSend = {colour:userPen.colour,
-              thickness:userPen.thickness,
-              fillColour:userPen.fillColour,
-              textSize:userPen.textSize,
+    toSend = {pen: userPen,
               tool:tool,
-              data:"",
-              justStarted:true};
+              data:[],
+              justStarted:true,
+              lastUpdate:false};
     lastSentTime = (new Date()).getTime();
     sendInterval = setInterval(sendToolUpdates, TOOL_INTERVAL);
 }
@@ -290,44 +291,40 @@ function toolSendTime() {
 }
 
 function addDataToSend() {
-    var data = "";
-    if(tool == "Pen")
-        data = "x:" + mousePos.x + ";y:" + mousePos.y;
-    else if(tool == "Text")
-        data = "x:" + clickPos.x + ";y:" + clickPos.y + 
-               ";text:" + encodeURIComponent(textHidden.value);
-    else if(tool == "Rectangle")
-        data = "x:" + clickPos.x + ";y:" + clickPos.y + 
-               ";width:"+(mousePos.x - clickPos.x) +
-               ";height:"+(mousePos.y - clickPos.y);
-    lastData = data;
-    toSend.data += data + ";time:"+toolSendTime() + "\n";
+    var data = {};
+    if(tool == "Pen") {
+        data.x = mousePos.x
+        data.y =  mousePos.y;
+    } else if(tool == "Text") {
+        data.x = clickPos.x;
+        data.y = clickPos.y;
+        data.text = encodeURIComponent(textHidden.value);
+    } else if(tool == "Rectangle") {
+        data.x = clickPos.x;
+        data.y = clickPos.y;
+        data.width = mousePos.x - clickPos.x;
+        data.height = (mousePos.y - clickPos.y);
+    }
+    data.time = toolSendTime();
+    toSend.data.push(data);
 }
 
 function sendToolUpdates(lastUpdate, ensureSent) {
     if(ensureSent !== true)
         ensureSent = false;
 
-    var payload = "justStarted=" + toSend.justStarted +
-                 "&data=colour+" + toSend.colour +
-                 "@thickness+" + toSend.thickness +
-                 "@fillColour+" + toSend.fillColour +
-                 "@textSize+" + toSend.textSize +
-                 "@tool+" + tool +
-                 "@data+" + toSend.data;
-
     if(lastUpdate)
-        payload += "&lastUpdate=true";
-    encodeURIComponent(payload);
+        toSend.lastUpdate = true;
 
     //Clear the data so we don't send twice, and the next update is definitely
     //not the first.
-    toSend.data = "";
-    toSend.justStarted = false;
-
 
     var aClient = new HttpClient(ensureSent);
-    aClient.post('update', payload, function (response) { }, ensureSent);
+    aClient.post('update', JSON.stringify(toSend), function (response) { }, ensureSent);
+    
+    toSend.data = [];
+    toSend.justStarted = false;
+
 }
 
 function updateWhiteboard(allUpdates) {
@@ -337,95 +334,44 @@ function updateWhiteboard(allUpdates) {
 
     var client = new HttpClient();
     client.get('getUpdate?' + query, function(response) {
-        /*The response is the form:
-          lastUpdate<>response1\response2\...\responseN(<>allUpdates)
-          where a response is of the form:
-          key+value@key+value@...@data+updateData
-          where updateData has a form dependent on the tool, but usually
-          key:value;key:value;...;key:value\n */
-        var res = response.split("<>");
+        response = JSON.parse(response);
         
-        lastUpdateNo = parseInt(res[0]);
+        lastUpdateNo = response.lastUpdateNo;
         
-        var allUpdates = false;
         playbackStartTime = (new Date()).getTime();
-        if(res[2]) {
-            allUpdates = true;
+        if(allUpdates) {
             playingBack = true;
             playbackEndTime = 0;
         }
 
-        var responses = res[1].split("\\");
+        var responses = response.responses;
         for(var k = 0; k < responses.length; k++) {
-            console.log(responses[k]);
             //The new update object.
-            var update = {};
+            var update = responses[k];
 
-            //Split up the update information.
-            res = responses[k].split("@");
-            for(var i = 0; i < res.length; i++) {
-                var keyAndValue = res[i].split("+");
-                update[keyAndValue[0]] = keyAndValue[1];
-                console.log(keyAndValue[0] + "=" + keyAndValue[1]);
+            var appending;
+            if(!updatesToDraw[update.id]) {
+                appending = false;
+                updatesToDraw[update.id] = update;
+                update.start = playbackStartTime;
+            } else {
+                appending = true;
+                var prev = updatesToDraw[update.id];
+                if(update.lastUpdate == true) {
+                    prev.lastUpdate = true;
+                }
+                prev.data = prev.data.concat(update.data);
             }
 
-            //Correct some strings
-            if(update.lastUpdate == "true") update.lastUpdate = true;
-            else update.lastUpdate = false;
+            if (!appending && update.tool == "Pen") {
+                update.last = update.data[0]
+            }
 
-            console.log("Last update? " + update.lastUpdate);
-
-            //If we have data
-            if(update.data) {
-                //Split the points
-                var points = update.data.split('\n');
-                
-                //Check if it's a new set of points or just a continuation.
-                var appending;
-                if(!updatesToDraw[update.id]) {
-                    appending = false;
-                    updatesToDraw[update.id] = update;
-                    update.data = [];
-                } else {
-                    appending = true;
-                    if(update.lastUpdate == true) {
-                        updatesToDraw[update.id].lastUpdate = true;
-                    }
-                    update = updatesToDraw[update.id];
-                }
-                
-                //Loop through each of the points
-                for(var j = 0; j < points.length; j++) {
-                    var info = points[j].split(";");
-                    var infoObject = {};
-                    
-                    if(!info)
-                        continue;
-
-                    for(var i = 0; i < info.length; i++) {
-                        var keyAndValue = info[i].split(":");
-                        infoObject[keyAndValue[0]] = keyAndValue[1];
-                    }
-                    update.data.push(infoObject);
-                    //Speed up text typing in playback mode.
-                    if(playingBack && update.tool == "Text") {
-                        update.data[update.data.length -1].time = (update.data.length - 1) * 50;
-                    }
-                }
-                if(!appending)
-                    update.start = playbackStartTime;
-
-                if (!appending && update.tool == "Pen") {
-                    console.log("Setting last...");
-                    update.last = update.data[0]
-                    console.log(update.last);
-                }
-                //If we're playing back/getting all updates
-                if(playingBack) {
-                    update.start=playbackEndTime;
-                    if(update.lastUpdate == true) {
-                        playbackEndTime+=parseInt(update.data[update.data.length-1].time);
-                    }
+            //If we're playing back/getting all updates
+            if(playingBack) {
+                update.start=playbackEndTime;
+                if(update.lastUpdate == true) {
+                    playbackEndTime+=parseInt(update.data[update.data.length-1].time);
                 }
             }
         }
@@ -441,16 +387,13 @@ function drawUpdates() {
             length++;
             var timePassed;
             if(playingBack) {
-                timePassed = (time - playbackStartTime) * 5 - updatesToDraw[i].start;
+                timePassed = (time - playbackStartTime) * 1 - updatesToDraw[i].start;
             } else {
                 timePassed = time - updatesToDraw[i].start;
             }
 
             var data = updatesToDraw[i].data;
-            ctx.strokeStyle = updatesToDraw[i].colour;
-            ctx.lineWidth = updatesToDraw[i].thickness;
-            ctx.fillStyle = updatesToDraw[i].fillColour;
-            ctx.font = "" + updatesToDraw[i].textSize + "px Arial";
+            setPen(ctx, updatesToDraw[i].pen);
             while(data.length > 0 && data[0].time < timePassed) {
                 if(updatesToDraw[i].tool == "Pen") {
                     ctx.beginPath();
@@ -477,15 +420,13 @@ function drawUpdates() {
                     }
                     tempToDraw[i] = function(data, ctx) {
                         ctx.beginPath();
-                        console.log(data);
-                        console.log(data.width);
-                        console.log(parseFloat(data.width));
                         ctx.rect(data.x, data.y, parseFloat(data.width), parseFloat(data.height));
                         ctx.fill();
                         ctx.stroke();
                     }
                     var last = data.shift();
                     if(updatesToDraw[i].lastUpdate && !data[0]) {
+                        setPen(ctx, updatesToDraw[i].pen);
                         ctx.beginPath();
                         ctx.rect(last.x, last.y, parseFloat(last.width), parseFloat(last.height));
                         ctx.fill();
@@ -506,14 +447,11 @@ function drawUpdates() {
     clearCtx(netCtx);
     for (var i in tempToDraw) {
         if (tempToDraw.hasOwnProperty(i)) {
-            netCtx.strokeStyle = updatesToDraw[i].colour;
-            netCtx.lineWidth = updatesToDraw[i].thickness;
-            netCtx.fillStyle = updatesToDraw[i].fillColour;
-            netCtx.font = "" + updatesToDraw[i].textSize + "px Arial";
+
+            setPen(netCtx, updatesToDraw[i].pen);
             tempToDraw[i](updatesToDraw[i].data[0], netCtx);
         }
     }
-    console.log(playingBack);
 }
 
 window.onbeforeunload = function() {
