@@ -4,12 +4,19 @@
         <title>Add Users</title>
         <link rel="stylesheet" href="css/add_users.css">
         <script src="js.js"></script>
+        <script type="text/javascript" src="/template/template.js"></script>
     </head>
 
     <body>
     <div id="navbar">
-      <span id="navbar-home" onclick="window.location='/groups/'">
+      <span onclick="window.location='/groups/'" id="navbar-home">
         <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
+      </span>
+      <span id="navbar-right">
+        <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
+          <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/logout.png">
+          <span id="popover-logout">Log out</span>
+        </span> 
       </span>
     </div>
 
