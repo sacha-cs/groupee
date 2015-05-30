@@ -18,40 +18,47 @@ Whiteboard
             <span id="currTool">
                 Pen
             </span><br />
-            <div id="current-tool">
-                <img src="https://cdn4.iconfinder.com/data/icons/miu/22/editor_pencil_pen_edit_write_-32.png">
-            </div>  
-        </div>
-
-        <div class="tool" id="line-thickness">
-            <img src='http://png-1.findicons.com/files/icons/2711/free_icons_for_windows8_metro/128/line_width.png'>
-            <div id="line-thickness-input">
-                <input type=range min=3 max=30 value=5 step=1 oninput="setUserPenThickness(value)">
-            </div>
-        </div>
-
-        <div class="tool" id="colout">
-            Colour: 
-            <input type="color" value="#000000" onchange="setUserPenColour(value)"/>
-        </div>
-
-        <div class="tool" id="fill-text-colour">
-            Fill/Text Colour: 
-            <input type="color" value="#000000" onchange="setUserFillColour(value)"/>
         </div>
 
         <div class="tool" id="select-tool">
-            Tool:
-            <button onclick="selectPen()">Pen</button>
-            <button onclick="selectText()">Text</button>
-            <button onclick="selectRectangle()">Rectangle</button>
-            <button onclick="selectLine()">Line</button>
-            <button onclick="selectCircle()">Circle</button>
+            <input type='radio' name='selectedTool' checked="checked" value='valuable' id="pen" onclick="selectPen()" /><label for="pen"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="text" onclick="selectText()" /><label for="text"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="rectangle" onclick="selectRectangle()" /><label for="rectangle"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="circle" onclick="selectCircle()" /><label for="circle"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="line" onclick="selectLine()" /><label for="line"></label>
+        </div>
+
+        <div class="tool" id="line-thickness">
+                <img src='http://png-1.findicons.com/files/icons/2711/free_icons_for_windows8_metro/128/line_width.png'>
+                <div id="line-thickness-input">
+                    <input type=range min=3 max=30 value=5 step=1 oninput="setUserPenThickness(value)">
+                </div>
+        </div>
+
+        <div class="tool" id="colour">
+            <img src='https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_palette_48px-48.png'>
+            <div id="colour-input">
+                    <span id="line-border-label">
+                        <label>Line/Border Colour:</label> 
+                    </span>
+                    <span id="line-border-input">
+                        <input type="color" value="#000000" onchange="setUserPenColour(value)"/>
+                    </span>
+
+                    <span id="fill-text-label">
+                        <label>Fill/Text Colour:</label> 
+                    </span>
+                    <span id="fill-text-input">
+                        <input type="color" value="#000000" onchange="setUserFillColour(value)"/>
+                    </span>
+            </div>
         </div>
 
         <div class="tool" id="text-size">
-            Text size:
-            <input type=range min=12 max=60 value=16 step=1 oninput="setUserTextSize(value)">
+            <img src='https://cdn3.iconfinder.com/data/icons/google-material-design-icons/48/ic_format_size_48px-48.png'>
+            <div id="text-size-input">
+                <input type=range min=12 max=60 value=16 step=1 oninput="setUserTextSize(value)">
+            </div>
         </div>
 
         <div id="hiddenWrapper">
