@@ -1,18 +1,16 @@
-postHandler.addHandler("posts/add_note", addNote);
+postHandler.addHandler("posts/add_note", addNote, true);
 getHandler.addHandler("posts/get_notes", getNotes);
 
-function addNote(request, response, params) {
-
+function addNote(request, response, data) {
+    var parsedData = JSON.parse(data);
+    var groupId = utils.getViewingGroup(request);
+    var username = utils.getUser(request);
+    var noteTitle = parsedData.noteTitle;
+    var noteContent = parsedData.noteContent;
+    var insertNoteQuery = "INSERT INTO note(note_title, note_content, group_id, username) " +
+                          "VALUES('" + noteTitle + "', '" + noteContent + "', " + groupId + ", '" + username + "')" + 
+                          "RETURNING note_id"; 
 	pg.connect(connectionString, function(err, client, done) {
-		if(err) { return utils.respondError(err, response); }
-
-		var groupId = utils.getViewingGroup(request);
-		var username = utils.getUser(request);
-        var noteTitle = params.noteTitle;
-        var noteContent = params.noteContent;
-        var insertNoteQuery = "INSERT INTO note(note_title, note_content, group_id, username) " +
-                              "VALUES(" + noteTitle + "', '" + noteContent + "', '" + groupId + "', '" + username + "')" + 
-                              "RETURNING note_id"; 
 	 	client.query(insertNoteQuery, function(err, result) {
             done(client);
 			var noteId = result.rows[0].note_id;

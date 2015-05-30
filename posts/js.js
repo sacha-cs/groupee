@@ -46,13 +46,14 @@ function sendUpdate(e) {
     if (expectedTitle == actualTitle && expectedContent == actualContent) {
         return;
     }
-   /* 
+
     // Something is different, so we can send some data. 
     if (noteInfo[id].saved) {
         // TODO: Update the note with the given id. 
     } else {
         // Save to the database.
-        aClient.post('add_note', 'noteTitle=' + actualTitle + '&noteContent=' + actualContent, 
+        var data = {noteTitle: actualTitle, noteContent: actualContent};
+        aClient.post('add_note', JSON.stringify(data), 
             function(response) {
                 var correct = response[0];
                 if (correct == "Y") {
@@ -64,7 +65,7 @@ function sendUpdate(e) {
                 }
             }
         );
-    }*/
+    }
     noteInfo[id].title = actualTitle;
     noteInfo[id].content = actualContent;
 }
