@@ -8,6 +8,7 @@ body {
 /* NAVBAR STYLING */
 
 #navbar {
+  color: white;
   z-index: 2;
   background-color: #4C687C;
   width: 100%;
@@ -27,6 +28,7 @@ body {
 }
 
 #navbar-right {
+    font-size: 11pt;
     height: 100%;
     float:right;
     margin-right: 10px;
@@ -41,6 +43,28 @@ body {
 
 #navbar span {
   display: inline-block;
+}
+
+#avatar-self {
+  float: right;
+  height: 50px;
+  width: 50px;
+}
+
+#avatar-self img {
+  height:100%;
+  width: 100%;
+}
+
+#navbar-group {
+  height: 100%;
+  font-size: 14pt;
+}
+
+#navbar-group p {
+  margin: 0px;
+  height: 100%;
+  line-height: 50px;
 }
 
 /* CHAT STYLING */
@@ -312,7 +336,7 @@ div ::-webkit-scrollbar-thumb {
   position: absolute;
   bottom: 100%;
   left: 50%;
-  margin-left: 0px;
+  margin-left: -8px;
   width: 0; height: 0;
   border-bottom: 8px solid #000000;
   border-right: 8px solid transparent;
@@ -326,6 +350,6 @@ div ::-webkit-scrollbar-thumb {
   opacity: 0.8;
   top: 45px;
   left: 50%;
-  margin-left: -50px;
+  margin-left: -40px;
   z-index: 999;
 }
