@@ -35,37 +35,50 @@ function addNote() {
 
 // Handles the saving of a note to the DB / altering an existing note.
 function sendUpdate(e) {
-    var aClient = new HttpClient();
     var id = e.target.parentElement.id.slice(4); // Id of note we just clicked away from.
+
     var expectedTitle = noteInfo[id].title;
     var expectedContent = noteInfo[id].content; 
+
     var actualTitle = document.getElementById("title" + id).value;
     var actualContent = document.getElementById("content" + id).value;
 
-    /* We don't want to do anything if there are no changed that have been made to the note. */
+    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: 2129};
+
+    // We don't want to do anything if there are no changed that have been made to the note. 
     if (expectedTitle == actualTitle && expectedContent == actualContent) {
         return;
     }
-
     // Something is different, so we can send some data. 
+    var aClient = new HttpClient();
     if (noteInfo[id].saved) {
-        // TODO: Update the note with the given id. 
+        // Update the note with the given id.
+        data.noteId = noteInfo[id].noteId;
+        aClient.post('update_note', JSON.stringify(data),
+            function(response) {
+                var correct = response[0];
+                if (correct == "N") {
+                    // TODO: Handle errors.
+                }
+            }
+        );
     } else {
         // Save to the database.
-        var data = {noteTitle: actualTitle, noteContent: actualContent};
         aClient.post('add_note', JSON.stringify(data), 
             function(response) {
                 var correct = response[0];
                 if (correct == "Y") {
-                    var newId = response.split(1); // Id of note that we have saved to.
+                    var newId = response.slice(1); // Id of note that we have saved to.
                     noteInfo[id].saved = true;
                     noteInfo[id].noteId = newId;
                 } else {
-                    // Handle errors. 
+                    // TODO: Handle errors. 
                 }
             }
         );
     }
+
+    // Record updates locally. 
     noteInfo[id].title = actualTitle;
     noteInfo[id].content = actualContent;
 }

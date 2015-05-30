@@ -4,7 +4,7 @@ this.respondPlain = function (response, text) {
     response.end(text);
 }
 
-function respondError(err, response) {
+this.respondError = function(err, response) {
     console.log(err);
     return utils.respondPlain(response);
 }
