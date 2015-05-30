@@ -1,0 +1,22 @@
+canvas { 
+    border: 1px solid black; 
+    position:absolute;
+}
+
+#wrapper {
+    position:relative;
+    width:800px;
+    height:500px;
+    cursor:none;
+    background-color: white;
+}
+
+#textHidden {
+    position:absolute;
+    left:-500px;
+    top:-500px;
+}
+
+#hiddenWrapper {
+    position:relative;
+}
