@@ -1,5 +1,6 @@
 var noteInfo = [];
 var lastId = 0;
+var imgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
 
 // Adds a new note.
 function addNote() {
@@ -11,8 +12,8 @@ function addNote() {
                           "<a href='#'>" +
                               "<textarea class='note-title' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
                               "<textarea class='note-content' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
-                              "<img onclick='deleteNote(" + lastId + ")' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>"
-                          "</a> " +
+                              "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
+                          "</a>" +
                       "</li>";
     
     // "onblur" event checks when the user leaves a text field - add listeners.
@@ -95,9 +96,13 @@ function getNotes() {
 
 // Delete a note associated with a user from the database.
 function deleteNote(id) {
+    console.log("gonna delete note with id: " + id);
+    console.log(noteInfo);
     var aClient = new HttpClient();
+    console.log("which is" + noteInfo[id]);
     var actualId = noteInfo[id].noteId;
     var data = {noteId: actualId};
+    noteInfo.splice(id, 1);
     var noteForDeletion = document.getElementById("note" + id);
     noteForDeletion.parentElement.removeChild(noteForDeletion);
     
@@ -113,27 +118,34 @@ function deleteNote(id) {
     }
 }
 
-function getAllNotes() {/*
+// Sends a request to the server to receive all notes associated with a group.
+function getAllNotes() {
 	var notes = document.getElementById("notes"); 
 	var aClient = new HttpClient();
 	aClient.get('get_notes', function(response) {
 		var noteList = response.split("#");
 		for (var i = 0; i < noteList.length-1 ; i++) {
-			var noteInfo = noteList[i].split("&");
-            var noteId = noteInfo[0].split("=")[1];
-            var noteTitle = noteInfo[1].split("=")[1];
-            var noteContent = noteInfo[2].split("=")[1];
+			var noteStuff = noteList[i].split("&");
+            var noteId = noteStuff[0].split("=")[1];
+            var noteTitle = noteStuff[1].split("=")[1];
+            var noteContent = noteStuff[2].split("=")[1];
             var info = {noteId : noteId,
             	        noteTitle : escapeHtml(decodeURIComponent(noteTitle)),   
-                        noteContent : escapeHtml(decodeURIComponent(noteContent))};
-            noteHtml = "<li id='" + info.noteId + "'>" +
-                           "<a href='#'>" +
-                                "<textarea class='note-title' maxlength='10'>" + info.noteTitle + "</textarea>" +
-                                "<textarea class='note-content'>" + info.noteContent + "</textarea>" +
-                            "</a>" +
-                       "</li>";
-            notes.innerHtml += noteHtml;
+                        noteContent : escapeHtml(decodeURIComponent(noteContent)),
+                        saved: true};
+            noteInfo.push(info); 
+            notes.innerHTML += "<li id='note" + i + "'>" + 
+                                  "<a href='#'>" +
+                                      "<textarea class='note-title' id='title" + i + "' placeholder='Untitled'>" + noteTitle + "</textarea>" +
+                                      "<textarea class='note-content' id='content" + i + "' placeholder='Your content here'>" + noteContent + "</textarea>" +
+                                      "<img onclick='deleteNote(" + i + ")' id='delete' src='" + imgStr + "'>" +
+                                  "</a> " +
+                              "</li>";
+            
+            // "onblur" event checks when the user leaves a text field - add listeners.
+            document.getElementById("title" + i).addEventListener("blur", sendUpdate);
+            document.getElementById("content" + i).addEventListener("blur", sendUpdate);
     	}
-	}); */
+	});
 }
 

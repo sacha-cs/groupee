@@ -62,10 +62,10 @@ function deleteNote(request, response, data) {
 }
 
 function getNotes(request, response) {
-    /*var currentUser = utils.getUser(request);
+    var currentUser = utils.getUser(request);
     var currentGroup = utils.getViewingGroup(request);
     var getNotesQuery = "SELECT note_id, note_title, note_content " + 
-                        "FROM note NATURAL JOIN note_taker " +
+                        "FROM note " +
                         "WHERE username='" + currentUser + "' AND group_id='" + currentGroup + "'";
     pg.connect(connectionString, function(err, client, done) {
         client.query(getNotesQuery, function(err, result) {
@@ -85,7 +85,7 @@ function getNotes(request, response) {
             response.write(responseString);
             response.end();
         });
-    });*/
+    });
 }
 
 
