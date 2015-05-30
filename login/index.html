@@ -1,28 +1,54 @@
 <html>
-
-    <head>
-        <title>Log-In</title>
+	<head>
+		<title>groupee</title>
         <link rel="stylesheet" href="css/style.css">
         <script src="js.js"></script>
-    </head>
+	</head>
+	
+	<body onload="setUpListeners()">
 
-    <body onload="setUpListeners()">
+	<div id="navbar">
+	    <span id="navbar-home">
+	       <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
+	    </span>
+    </div>
 
-    <div class="login-card">
+		<div id="content">
+			<div id="description">
+				<div id="logo">
+					<img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-transparent.png">
+				</div>
+				<div id="text">
+				What is groupee? </br>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				</div>
+			</div>
 
-    <h1>Log-In</h1><br>
+			<div id="login-register">
+				<div class="login-register-section">
+        			<input type="text" name="username" class="username" placeholder="Username">
+        			<input type="password" name="password" class="password" placeholder="Password">
+        			<input type="submit" name="submit" class="login login-submit" value="Log In" onclick=login()>
+        			<div class="login-text">
+            			<div id="loginError"></div>
+        			</div>
+				</div>
 
-        <input type="text" name="username" id="username" placeholder="Username">
-        <input type="password" name="password" id="password" placeholder="Password">
-        <input type="submit" name="submit" class="login login-submit" value="Go" onclick=login()>
-        <div class="login-text">
-            <p id="error"></p>
-        </div>
-        <div class="login-text">
-            <a href="register.html">Don't have an account yet? Register!</a>
-        </div>
-    <div>
+				<div class="login-register-section">
+				    <h1>New to groupee? Sign up!</h1><br>
 
-    </body>
+				    <input type="text" name="username" class="username" placeholder="Username">
+    				<input type="password" name="password" class="password" placeholder="Password">
+				    <input type="password" name="passwordconfirm" id="passwordconfirm" placeholder="Retype Password">
+				    <input type="submit" name="submit" class="login login-submit" value="Register" onclick=register()>
 
+			        <div class="login-text">
+			            <div id="registerError"></div>
+			        </div>
+
+				</div>
+			</div>
+		</div>
+
+	</body>
 </html>

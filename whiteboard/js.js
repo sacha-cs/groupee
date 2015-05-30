@@ -241,13 +241,13 @@ function setUserPreferences(ctx) {
 function selectPen() {
     tool = "Pen";
     document.getElementById("currTool").innerHTML = tool;
-    document.getElementById("wrapper").style.cursor="none";
+    document.getElementById("wrapper").style.cursor= "none";
 }
 
 function selectText() {
     tool = "Text";
     document.getElementById("currTool").innerHTML = tool;
-    document.getElementById("wrapper").style.cursor="text";
+    document.getElementById("wrapper").style.cursor= "text";
 }
 
 function selectRectangle() {
