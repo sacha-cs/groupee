@@ -13,6 +13,7 @@ getHandler = require('./getHandlers.js');
 require('./userFunctions');
 require('./chatServer');
 require('./todosServer');
+require('./whiteboardServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';
 uploadPath = "/vol/project/2014/271/g1427136/"
@@ -47,16 +48,29 @@ function serverListener(request, response) {
         var handler = postHandler.getHandler(requestURL);
 
         if(handler != null) {
-            var form = new formidable.IncomingForm();
-            form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
-            form.keepExtensions = true;
-            form.on("error", function(error) {
-                console.log(error);
-            });
-            form.parse(request, function(err, fields, files) {
-                handler(request, response, fields, files);
-            });
-
+            if(!postHandler.useOwn(requestURL)) {
+                var form = new formidable.IncomingForm();
+                form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
+                form.keepExtensions = true;
+                form.on("error", function(error) {
+                    console.log(error);
+                });
+                form.parse(request, function(err, fields, files) {
+                    handler(request, response, fields, files);
+                });
+            } else {
+                var message = "";
+                request.on("data", function(data) {
+                    message += data.toString('utf-8');
+                    if(message.length > 1e7) {
+                        POSTDataTooBig(response);
+                        return;
+                    }
+                });
+                request.on("end", function() {
+                    handler(request, response, message);
+                });
+            }
         }
         else
         {

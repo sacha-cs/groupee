@@ -1,0 +1,45 @@
+<?template?>
+/template/main_template.html
+<?title?>
+Whiteboard
+<?headers?>
+<link rel="stylesheet" href="css/style.css">
+<script src = "js.js"></script> 
+<?content?>
+    <div id=wrapper>
+        <canvas id="board" width=800 height=500>Upgrade your browser to use the whiteboard!</canvas>
+        <canvas id="networkTempBoard0" width=800 height=500></canvas>
+        <canvas id="networkTempBoard1" width=800 height=500></canvas>
+        <canvas id="tempBoard" width=800 height=500></canvas>
+    </div>
+    <br />
+
+    Current Tool: <span id="currTool">Pen</span><br />
+
+
+    Line Thickness:
+    <input type=range min=3 max=30 value=5 step=1 oninput="setUserPenThickness(value)">
+    <br />
+
+    Colour: 
+    <input type="color" value="#000000" onchange="setUserPenColour(value)"/>
+    <br />
+
+    Fill/Text Colour: 
+    <input type="color" value="#000000" onchange="setUserFillColour(value)"/>
+    <br />
+
+    Tool:
+    <button onclick="selectPen()">Pen</button>
+    <button onclick="selectText()">Text</button>
+    <button onclick="selectRectangle()">Rectangle</button>
+    <button onclick="selectLine()">Line</button>
+    <button onclick="selectCircle()">Circle</button>
+    <br />
+
+    Text size:
+    <input type=range min=12 max=60 value=16 step=1 oninput="setUserTextSize(value)">
+
+    <div id=hiddenWrapper>
+    <textarea id="textHidden"></textarea>
+    </div>
