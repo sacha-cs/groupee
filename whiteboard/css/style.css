@@ -4,6 +4,8 @@ canvas {
 }
 
 #wrapper {
+    float: left;
+    margin: 20px;
     position:relative;
     width:800px;
     height:500px;
@@ -17,6 +19,34 @@ canvas {
     top:-500px;
 }
 
-#hiddenWrapper {
-    position:relative;
+#tools {
+    text-align: center;
+    padding-top:20px;
+    position: fixed;
+    right:0;
+    float: right;
+    width:40px;
+    background-color: white;
+    height: 100%;
 }
+
+#current-tool {
+    padding: 5px;
+    margin-bottom: 15px;
+    background-color: gray;
+}
+
+.tool {
+    background-color: white;
+}
+
+#line-thickness img {
+    width: 32px;
+}
+
+#select-tool img {
+    padding: 5px;
+    width: 25px;
+}
+
+

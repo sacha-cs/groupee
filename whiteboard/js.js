@@ -239,31 +239,31 @@ function setUserPreferences(ctx) {
 }
 
 function selectPen() {
-    tool = "Pen";
+    tool = "<img src='https://cdn4.iconfinder.com/data/icons/miu/22/editor_pencil_pen_edit_write_-32.png'>";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="none";
 }
 
 function selectText() {
-    tool = "Text";
+    tool = "<img src='https://cdn4.iconfinder.com/data/icons/cc_mono_icon_set/blacks/32x32/text_letter_t.png'>";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="text";
 }
 
 function selectRectangle() {
-    tool = "Rectangle";
+    tool = "<img src='https://cdn3.iconfinder.com/data/icons/virtual-notebook/16/button_shape_rectangle-32.png'>";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="crosshair";
 }
 
 function selectLine() {
-    tool = "Line";
+    tool = "<img src='https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/32/line.png'>";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="crosshair";
 }
 
 function selectCircle() {
-    tool = "Circle";
+    tool = "<img src='https://cdn3.iconfinder.com/data/icons/virtual-notebook/16/button_shape_oval-32.png'>";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor="crosshair";
 }
