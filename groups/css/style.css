@@ -142,3 +142,44 @@ body {
   height: 30px;
   margin: 10px;
 }
+
+
+#navbar-logout {
+  position: relative;
+  display: inline;
+}
+
+#navbar-logout #popover-logout {
+  position: absolute;
+  width:50px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 8px;
+}
+
+#navbar-logout #popover-logout:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: 0px;
+  width: 0; height: 0;
+  border-bottom: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+#navbar-logout:hover #popover-logout {
+  width:80px;
+  font-size: 10pt;
+  visibility: visible;
+  opacity: 0.8;
+  top: 55px;
+  left: 50%;
+  margin-left: -50px;
+  z-index: 999;
+}
