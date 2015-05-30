@@ -32,7 +32,7 @@ canvas {
 
 #current-tool {
     padding: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     background-color: gray;
 }
 
@@ -48,5 +48,7 @@ canvas {
     padding: 5px;
     width: 25px;
 }
-
+ #currTool {
+    display: none;
+ }
 
