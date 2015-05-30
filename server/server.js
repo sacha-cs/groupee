@@ -11,7 +11,7 @@ postHandler = require('./postHandlers.js');
 getHandler = require('./getHandlers.js');
 
 require('./userFunctions');
-require('./chatServer');
+chat = require('./chatServer');
 require('./todosServer');
 require('./whiteboardServer');
 
@@ -33,6 +33,7 @@ else
     port = parseInt(port);
 
 http.createServer(serverListener).listen(port);
+chat.getAllChatHistory();
 console.log("Listening on port " + port);
 
 function serverListener(request, response) {

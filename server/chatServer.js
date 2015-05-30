@@ -29,6 +29,23 @@ function chatSendMessage(request, response, params) {
         clearTimeout(curr.timeoutID);
         curr.callback(curr.request, curr.response, curr.params);
     }
+
+    pg.connect(connectionString, function(err, client, done) {
+        var getGroupQuery = "SELECT chat_id " +
+                            "FROM group_chats " +
+                            "WHERE group_id="+group + ";";
+        client.query(getGroupQuery, function(err, result) {
+            if(err) { return console.log(err); }
+            var chatID = result.rows[0].chat_id;
+            var addMessageQuery = "INSERT INTO chat_messages " +
+                                  "VALUES(" + chatID + ", '" + username +
+                                      "', now(), '" + safeMessage + "');"
+            client.query(addMessageQuery, function(err, result) {
+                if(err) { return console.log(err); }
+                done(client);
+            });
+        });
+    });
 }
 
 function chatUpdate(request, response, params, checkForNew) {
@@ -82,4 +99,37 @@ function escapeHtml(text) {
     };
 
     return text.replace(/[&<>"'=]/g, function(m) { return map[m]; });
+}
+
+this.getAllChatHistory = function() {
+    pg.connect(connectionString, function(err, client, done) {
+        var allChatQuery = "SELECT * " +
+                           "FROM group_chats";
+        var chatToGroup = {};
+        client.query(allChatQuery, function(err, result) {
+            if(err) { return console.log(err); }
+            for(var i = 0; i < result.rows.length; i++) {
+                var chat_id = result.rows[i].chat_id;
+                var group_id = result.rows[i].group_id;
+                chatToGroup[chat_id] = group_id;
+                var allMessagesQuery = 
+                  "SELECT * " +
+                  "FROM chat_messages " +
+                  "WHERE chat_id=" + chat_id +
+                  " ORDER BY message_time";
+                client.query(allMessagesQuery, function(err, result) {
+                    if(result.rows.length == 0) return;
+                    var group = chatToGroup[result.rows[0].chat_id];
+                    createGroupData(group);
+                    for(var j = 0; j < result.rows.length; j++) {
+                        groups[group].messages.push(
+                          {user:result.rows[j].username,
+                           message:result.rows[j].message});
+                        groups[group].messageNo++;
+                    }
+                });
+            }
+        });
+
+    });
 }
