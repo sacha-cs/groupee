@@ -122,6 +122,15 @@ ul li textarea {
     border-style: none; 
 }
 
+ul li:hover #delete {
+    display: initial;
+    right:5px;
+    bottom:5px;
+    position: absolute;
+    height:25px;
+    width:25px;
+}
+
 .note-title {
     font-size: 140%;
     font-weight: bold;
@@ -143,6 +152,10 @@ ul li textarea {
     display:block;
     float:left;
     margin-right:15px;
+}
+
+#delete {
+    display:none;
 }
 
 #new-note:hover, #new-note:focus {

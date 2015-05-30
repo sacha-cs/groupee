@@ -7,10 +7,11 @@ function addNote() {
     var noteLength = notes.children.length;
 
     // Create an empty note.
-    notes.innerHTML += "<li>" + 
-                          "<a href='#' id='note" + lastId + "'>" +
+    notes.innerHTML += "<li id='note" + lastId + "'>" + 
+                          "<a href='#'>" +
                               "<textarea class='note-title' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
                               "<textarea class='note-content' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
+                              "<img onclick='deleteNote(" + lastId + ")' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>"
                           "</a> " +
                       "</li>";
     
@@ -23,7 +24,7 @@ function addNote() {
 
     // Iterate through all notes, set their values and re-add the 'lost' event listeners. 
     for (var i = 0; i < noteLength; i++) {
-        var currentId = parseInt(notes.children[i].children[0].id.slice(4));
+        var currentId = parseInt(notes.children[i].id.slice(4));
         document.getElementById("title" + currentId).value = noteInfo[currentId].title;
         document.getElementById("content" + currentId).value = noteInfo[currentId].content;
         
@@ -35,7 +36,7 @@ function addNote() {
 
 // Handles the saving of a note to the DB / altering an existing note.
 function sendUpdate(e) {
-    var id = e.target.parentElement.id.slice(4); // Id of note we just clicked away from.
+    var id = e.target.parentElement.parentElement.id.slice(4); // Id of note we just clicked away from.
 
     var expectedTitle = noteInfo[id].title;
     var expectedContent = noteInfo[id].content; 
@@ -90,6 +91,26 @@ function setErrorText(error) {
 
 function getNotes() {
     return document.getElementById("notes");
+}
+
+// Delete a note associated with a user from the database.
+function deleteNote(id) {
+    var aClient = new HttpClient();
+    var actualId = noteInfo[id].noteId;
+    var data = {noteId: actualId};
+    var noteForDeletion = document.getElementById("note" + id);
+    noteForDeletion.parentElement.removeChild(noteForDeletion);
+    
+    // We only want DB interactions for entries that exist in the DB.
+    if (actualId != -1) {
+        aClient.post('delete_note', JSON.stringify(data),
+            function (response) {
+                if (response[0] == "N") {
+                    // TODO: Handle errors.
+                }
+            }
+        );
+    }
 }
 
 function getAllNotes() {/*
