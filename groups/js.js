@@ -103,9 +103,11 @@ function addGroupsToPage() {
 function setGroup(groupId) {
     var aClient = new HttpClient();
     aClient.get('/groups/set_viewing_group?group_id=' + groupId, function(response) {
-        console.log(response);
-        var correct = response[0]; // User wants to view this group.
-        if(correct == "Y") {    
+        var correct = response[0]; /* User wants to view this group. */
+        if(correct == "Y") { 
+            /* Get the groupName from the response. */
+            var groupName = escapeHtml(decodeURIComponent(response.slice(1)));
+            document.cookie = "group-name=" + groupName + ";path=/";
             window.location = "/home/";
         }
     });

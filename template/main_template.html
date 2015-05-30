@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="/template/css/template.css">
+        <script type="text/javascript" src="/template/template.js"></script>
+        <script type="text/javascript" src="/chat/js.js"></script>
+        <?headers?>
+        <title><?title?></title>
+    </head>
+
+    <body onload="startChat(); templateLoaded()">
+
+    <div id="navbar">
+        <span id="navbar-home">
+            <p>Go Home </p>
+        </span>
+        <span id="navbar-group">
+        </span>
+        <span id="navbar-right">
+            <span id="navbar-self">
+            </span>
+              <span onclick="logout(); window.location='/login/index.html' "id="navbar-logout">
+                  <p>Log out</p>
+              </span> 
+        </span>
+    </div>
+
+
+    <div id="chat-left">
+        <div id="chat-toggle" onclick="toggleChat()">
+        </div>
+
+        <div id="chat-messages">
+            <ol id="chat">
+                <!-- Chat messages get added here -->
+            </ol>
+        </div>
+        <div id="chat-box">
+            <input id="message"></input>
+        </div> 
+    </div>
+
+    <div id="content">
+        <?content?>
+    </div>  
+    </body>
+
+</html>

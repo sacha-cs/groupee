@@ -112,7 +112,7 @@ function getAllTodoItems() {
 
             var taskHtml = "<div draggable='true' ondragstart='drag(event)' ondrop='bubbleDrop(event)' class='task' id='" + info.taskId + "'>" +
             				info.task +
-                    "<img onclick='deleteTask(" + info.taskId + ")' id='delete' src='https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/128x128/Close_Box_Red.png'>" + 
+                    "<img onclick='deleteTask(" + info.taskId + ")' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/remove.png'>" + 
             			   "</div>";
 
            	switch(info.category) {
@@ -141,4 +141,48 @@ function deleteTask(taskId) {
           console.log("deleted successfully");
         }
       });
+}
+
+function loaded() {
+  getAllTodoItems();
+
+
+  document.getElementById("todos").addEventListener("mousewheel", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
+  document.getElementById("todos").addEventListener("DOMMouseScroll", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
+
+  document.getElementById("doings").addEventListener("mousewheel", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
+  document.getElementById("doings").addEventListener("DOMMouseScroll", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
+
+  document.getElementById("dones").addEventListener("mousewheel", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
+  document.getElementById("dones").addEventListener("DOMMouseScroll", function (e) {
+      var delta = e.wheelDelta || -e.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+      e.preventDefault();
+  });
 }

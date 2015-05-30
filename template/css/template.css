@@ -1,0 +1,215 @@
+body {
+	width: 100%;
+	margin: 0px;
+	font-family: 'Helvetica', sans-serif;
+	background: #2c3e50;
+}
+
+/* NAVBAR STYLING */
+
+#navbar {
+	z-index: 2;
+	position: fixed;
+  /*background-color: white;*/
+  width: 100%;
+  height: 50px;
+  text-align: center;
+  background: #ffffff; /* Old browsers */
+  background: -moz-linear-gradient(top, #ffffff 0%, #f1f1f1 50%, #e1e1e1 51%, #f6f6f6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
+}
+
+#navbar-right {
+    float:right;
+    margin-right: 10px;
+}
+
+#navbar-home {
+    float:left; 
+    margin-left: 10px;
+}
+
+#navbar span {
+	display: inline-block;
+}
+
+
+/* CHAT STYLING */
+
+#chat-left {
+	width: 300px;
+	height: 100%;
+	position: fixed;
+	margin-top: 50px;
+	background-color: #4B6B8B;
+}
+
+#chat-toggle {
+	display: block;
+	background-image: url(https://cdn0.iconfinder.com/data/icons/glyphpack/26/double-arrow-right-128.png);
+	background-size: 100%;
+	background-position: center; 
+	background-repeat: no-repeat;
+    /*background-attachment: fixed;*/
+	/*background-color: gray;*/
+	width: 15px;
+	height: 100%;
+  z-index: 2;
+  position: absolute;
+  left: 285px;
+  -webkit-transition: left -1.5s ease;
+  -moz-transition: left 0.5s ease;
+  -o-transition: left 0.5s ease;
+  transition: left 0.5s ease;
+}
+
+li {
+  padding: 0.5rem;
+  overflow: hidden;
+  display: flex;
+}
+
+.avatar {
+  position: relative;
+}
+
+.avatarimage {
+  width: 40px;
+}
+
+.other .avatarimage {
+    position:absolute;
+}
+
+
+/*Align the self comments to the right*/
+.self {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+/*Flip around the order of the messages and avatar*/
+.self .messages {
+    order:1;
+}
+.self .avatar {
+    order:2;
+}
+
+/*Self Triangle*/
+.self .avatar:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border: 5px solid #C6D9FF;
+  border-right-color: transparent;
+  border-top-color: transparent;
+}
+
+/*Other Triangle*/
+.other .avatar:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -40px;
+      width: 0;
+      height: 0;
+      border: 5px solid white;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+}
+
+
+.self .messages {
+  max-width: 220px;
+  background: #C6D9FF;
+  padding: 5px;
+  border-radius: 2px;
+  -webkit-border-bottom-right-radius: 0px;
+}
+
+.other .messages {
+  max-width: 220px;
+  background: white;
+  padding: 5px;
+  border-radius: 2px;
+  -webkit-border-top-left-radius: 0px;
+  margin-left:40px;
+}
+
+.self .messages p {
+  font-size: 0.8rem;
+  word-wrap: break-word;
+  margin: 0 0 0.2rem 0;
+}
+
+.other .messages p {
+  font-size: 0.8rem;
+  word-wrap: break-word;
+  margin: 0 0 0.2rem 0;
+}
+
+#chat-messages {
+	margin-right: 15px;
+    position:relative;
+    height: calc(100% - 100px);
+}
+
+#chat {
+  height: 100%;
+  overflow-y:auto;
+  list-style: none;
+  margin: 0;
+  padding-left:0px;
+}
+
+#chat-box {
+  text-align: center;
+  width: 100%;
+  height: 50px;
+  padding-top: 10px;
+  z-index: 3;
+}
+
+#message {
+	width: 250px;
+}
+
+
+/* CONTENT STYLING */
+
+#content {
+	position: absolute;
+	top: 50px;
+	left: 300px;
+	min-height: calc(100% - 50px);
+	min-width: 350px;
+	-webkit-transition: left 0.5s ease;
+    -moz-transition: left 0.5s ease;
+    -o-transition: left 0.5s ease;
+    transition: left 0.5s ease;
+  	background: #2c3e50;
+}
+
+
+/* NICE SCROLLBAR */
+
+div ::-webkit-scrollbar {
+  width: 5px;  /* for vertical scrollbars */
+}
+
+div ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+div ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
+}

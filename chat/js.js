@@ -47,8 +47,6 @@ function sendMessage() {
     if(!message)
         return;
 
-    //addMessageToChat(getCookie("username"), escapeHtml(message));
-
     aClient = new HttpClient();
     var d = new Date();
     aClient.post('/chat/send_message', "chatmessage="+ encodeURIComponent(message) + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
@@ -59,9 +57,8 @@ function sendMessage() {
 }
 
 function addMessageToChat(user, message) {
-    var chatMessages = document.getElementById("chat-messages");
     var chat = document.getElementById("chat");
-    var isScrolledToBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 1;
+    var isScrolledToBottom = chat.scrollHeight - chat.clientHeight <= chat.scrollTop + 1;
     var messenger;
     if (getCookie("username") == user) {
         messenger = "self";
@@ -81,5 +78,5 @@ function addMessageToChat(user, message) {
     chat.innerHTML += htmlMsg;    
 
     if(isScrolledToBottom)
-              chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
+              chat.scrollTop = chat.scrollHeight - chat.clientHeight;
 }
