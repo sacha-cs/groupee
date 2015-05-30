@@ -14,7 +14,7 @@ body {
   padding: 40px;
   width: 274px;
   background-color: #F7F7F7;
-  margin: 30px auto 10px;
+  margin: 80px auto 10px;
   border-radius: 2px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   overflow: hidden;
@@ -102,6 +102,8 @@ body {
   width: 100%;
   height: 50px;
   text-align: center;
+  position: fixed;
+  top:0;
 }
 
 #navbar-home {
@@ -116,6 +118,18 @@ body {
 
 #navbar span {
   display: inline-block;
+}
+
+
+#navbar-right {
+    height: 100%;
+    float:right;
+    margin-right: 10px;
+}
+
+#navbar-right img {
+  height: 30px;
+  margin: 10px;
 }
 
 

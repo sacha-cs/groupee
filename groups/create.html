@@ -3,16 +3,21 @@
     <head>
         <title>Create a group</title>
         <link rel="stylesheet" href="css/create.css">
+        <script type="text/javascript" src="/template/template.js"></script>
         <script src="js.js"></script>
     </head>
 
     <body>
     <div id="navbar">
-        <span id="navbar-home" onclick="window.location='/groups/'">
+      <span onclick="window.location='/groups/'" id="navbar-home">
         <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
       </span>
+      <span id="navbar-right">
+        <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
+          <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/logout.png">
+        </span> 
+      </span>
     </div>
-
     <div class="create-card">
 
     <h1>Create a Group</h1><br>

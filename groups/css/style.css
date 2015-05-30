@@ -113,6 +113,8 @@ body {
   width: 100%;
   height: 50px;
   text-align: center;
+  position: fixed;
+  top:0;
 }
 
 #navbar-home {
@@ -127,4 +129,16 @@ body {
 
 #navbar span {
   display: inline-block;
+}
+
+
+#navbar-right {
+    height: 100%;
+    float:right;
+    margin-right: 10px;
+}
+
+#navbar-right img {
+  height: 30px;
+  margin: 10px;
 }
