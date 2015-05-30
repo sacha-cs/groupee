@@ -10,26 +10,20 @@ function addNote(request, response, params) {
 		var username = utils.getUser(request);
         var noteTitle = params.noteTitle;
         var noteContent = params.noteContent;
-
-		var insertNoteQuery = "INSERT INTO note_taker(group_id, username) " +
-							  "VALUES('" + groupId + "', '" + username + "') RETURNING note_id";
-
+        var insertNoteQuery = "INSERT INTO note(note_title, note_content, group_id, username) " +
+                              "VALUES(" + noteTitle + "', '" + noteContent + "', '" + groupId + "', '" + username + "')" + 
+                              "RETURNING note_id"; 
 	 	client.query(insertNoteQuery, function(err, result) {
+            done(client);
 			var noteId = result.rows[0].note_id;
 			if (err) { return utils.respondError(err, response); }
-            var insertNoteInfoQuery = "INSERT INTO note(note_id, note_title, note_content) " +
-                                      "VALUES(" + noteId + ", '" + noteTitle + "', '" + noteContent + "')";
-            client.query(insertNoteInfoQuery, function(err, result) {
-                done(client);
-                if (err) { return utils.respondError(err, response); }
-                return utils.respondPlain(response, "Y");
-            })
+            return utils.respondPlain(response, "Y" + noteId);
 		})
 	})
 }
 
 function getNotes(request, response) {
-    var currentUser = utils.getUser(request);
+    /*var currentUser = utils.getUser(request);
     var currentGroup = utils.getViewingGroup(request);
     var getNotesQuery = "SELECT note_id, note_title, note_content " + 
                         "FROM note NATURAL JOIN note_taker " +
@@ -41,8 +35,6 @@ function getNotes(request, response) {
             
             var responseString = "";
             if(result.rows.length > 0) {
-              /* Populate the groupInfo array with information about the groups associated with
-                 the current user. */
                 for(var i = 0; i < result.rows.length; i++) {
                     var row = result.rows[i];
                     var noteTitle = encodeURIComponent(row.note_title);
@@ -54,7 +46,7 @@ function getNotes(request, response) {
             response.write(responseString);
             response.end();
         });
-    });
+    });*/
 }
 
 

@@ -8,11 +8,10 @@
     <body onload="getAllNotes()">
         <div class="content">
             <div id="controller">
-                <div id="new-note" onclick="addNote()"><p>New Note</p></div>
+                <div id="new-note" onmouseup="addNote()"><p>New Note</p></div>
                 <div id="error"></div>
             </div>        
-            <ul id="notes">
-            </ul>
+            <ul id="notes"></ul>
         </div>
     </body>
 </html>
