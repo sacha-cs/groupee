@@ -65,7 +65,8 @@ body {
 
 #group {
   position: relative;
-  background-color: #4B6B8B;
+  background:#67727A;
+  transition:all 0.3s ease;
   width: 200px;
   height: 400px;
   float: left;
@@ -74,14 +75,18 @@ body {
   margin-left: 50px;
   margin-right: 50px;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px black; 
+  box-shadow: 0px 0px 30px 0px white; 
   border-radius: 20px;
+}
 
+#group:hover {
+  background-color: #6991AC;
 }
 
 #add {
   text-align: center;
-  background-color: #4B6B8B;
+  background-color: #67727A;
+  transition: all 0.3s ease;
   width: 200px;
   height: 400px;
   float: left;
@@ -90,8 +95,12 @@ body {
   margin-left: 50px;
   margin-right: 50px;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px black;  
+  box-shadow: 0px 0px 30px 0px white;  
   border-radius: 20px;
+}
+
+#add:hover {
+  background-color: #D75C37;
 }
 
 #add-img {

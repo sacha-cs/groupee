@@ -100,7 +100,7 @@ function register()
             var parts = response.slice(1).split('#');
             document.cookie="seshCookie="+parts[0]+";path=/";
             document.cookie="username="+parts[1]+";path=/";
-            window.location = "/groups/index.html";
+            window.location = "/welcome";
         } else {
             switch(response.slice(1)) {
                 case "UsernameTaken":
