@@ -112,3 +112,7 @@ function setGroup(groupId) {
         }
     });
 }
+
+function loaded() {
+    addGroupsToPage();
+}
