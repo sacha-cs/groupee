@@ -6,7 +6,7 @@ var oldTitle;
 var tabOpen;
 var lastSeenMessage;
 
-var chatSound = new Audio('http://doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
+var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
 
 function startChat() {
     lastMessageID = 0;
