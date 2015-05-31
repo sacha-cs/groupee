@@ -8,6 +8,7 @@ body {
 /* NAVBAR STYLING */
 
 #navbar {
+  color: white;
   z-index: 2;
   background-color: #4C687C;
   width: 100%;
@@ -26,7 +27,12 @@ body {
   margin: 5px;
 }
 
+#navbar-home:hover {
+  cursor: pointer;
+}
+
 #navbar-right {
+    font-size: 11pt;
     height: 100%;
     float:right;
     margin-right: 10px;
@@ -43,6 +49,28 @@ body {
   display: inline-block;
 }
 
+#avatar-self {
+  float: right;
+  height: 50px;
+  width: 50px;
+}
+
+#avatar-self img {
+  height:100%;
+  width: 100%;
+}
+
+#navbar-group {
+  height: 100%;
+  font-size: 14pt;
+}
+
+#navbar-group p {
+  margin: 0px;
+  height: 100%;
+  line-height: 50px;
+}
+
 /* CHAT STYLING */
 
 #chat-left {
@@ -50,11 +78,11 @@ body {
 	height: 100%;
 	position: fixed;
 	margin-top: 50px;
-	background-color: #4C687C;
+	background-color: #6991AC;
 }
 
 #chat-toggle {
-  background-color: #4B6B8B;
+  background-color: #6991AC;
 	display: block;
 	width: 50px;
 	height: 100%;
@@ -73,7 +101,7 @@ body {
   display: block;
   width: 25px;
   height: 100%;
-  background-color: #4C687C;
+  background-color: #6991AC;
 }
 
 #half2 {
@@ -88,7 +116,7 @@ body {
 #chat-toggle-icon {
   border-radius: 10px;
   height:50px;
-  background-color: #4C687C;
+  background-color: #6991AC;
   margin: auto;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
@@ -312,7 +340,7 @@ div ::-webkit-scrollbar-thumb {
   position: absolute;
   bottom: 100%;
   left: 50%;
-  margin-left: 0px;
+  margin-left: -8px;
   width: 0; height: 0;
   border-bottom: 8px solid #000000;
   border-right: 8px solid transparent;
@@ -326,6 +354,6 @@ div ::-webkit-scrollbar-thumb {
   opacity: 0.8;
   top: 45px;
   left: 50%;
-  margin-left: -50px;
+  margin-left: -40px;
   z-index: 999;
 }
