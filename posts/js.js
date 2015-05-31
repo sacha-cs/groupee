@@ -1,65 +1,37 @@
 var noteInfo = [];
 var imgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
+var lastId = 0;
+var ensureSent = false;
 
 // Adds a new note.
 function addNote() {
     var notes = document.getElementById("notes"); 
     var noteLength = notes.children.length;
 
-    lastId = ((noteLength > 0) ? parseInt(notes.children[noteLength-1].id.slice(4))+1 : 0);
-
     // Create an empty note.
     notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                          "<a href='#'>" +
-                              "<textarea class='note-title' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
-                              "<textarea class='note-content' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
-                              "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
-                          "</a>" +
-                      "</li>";
-    
-    // "onblur" event checks when the user leaves a text field - add listeners.
-    document.getElementById("title" + lastId).addEventListener("blur", sendUpdate);
-    document.getElementById("content" + lastId).addEventListener("blur", sendUpdate);
-        
-    noteInfo[lastId] = {listId: lastId, noteId: -1, title: "", content: "", saved: false};
-    //lastId++;
+                           "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' maxlength='13' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
+                           "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
+                           "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
+                       "</li>";
+    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false};
+    lastId++;
 
     // Iterate through all notes, set their values and re-add the 'lost' event listeners. 
     for (var i = 0; i < noteLength; i++) {
         var currentId = parseInt(notes.children[i].id.slice(4));
-        console.log("current id; " + currentId);
 
-        // Find corresponding element in array of notes.
-        var currentNote = noteInfo.filter(function(o) {
-            return o.listId === currentId;
-        })[0];
-        var currentTitle = currentNote.title;
-        var currentContent = currentNote.content;
-
-        document.getElementById("title" + currentId).value = currentTitle;
-        document.getElementById("content" + currentId).value = currentContent;
-      
         // Strings are immutable in Javascript, so the whole HTML string is written over! 
-        document.getElementById("title" + currentId).addEventListener("blur", sendUpdate);
-        document.getElementById("content" + currentId).addEventListener("blur", sendUpdate);
+        document.getElementById("title" + currentId).value = noteInfo[currentId].title;
+        document.getElementById("content" + currentId).value = noteInfo[currentId].content; 
     }
-    console.log(noteInfo);
 }
 
 // Handles the saving of a note to the DB / altering an existing note.
-function sendUpdate(e) {
-    console.log("gonna send update");
-    var id = e.target.parentElement.parentElement.id.slice(4); // Id of note we just clicked away from.
-    console.log("for id " + id);
-    // Find corresponding element in array of notes.
-    var currentNote = noteInfo.filter(function(o) {
-        return o.listId === id;
-    })[0];
-    console.log("noteInfo:" );
-    console.log(noteInfo);
-
-    var expectedTitle = currentNote.title;
-    var expectedContent = currentNote.content; 
+function sendUpdate(id) {
+    
+    var expectedTitle = noteInfo[id].title;
+    var expectedContent = noteInfo[id].content; 
 
     var actualTitle = document.getElementById("title" + id).value;
     var actualContent = document.getElementById("content" + id).value;
@@ -72,10 +44,10 @@ function sendUpdate(e) {
     }
 
     // Something is different, so we can send some data. 
-    var aClient = new HttpClient();
-    if (currentNote.saved) {
+    var aClient = new HttpClient(ensureSent);
+    if (noteInfo[id].saved) {
         // Update the note with the given id.
-        data.noteId = currentNote.noteId;
+        data.noteId = noteInfo[id].noteId;
         aClient.post('update_note', JSON.stringify(data),
             function(response) {
                 var correct = response[0];
@@ -91,8 +63,8 @@ function sendUpdate(e) {
                 var correct = response[0];
                 if (correct == "Y") {
                     var newId = response.slice(1); // Id of note that we have saved to.
-                    currentNote.saved = true;
-                    currentNote.noteId = newId;
+                    noteInfo[id].saved = true;
+                    noteInfo[id].noteId = newId;
                 } else {
                     // TODO: Handle errors. 
                 }
@@ -101,8 +73,8 @@ function sendUpdate(e) {
     }
 
     // Record updates locally. 
-    currentNote.title = actualTitle;
-    currentNote.content = actualContent;
+    noteInfo[id].title = actualTitle;
+    noteInfo[id].content = actualContent;
 }
 
 function setErrorText(error) {
@@ -117,19 +89,12 @@ function getNotes() {
 // Delete a note associated with a user from the database.
 function deleteNote(id) {
     var aClient = new HttpClient();
-    
-    // Find corresponding element in array of notes, get its DB id.
-    var actualId = noteInfo.filter(function(o) {
-        return o.listId === id;
-    })[0].noteId;
-
+    var actualId = noteInfo[id].noteId;
     var data = {noteId: actualId};
 
-    // Remove corresponding element from array of notes.
-    noteInfo = noteInfo.filter(function(o){
-        return o.listId !== id;
-    })
-
+    // Clear the value for the note in local storage.
+    delete noteInfo[id];
+    
     var noteForDeletion = document.getElementById("note" + id);
     noteForDeletion.parentElement.removeChild(noteForDeletion);
     
@@ -156,24 +121,29 @@ function getAllNotes() {
             var noteId = noteStuff[0].split("=")[1];
             var noteTitle = noteStuff[1].split("=")[1];
             var noteContent = noteStuff[2].split("=")[1];
-            var info = {listId : i,
-                        noteId : noteId,
+            var info = {noteId : noteId,
             	        title : escapeHtml(decodeURIComponent(noteTitle)),   
                         content : escapeHtml(decodeURIComponent(noteContent)),
                         saved: true};
-            noteInfo.push(info); 
-            notes.innerHTML += "<li id='note" + i + "'>" + 
-                                  "<a href='#'>" +
-                                      "<textarea class='note-title' id='title" + i + "' placeholder='Untitled'>" + info.title + "</textarea>" +
-                                      "<textarea class='note-content' id='content" + i + "' placeholder='Your content here'>" + info.content + "</textarea>" +
-                                      "<img onclick='deleteNote(" + i + ")' id='delete' src='" + imgStr + "'>" +
-                                  "</a> " +
-                              "</li>";
             
-            // "onblur" event checks when the user leaves a text field - add listeners.
-            document.getElementById("title" + i).addEventListener("blur", sendUpdate);
-            document.getElementById("content" + i).addEventListener("blur", sendUpdate);
+            noteInfo[lastId] = info; 
+            notes.innerHTML += "<li id='note" + lastId + "'>" + 
+                                   "<textarea class='note-title' maxlength='15' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + info.title + "</textarea>" +
+                                   "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + info.content + "</textarea>" +
+                                   "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
+                               "</li>";
+            lastId++;
     	}
 	});
+}
+
+window.onbeforeunload = function() {
+    var el = document.activeElement;
+    if (el && (el.tagName.toLowerCase() == 'textarea')) {
+        // Element currently in focus is a textarea.
+        var id = el.parentElement.id.slice(4);
+        ensureSent = true;
+        sendUpdate(id);
+    }
 }
 

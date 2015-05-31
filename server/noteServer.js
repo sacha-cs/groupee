@@ -1,7 +1,7 @@
 postHandler.addHandler("posts/add_note", addNote, true);
 postHandler.addHandler("posts/update_note", updateNote, true);
 postHandler.addHandler("posts/delete_note", deleteNote, true);
-getHandler.addHandler("posts/get_notes", getNotes);
+getHandler.addHandler("posts/get_notes", getNotes, true);
 
 // Add a fresh note to the database.
 function addNote(request, response, data) {
@@ -62,11 +62,11 @@ function deleteNote(request, response, data) {
 }
 
 function getNotes(request, response) {
-    var currentUser = utils.getUser(request);
     var currentGroup = utils.getViewingGroup(request);
     var getNotesQuery = "SELECT note_id, note_title, note_content " + 
                         "FROM note " +
-                        "WHERE username='" + currentUser + "' AND group_id='" + currentGroup + "'";
+                        "WHERE group_id='" + currentGroup + "' " +
+                        "ORDER BY note_id";
     pg.connect(connectionString, function(err, client, done) {
         client.query(getNotesQuery, function(err, result) {
             done(client);
