@@ -1,7 +1,6 @@
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
-postHandler.addHandler("fileupload/upload", uploadAvatar);
 postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
@@ -88,47 +87,28 @@ function handleGroupInsertion(request, response, params) {
     var username = utils.getUser(request);
     var privacy = params.privacy.toLowerCase();
 
-    // Check if the group name entered exists in the DB.
-    var groupIdQuery = "SELECT group_id " +
-                       "FROM groups " +
-                       "WHERE group_name='" + groupname + "'";
-  
     pg.connect(connectionString, function(err, client, done) {
         if(err) {
             console.log(err);
             return utils.respondPlain(response, "NServerError");
         }
-        // Handle group insertion/creation.
-        client.query(groupIdQuery, function(err, checkResult) {
+        // Group does not already exist, so we create a new one.
+        var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
+                            "VALUES('" + groupname + "', '" + privacy + 
+                            "', '" + description + "') " +
+                            "RETURNING group_id";
+        client.query(newGroupQuery, function(err, result) {
             if(err) { return utils.respondError(err, response); }
-          
-            // If the group already exists, set the group id to the existing one.
-            if (checkResult.rows.length > 0) {
-                newGroupId = checkResult.rows[0].group_id;
-                insertUserIntoMemberOf(request, response, client, done,
-                    function(request, response, client, done) { 
+            var group_id = result.rows[0].group_id;
+            insertUserIntoMemberOf(request, response, client, done, 
+                function() { 
+                    addGroupChat(request, response, client, done,
+                    function() {
                         done(client);
-                    }, newGroupId, username);
-            } else {
-                // Group does not already exist, so we create a new one.
-                var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
-                                    "VALUES('" + groupname + "', '" + privacy + 
-                                    "', '" + description + "')";
-                client.query(newGroupQuery, function(err, checkResult) {
-                    if(err) { return utils.respondError(err, response); }
-
-                    // We must now extract the group id that was just created.
-                    // 
-                    extractGroupId(request, response, client, done,
-                        function(request, response, client, done, group_id) {
-                            insertUserIntoMemberOf(request, response, client, done, 
-                                function(request, response, client, done) { 
-                                    done(client);
-                                    utils.respondPlain(response, "Y" + group_id) },
-                            group_id, username );
-                    }, groupname);
-                });
-            }
+                        utils.respondPlain(response, "Y" + group_id)
+                    }, group_id);
+                },
+            group_id, username );
         });
     });
 }
@@ -169,7 +149,7 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
                 return utils.respondError(err, response); 
             }
             // User has been inserted into appropriate group.
-            callback(request, response, client, done);
+            callback();
         });
     });
 }
@@ -208,31 +188,22 @@ function register(request, response, params) {
                 if(err) { return utils.respondError(err, response); }
                 
                 // New user has just been created. 
-                //createAvatar(username);
-      
-                return utils.respondPlain(response, "YRegisteredSuccessfully");
+                createAvatar(username);
+                // login automatically after registration
+                var user_info = {"username" : username};
+                var seshCookie = createSessionCookie(user_info);
+                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
             });
         });
     });
 }
 
-function uploadAvatar(request, response, fields, files) {
-    utils.respondPlain(response, "File Uploaded successfully!");
-
-    var file = files.avatar;
-    //TODO: pass around user? think about this.
-    var user = utils.getUser(request);
-    if(user)
-    {
-        fs.rename(file.path, uploadPath + "avatars/" + user + ".png");
-    }
-    return;
-}
-
-function createAvatar(username) {
-    var defaultAvatar = fs.createReadStream(uploadPath + "avatar.png");
-    var newAvatar = fs.createWriteStream(uploadPath + "avatars/" + username + ".png")
-    defaultAvatar.pipe(newAvatar);
+function createAvatar(user) {
+    request.post(
+    'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php',
+    { form: { username: user } },
+            function (error, response, body) {}
+    );
 }
 
 function nameIsValid(name) {
@@ -262,7 +233,7 @@ function addUserToGroup(request, response, params) {
         checkUserExists(request, response, client, done,
             function(request, response, client, done) {
                 insertUserIntoMemberOf(request, response, client, done, 
-                    function(request, response, client, done) {
+                    function() {
                         done(client);
                         utils.respondPlain(response, "YUserAddedSuccessfully");
                     },
@@ -383,4 +354,19 @@ function setGroup(request, response, params) {
                 }
             }, params.group_id);
         });
+}
+
+function addGroupChat(request, response, client, done, callback, group_id) {
+    var query = "INSERT INTO chats(type) VALUES('group') RETURNING chat_id;"
+    client.query(query, function(err, result) {
+        if(err) { return utils.respondError(response, err); }
+        var chat_id = result.rows[0].chat_id;
+        var groupQuery = "INSERT INTO group_chats " +
+                         "VALUES(" + chat_id + ", " + group_id + ");";
+        client.query(groupQuery, function(err, result) {
+            if(err) { return utils.respondErr(response, err); }
+            callback(chat_id);
+        });
+    });
+
 }

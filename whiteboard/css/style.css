@@ -1,0 +1,352 @@
+canvas { 
+    border: 1px solid black; 
+    position:absolute;
+}
+
+#wrapper {
+    float: left;
+    margin: 20px;
+    position:relative;
+    width:800px;
+    height:500px;
+    cursor:none;
+    background-color: white;
+}
+
+#textHidden {
+    position:absolute;
+    left:-500px;
+    top:-500px;
+}
+
+#tools {
+    padding-top:20px;
+    position: fixed;
+    right:0;
+    float: right;
+    width:50px;
+    background-color: white;
+    height: 100%;
+}
+
+.tool {
+    background-color: white;
+}
+
+#line-thickness {
+    margin-right: 4px;
+    margin-left: 4px;
+}
+
+#line-thickness img {
+    width: 42px;
+}
+
+input[type=radio] {
+    display:none;
+}
+
+label {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    width: 50px;
+}
+ 
+#pen + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pen.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#pen:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pen.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#text + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/text.png);
+    background-size: 35px 35px;
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#text:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;  
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/text.png);  
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#rectangle + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/rectangle.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#rectangle:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/rectangle.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#line + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/line.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+    margin-bottom: 60px;
+}
+
+#line:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/line.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+    margin-bottom: 60px;
+}
+
+#circle + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/circle.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#circle:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/circle.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+}
+
+#currTool {
+    display: none;
+}
+
+div#line-thickness {
+  position: relative;
+  display: inline;
+}
+
+#line-thickness-input {
+  position: absolute;
+  width:170px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 40px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+}
+
+#line-thickness-input input {
+    margin: 10px;
+}
+
+/*Triangle out of popup*/
+#line-thickness-input:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid #000000;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+div:hover#line-thickness div {
+  visibility: visible;
+  opacity: 0.8;
+  right: 100%;
+  top: 50%;
+  margin-top: -30px;
+  margin-right: 15px;
+  z-index: 999;
+}
+
+#line-thickness #line-thickness-input:before {
+  right: -20px;
+  content: " ";
+  display: block;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: -999;
+}  
+
+#colour {
+    margin-top: 40px;
+}
+
+#colour img {
+    width: 50px;
+}
+
+div#colour {
+  position: relative;
+  display: inline;
+}
+
+#colour-input {
+    padding-top: 10px;
+  position: absolute;
+  width:220px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 80px;
+  line-height: 30px;
+  visibility: hidden;
+  border-radius: 6px;
+}
+
+/*Triangle out of popup*/
+#colour-input:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid #000000;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+div:hover#colour div {
+  visibility: visible;
+  opacity: 0.8;
+  right: 100%;
+  top: 50%;
+  margin-top: -65px;
+  margin-right: 15px;
+  z-index: 999;
+}
+
+#colour #colour-input:before {
+  right: -20px;
+  content: " ";
+  display: block;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: -999;
+}  
+
+#line-border-label {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+#line-border-input {
+    position: absolute;
+    right: 10px;
+    top:13px;
+}
+
+#fill-text-label {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
+
+#fill-text-input {
+    position: absolute;
+    right: 10px;
+    bottom:13px;
+}
+
+
+
+div#text-size {
+  position: relative;
+  display: inline;
+}
+
+#text-size-input {
+  position: absolute;
+  width:170px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 40px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;
+}
+
+#text-size-input input {
+    margin: 10px;
+}
+
+/*Triangle out of popup*/
+#text-size-input:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -8px;
+  width: 0; height: 0;
+  border-left: 8px solid #000000;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+div:hover#text-size div {
+  visibility: visible;
+  opacity: 0.8;
+  right: 100%;
+  top: 50%;
+  margin-top: -35px;
+  margin-right: 15px;
+  z-index: 999;
+}
+
+#text-size #text-size-input:before {
+  right: -20px;
+  content: " ";
+  display: block;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: -999;
+}  
+
+#text-size img {
+    /*width: 38px;*/
+    height: 50px;
+}

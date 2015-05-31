@@ -42,6 +42,14 @@ this.getSessionCookie = function(request) {
     return seshCookie;
 }
 
+this.getSessionCookie = function(request) {
+    var cookie = request.headers.cookie;
+    if(!cookie) return;
+    var cookies = this.splitParams(cookie, ';');
+    var seshCookie = cookies.seshCookie;
+    return seshCookie;
+}
+
 this.splitParams = function(string, splitOn) {
     var params = {};
     if(string == null || string == undefined) return params;
