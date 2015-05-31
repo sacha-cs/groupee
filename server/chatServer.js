@@ -104,32 +104,20 @@ function escapeHtml(text) {
 this.getAllChatHistory = function() {
     pg.connect(connectionString, function(err, client, done) {
         var allChatQuery = "SELECT * " +
-                           "FROM group_chats";
+                           "FROM group_chats JOIN chat_messages " +
+                              "USING (chat_id) " +
+                           "ORDER BY message_time;";
         var chatToGroup = {};
         client.query(allChatQuery, function(err, result) {
             if(err) { return console.log(err); }
             for(var i = 0; i < result.rows.length; i++) {
-                var chat_id = result.rows[i].chat_id;
-                var group_id = result.rows[i].group_id;
-                chatToGroup[chat_id] = group_id;
-                var allMessagesQuery = 
-                  "SELECT * " +
-                  "FROM chat_messages " +
-                  "WHERE chat_id=" + chat_id +
-                  " ORDER BY message_time";
-                client.query(allMessagesQuery, function(err, result) {
-                    if(result.rows.length == 0) return;
-                    var group = chatToGroup[result.rows[0].chat_id];
+                var group = result.rows[i].group_id;
+                if(!groups[group]) 
                     createGroupData(group);
-                    for(var j = 0; j < result.rows.length; j++) {
-                        groups[group].messages.push(
-                          {user:result.rows[j].username,
-                           message:result.rows[j].message});
-                        groups[group].messageNo++;
-                    }
-                });
+                groups[group].messages.push({user:result.rows[i].username,
+                                             message:result.rows[i].message});
+                groups[group].messageNo++;
             }
         });
-
     });
 }
