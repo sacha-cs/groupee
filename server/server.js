@@ -124,9 +124,15 @@ function returnFile(request, response) {
         case '.wav':
             contentType = 'audio/wav';
             break;
+        case '.mp3':
+            contentType = 'audio/mp3';
+            break;
     }
-
-    fs.readFile(filePath, 'utf-8', function(error, content) {
+    
+    var encoding = '';
+    if(contentType == 'text/html' || contentType == 'text/js')
+        encoding = 'utf-8';
+    fs.readFile(filePath, encoding, function(error, content) {
         if (error) {
             if(error.code == 'ENOENT') {
                 console.log("404ing! " + filePath);
