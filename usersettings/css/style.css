@@ -1,0 +1,110 @@
+#content {
+	margin: 50px;
+}
+
+#side-menu {
+	text-align: center;
+	float: left;
+	width: 30%;
+	background-color: #F7F7F7;
+  	border-radius: 2px;
+  	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+#user-settings {
+	text-align: center;
+	float: right;
+	width:70%;
+}
+
+#avatar img {
+	width: 50%;
+	margin: 20px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+#options {
+    text-align: center;
+	width: 100%;
+}
+
+#options ul {
+    display: inline-block;
+	padding: 0px;
+    list-style-type: none;
+    width: 85%;
+}
+
+a:link, a:visited {
+	margin-bottom: 10px;
+	line-height: 40px;
+	height: 40px;
+    display: block;
+    color: #FFFFFF;
+    background-color: #6991AC;
+    text-align: center;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    background-color: #55758C;
+}
+
+
+#account {
+  padding: 40px;
+  width: 35%;
+  background-color: #F7F7F7;
+  margin: 0 auto;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+#account h1 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 2.0em;
+}
+
+#account input[type=submit] {
+  width: 70%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+#account input[type=file] {
+  height: 44px;
+  font-size: 16px;
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.upload {
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  height: 36px;
+  padding: 0 8px;
+}
+
+.upload-submit {
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+}
+
+.upload-submit:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}

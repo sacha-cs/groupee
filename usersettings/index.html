@@ -2,7 +2,37 @@
 /template/no_group_template.html
 <?title?>
 Profile Settings
-<?headers?> 
+<?headers?>
+<script src="js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<?content?> 
+<div id="side-menu">
+	<div id="avatar">
+	</div>
 
-<?content?>
+	<div id="options">
+		<ul>
+  			<li onclick="toggleAccountSettings()"><a href="">General</a></li>
+			<li onclick="togglePasswordSettings()"><a href="">Password</a></li>
+			<li onclick="toggleGroupsSettings()"><a href="">Groups</a></li>
+		</ul>
+	</div>
+</div>
+
+<div id="user-settings">
+
+	<div id="account">
+	    <h1>Change your avatar</h1></br>
+		<form action="http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php" method="post" enctype="multipart/form-data">
+			<input type="file" name="avatar" id="avatar" placeholder="Upload image">
+        	<input type="submit" name="submit" class="upload upload-submit" value="Go">
+        	<input type="hidden" id="username" name="username"> 
+		</form>
+	</div>
+
+	<div id="password">
+	</div>
+	<div id="groups">
+	</div>
+</div>
 
