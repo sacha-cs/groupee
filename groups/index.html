@@ -1,38 +1,22 @@
-<html>
+<?template?>
+/template/no_group_template.html
+<?title?>
+Your Groups
+<?headers?>
+<link rel="stylesheet" href="css/style.css">
+<script src="js.js"></script>
+<?content?>    
+<div id="wrapper">
 
-	<head>
-		<link rel="stylesheet" href="css/style.css">
-    <script src="js.js"></script>
-    <script type="text/javascript" src="/template/template.js"></script>
-		<title>Your Groups</title>
-	</head>
-	
-	<body onload="addGroupsToPage()">
-    <div id="navbar">
-      <span id="navbar-home">
-        <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
-      </span>
-      <span id="navbar-right">
-        <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
-          <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/logout.png">
-          <span id="popover-logout">Log out</span>
-        </span> 
-      </span>
+    <div id="groups">
+    </div>  
+
+    <div onclick="window.location='create.html'">
+      <div id="add">
+          <div class="create-group">Create a Group</div>
+          <span class="centerer"></span>
+          <img id="add-img" src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/add.png">
+      </div>
     </div>
 
-    <div id="wrapper">
-
-    		<div id="groups">
-	      </div>  
-
-        <div onclick="window.location='create.html'">
-          <div id="add">
-              <div class="create-group">Create a Group</div>
-              <span class="centerer"></span>
-              <img id="add-img" src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/add.png">
-          </div>
-        </div>
-
-    </div>
-	</body>
-</html>
+</div>
