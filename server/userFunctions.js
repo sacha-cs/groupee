@@ -1,7 +1,6 @@
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
 postHandler.addHandler("groups/create", handleGroupInsertion);
-postHandler.addHandler("fileupload/upload", uploadAvatar);
 postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
@@ -189,7 +188,7 @@ function register(request, response, params) {
                 if(err) { return utils.respondError(err, response); }
                 
                 // New user has just been created. 
-                //createAvatar(username);
+                createAvatar(username);
                 // login automatically after registration
                 var user_info = {"username" : username};
                 var seshCookie = createSessionCookie(user_info);
@@ -199,23 +198,12 @@ function register(request, response, params) {
     });
 }
 
-function uploadAvatar(request, response, fields, files) {
-    utils.respondPlain(response, "File Uploaded successfully!");
-
-    var file = files.avatar;
-    //TODO: pass around user? think about this.
-    var user = utils.getUser(request);
-    if(user)
-    {
-        fs.rename(file.path, uploadPath + "avatars/" + user + ".png");
-    }
-    return;
-}
-
-function createAvatar(username) {
-    var defaultAvatar = fs.createReadStream(uploadPath + "avatar.png");
-    var newAvatar = fs.createWriteStream(uploadPath + "avatars/" + username + ".png")
-    defaultAvatar.pipe(newAvatar);
+function createAvatar(user) {
+    request.post(
+    'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php',
+    { form: { username: user } },
+            function (error, response, body) {}
+    );
 }
 
 function nameIsValid(name) {
