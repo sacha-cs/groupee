@@ -15,6 +15,7 @@ require('./userFunctions');
 chat = require('./chatServer');
 require('./todosServer');
 require('./whiteboardServer');
+require('./calendarServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';
 uploadPath = "/vol/project/2014/271/g1427136/"
@@ -46,7 +47,8 @@ function serverListener(request, response) {
         return;
     }
     if(request.method=="POST") {
-        var requestURL = request.url.substring(1);
+        var requestURL = request.url.substring(1).split('?')[0];
+        console.log(requestURL);
         var handler = postHandler.getHandler(requestURL);
 
         if(handler != null) {
