@@ -65,17 +65,16 @@ body {
 
 #group {
   position: relative;
-  background:#67727A;
+  background:#7E8083;
   transition:all 0.3s ease;
   width: 200px;
-  height: 400px;
+  height: 300px;
   float: left;
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 50px;
   margin-right: 50px;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px white; 
   border-radius: 20px;
 }
 
@@ -85,17 +84,16 @@ body {
 
 #add {
   text-align: center;
-  background-color: #67727A;
+  background-color: #7E8083;
   transition: all 0.3s ease;
   width: 200px;
-  height: 400px;
+  height: 300px;
   float: left;
   background-repeat: no-repeat;
   background-size: contain;
   margin-left: 50px;
   margin-right: 50px;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px white;  
   border-radius: 20px;
 }
 
