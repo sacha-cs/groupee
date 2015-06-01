@@ -7,4 +7,18 @@ function loaded() {
 
 function toggleAccountSettings() {
 	document.getElementById('account').style.display = 'block';
+	document.getElementById('password').style.display = 'none';
+	document.getElementById('groups').style.display = 'none';
+}
+
+function togglePasswordSettings() {
+	document.getElementById('password').style.display = 'block';
+	document.getElementById('account').style.display = 'none';
+	document.getElementById('groups').style.display = 'none';
+}
+
+function toggleGroupsSettings() {
+	document.getElementById('groups').style.display = 'block';
+	document.getElementById('account').style.display = 'none';
+	document.getElementById('password').style.display = 'none';
 }
