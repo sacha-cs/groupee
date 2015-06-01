@@ -9,7 +9,7 @@ function addNote() {
     var noteLength = notes.children.length;
 
     // Create an empty note.
-    notes.innerHTML += "<li id='note" + lastId + "'>" + 
+    notes.innerHTML += "<li draggable=true ondragstart='drag(event) id='note" + lastId + "'>" + 
                            "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' maxlength='10' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
                            "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
                            "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
@@ -127,7 +127,7 @@ function getAllNotes() {
                                 content: currentNote.noteContent,
                                 saved: true}; 
 
-            notes.innerHTML += "<li id='note" + lastId + "'>" + 
+            notes.innerHTML += "<li draggable=true ondragstart='drag(event) id='note" + lastId + "'>" + 
                                    "<textarea class='note-title' maxlength='10' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
                                    "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
                                    "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
@@ -150,4 +150,27 @@ window.onbeforeunload = function() {
 
 function loaded() {
     getAllNotes();
+}
+
+function drag(ev) {
+    /*var style = window.getComputedStyle(ev.target, null);
+    ev.dataTransfer.setData("text/plain", 
+        (parseInt(style.getPropertyValue("left"),10) - ev.clientX) + ',' + 
+        (parseInt(style.getPropertyValue("top"),10) - ev.clientY));*/
+}
+
+function dragOver(ev) {
+    /*ev.preventDefault();
+    return false;*/
+}
+
+// Unpack the offsets and use them to position the element relative to the mouse pointer.
+function drop(ev) {
+    /*var offset = ev.dataTransfer.getData("text/plain").split(',');
+    var id = evev.activeElement.parentElement.id.slice(4);
+    var dm = document.getElementById('note' + id);
+    dm.style.left = (ev.clientX + parseInt(offset[0],10)) + 'px';
+    dm.style.top = (ev.clientY + parseInt(offset[1],10)) + 'px';
+    ev.preventDefault();
+    return false;*/
 }
