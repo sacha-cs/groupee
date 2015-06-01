@@ -5,6 +5,7 @@ postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
 getHandler.addHandler("groups/set_viewing_group", setGroup);
+postHandler.addHandler("usersettings/change_avatar", changeAvatar, true);
 
 function login(request, response, params) {
 
@@ -370,3 +371,38 @@ function addGroupChat(request, response, client, done, callback, group_id) {
     });
 
 }
+
+function changeAvatar(req, response, data) {
+    response.writeHead("303", {'Location' : '/usersettings/' });
+    response.end();
+    var user = utils.getUser(req);
+
+    var part = data.split('; ')[2];
+    var morePart = part.split('=')[1];
+    var fileName = morePart.split(' ')[0].split('"')[1];
+    var contenttype = morePart.split(' ')[1].split('\n')[0];
+
+    var formData = {
+        // Pass a simple key-value pair
+        username: user,
+
+        // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
+        // Use case: for some types of streams, you'll need to provide "file"-related information manually.
+        // See the `form-data` README for more information about options: https://github.com/felixge/node-form-data
+        custom_file: {
+            value:  fs.createReadStream(''),
+            options: {
+                filename: fileName,
+                contentType: contenttype
+            }
+        }
+    };  
+ 
+
+    request.post({url:'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', form: formData },
+            function (error, response, body) {
+                console.log("Error: " + error);
+                console.log("Body: " + body);
+            }
+    );
+}   

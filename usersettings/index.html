@@ -17,15 +17,17 @@ Profile Settings
 	</div>
 </div>
 
-<div id="user-settings">
+<div id="user-settings"> 	
 
 	<div id="account">
 	    <h1>Change your avatar</h1></br>
-		<form action="http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php" method="post" enctype="multipart/form-data">
+		<form action="/usersettings/change_avatar" method="post" enctype="multipart/form-data">
 			<input type="file" name="avatar" id="avatar" placeholder="Upload image">
         	<input type="submit" name="submit" class="upload upload-submit" value="Go">
-        	<input type="hidden" id="username" name="username"> 
 		</form>
+		<div class="feedback-text">
+            <div id="avatar-error"></div>
+        </div>
 	</div>
 
 	<div id="password">
@@ -34,6 +36,9 @@ Profile Settings
 		<input type="password" id="avatar" placeholder="New password">
 		<input type="password" id="avatar" placeholder="Retype new password">
         <input type="submit" name="submit" class="password password-submit" value="Go" onclick="changePassword()">
+        <div class="feedback-text">
+            <div id="password-error"></div>
+        </div>
 	</div>
 
 	<div id="groups">
