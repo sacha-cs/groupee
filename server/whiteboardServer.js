@@ -1,15 +1,21 @@
 postHandler.addHandler("whiteboard/update", receivedUpdate, true);
 getHandler.addHandler("whiteboard/getUpdate", sendUpdates);
 
+var groups = {};
 var TIMEOUT_TIME = 10*1000;
-var updates = [];
-var lastUpdateNo = 0;
-var waitingRequests = [];
 var currentToolIds = {};
+
+function createGroupData(group) {
+    groups[group] = { lastUpdateNo: 0,
+                      updates: [],
+                      waitingRequests: [] };
+}
 
 function receivedUpdate(request, response, payload)
 {
     var seshCookie = utils.getSessionCookie(request);
+    var group = utils.getViewingGroup(request);
+
     payload = JSON.parse(payload);
 
     if(payload.justStarted) {
@@ -18,13 +24,13 @@ function receivedUpdate(request, response, payload)
 
     payload.id = currentToolIds[seshCookie];
     payload.user = utils.getUser(request);
-    updates.push(payload);
-    lastUpdateNo++;
+    groups[group].updates.push(payload);
+    groups[group].lastUpdateNo++;
     utils.respondPlain(response, "");
 
-    while(waitingRequests.length > 0) {
-        var curr = waitingRequests[0];
-        waitingRequests.splice(0, 1);
+    while(groups[group].waitingRequests.length > 0) {
+        var curr = groups[group].waitingRequests[0];
+        groups[group].waitingRequests.splice(0, 1);
         if(curr.timedOut)
             continue;
         clearTimeout(curr.timeoutID);
@@ -34,10 +40,13 @@ function receivedUpdate(request, response, payload)
 
 function sendUpdates(request, response, params, checkForNew)
 {
+    var group = utils.getViewingGroup(request);
+    if(!groups[group])
+        createGroupData(group);
     var last = parseInt(params.last);
     
     //If there are no more messages to send, add it to the waiting list 
-    if(!params.allUpdates && !checkForNew && last == lastUpdateNo)
+    if(!params.allUpdates && !checkForNew && last == groups[group].lastUpdateNo)
     {
         var requestData = {"request":request,
                            "response":response,
@@ -47,22 +56,22 @@ function sendUpdates(request, response, params, checkForNew)
         var timeoutID = setTimeout(requestTimedOut, TIMEOUT_TIME, requestData);
 
         requestData.timeoutID = timeoutID;
-        waitingRequests.push(requestData);
+        groups[group].waitingRequests.push(requestData);
         
         return;
     }
     
     response.writeHead(200, { "Content-Type": 'application/json' });
     resObj = {};
-    resObj.lastUpdateNo = lastUpdateNo;
+    resObj.lastUpdateNo = groups[group].lastUpdateNo;
     resObj.responses = [];
-    while(last < lastUpdateNo)
+    while(last < groups[group].lastUpdateNo)
     {
-        if((params.allUpdates == undefined) && updates[last].user == utils.getUser(request)) {
+        if((params.allUpdates == undefined) && groups[group].updates[last].user == utils.getUser(request)) {
             last++;
             continue;
         }
-        resObj.responses.push(updates[last]);
+        resObj.responses.push(groups[group].updates[last]);
         last++;
     }
     response.end(JSON.stringify(resObj));
