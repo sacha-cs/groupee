@@ -10,7 +10,7 @@ function addNote() {
 
     // Create an empty note.
     notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                           "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' maxlength='13' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
+                           "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' maxlength='10' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
                            "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
                            "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
                        "</li>";
@@ -128,7 +128,7 @@ function getAllNotes() {
                                 saved: true}; 
 
             notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                                   "<textarea class='note-title' maxlength='15' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
+                                   "<textarea class='note-title' maxlength='10' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
                                    "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
                                    "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
                                "</li>";

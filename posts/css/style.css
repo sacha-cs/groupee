@@ -187,6 +187,8 @@ ul li:hover #delete {
 }
 
 #new-note {
+    -webkit-transform: scale(1);
+    -webkit-transition:-webkit-transform .15s linear;
     display:block;
     float:left;
     margin-right:15px;
@@ -215,3 +217,53 @@ textarea::-webkit-scrollbar-track {
 textarea::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.5);
 }
+
+#new-note-icon {
+    height:70px;
+    width:70px;
+}
+
+.content {
+    margin-top: 35px;
+}
+
+/*
+.tooltip {
+    display: inline;
+    position: relative;
+}
+
+.tooltip:hover {
+    color: #c00;
+    text-decoration: none;
+}
+
+.tooltip:hover:after {
+    background: #111;
+    background: rgba(0,0,0,.8);
+    border-radius: .5em;
+    bottom: 1.35em;
+    color: #fff;
+    content: attr(title);
+    display: block;
+    left: 1em;
+    padding: .3em 1em;
+    position: absolute;
+    text-shadow: 0 1px 0 #000;
+    white-space: nowrap;
+    z-index: 98;
+}
+
+.tooltip:hover:before {
+    border: solid;
+    border-color: #111 transparent;
+    border-color: rgba(0,0,0,.8) transparent;
+    border-width: .4em .4em 0 .4em;
+    bottom: 1em;
+    content: "";
+    display: block;
+    left: 2em;
+    position: absolute;
+    z-index: 99;
+}
+*/                 
