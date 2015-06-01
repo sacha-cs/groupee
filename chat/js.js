@@ -15,17 +15,19 @@ function toggleChat() {
 	chatOpen = !chatOpen;
 
 	if (chatOpen) {
-		document.getElementById("content").style.left = "350px";
-		document.getElementById("chat-toggle").style.left = "285px";
+		document.getElementById("content").style.left = "335px";
+		document.getElementById("chat-left").style.left = "0px";
+        document.getElementById("new-messages-icon").style.display = "none";
 	} else {
 		document.getElementById("content").style.left = "50px";
-		document.getElementById("chat-toggle").style.left = "0px";		
+		document.getElementById("chat-left").style.left = "-285px";		
 	}
 
 }
 
 function startChat() {
     lastMessageID = 0;
+    lastSeenMessage = 0;
     updateChat();
 
     oldTitle = document.title;
@@ -60,9 +62,18 @@ function updateChat() {
                 var textMsg = currMsg[1].split("=")[1];
                 addMessageToChat(user, decodeURIComponent(textMsg));
             }
+            var newMessages = lastMessageID - lastSeenMessage;
             if(!tabOpen) {
-                document.title = "(" + (lastMessageID - lastSeenMessage) +
-                                 ") " + oldTitle;
+                document.title = "(" + (newMessages) + ") " + oldTitle;
+            } else {
+                lastSeenMessage = lastMessageID;
+            }
+            if(!chatOpen) {
+                var icon = document.getElementById("new-messages-icon");
+                icon.style.display = "block";
+                icon.innerHTML = newMessages;
+            }
+            if(!tabOpen || !chatOpen) {
                 chatSound.play();
             }
         }
