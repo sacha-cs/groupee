@@ -221,9 +221,3 @@ img:last-of-type:not(#logo) {
 .down {
   border-top:2em solid #00b6f1;
 }
-
-
-a[ id= "slide1" ]:target ~ #slide1 {
--webkit-transform: translateY( 50px);
-transform: translateY( 50px );
-}
