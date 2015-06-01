@@ -376,33 +376,72 @@ function changeAvatar(req, response, data) {
     response.writeHead("303", {'Location' : '/usersettings/' });
     response.end();
     var user = utils.getUser(req);
-
     var part = data.split('; ')[2];
     var morePart = part.split('=')[1];
     var fileName = morePart.split(' ')[0].split('"')[1];
     var contenttype = morePart.split(' ')[1].split('\n')[0];
 
-    var formData = {
-        // Pass a simple key-value pair
-        username: user,
+    // var formData = {
+    //     // Pass a simple key-value pair
+    //     username: user,
 
-        // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
-        // Use case: for some types of streams, you'll need to provide "file"-related information manually.
-        // See the `form-data` README for more information about options: https://github.com/felixge/node-form-data
-        custom_file: {
-            value:  fs.createReadStream(''),
-            options: {
-                filename: fileName,
-                contentType: contenttype
-            }
-        }
-    };  
- 
+    //     // Pass optional meta-data with an 'options' object with style: {value: DATA, options: OPTIONS}
+    //     // Use case: for some types of streams, you'll need to provide "file"-related information manually.
+    //     // See the `form-data` README for more information about options: https://github.com/felixge/node-form-data
+    //     custom_file: {
+    //         value:  fs.createReadStream(''),
+    //         options: {
+    //             filename: fileName,
+    //             contentType: contenttype
+    //         }
+    //     }
+    // };  
 
-    request.post({url:'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', form: formData },
-            function (error, response, body) {
-                console.log("Error: " + error);
-                console.log("Body: " + body);
-            }
-    );
+    // request.post({url:'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', form: formData },
+    //         function (error, response, body) {
+    //             console.log("Error: " + error);
+    //             console.log("Body: " + body);
+    //         }
+    // );
+
+
+
+
+
+
+
+    // var form = new formidable.IncomingForm();
+    // form.uploadDir = '/Users/stephanecohenscali/Desktop';
+    // form.keepExtension = true;
+    // form.type = "multipart";
+
+    // form.on("error", function(error) {
+    //     console.log(error);
+    // });
+    // form.parse(req, function(err, fields, files) {
+    //     if(err)
+    //     {
+    //         response.writeHead(500, { 'Content-Type': 'text/plain' });
+    //         response.end("Upload failed. :(");
+    //         return;
+    //     }
+    //     respondPlain(response, "File Uploaded successfully!");
+    //     return;
+    // });
+
+    // var r = request.post('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, resp, body) {
+    //     if (err) {
+    //             console.log("Error: " + error);
+    //     } else {
+    //             console.log("Body: " + body);
+    //     }
+    // });
+
+    // var form = r.form();
+    // form.append('username', user);
+    // form.append('file', '<FILE_DATA>', {
+    //     filename: fileName,
+    //     contentType: contenttype
+    // });
+    // console.log("FORM: " + form);
 }   
