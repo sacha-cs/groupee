@@ -148,3 +148,6 @@ window.onbeforeunload = function() {
     }
 }
 
+function loaded() {
+    getAllNotes();
+}

@@ -1,17 +1,15 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="css/style.css">
-        <script src="js.js"></script>
-        <title>Posts</title>
-    </head>
-    
-    <body onload="getAllNotes()">
-        <div class="content">
-            <div id="controller">
-                <div id="new-note" onmouseup="addNote()"><p>New Note</p></div>
-                <div id="error"></div>
-            </div>        
-            <ul id="notes"></ul>
-        </div>
-    </body>
-</html>
+<?template?>
+/template/main_template.html
+<?title?>
+Posts
+<?headers?>
+<link rel="stylesheet" href="css/style.css">
+<script src="js.js"></script>
+<?content?>
+    <div class="content">
+        <div id="controller">
+            <div id="new-note" onmouseup="addNote()"><p>New Note</p></div>
+            <div id="error"></div>
+        </div>        
+        <ul id="notes"></ul>
+    </div>
