@@ -29,30 +29,35 @@
 	width: 100%;
 }
 
-#options ul {
+#options {
     display: inline-block;
 	padding: 0px;
     list-style-type: none;
     width: 85%;
 }
 
-a:link, a:visited {
-	margin-bottom: 10px;
-	line-height: 40px;
-	height: 40px;
-    display: block;
-    color: #FFFFFF;
-    background-color: #6991AC;
-    text-align: center;
-    text-decoration: none;
+
+button {
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  background: #6991AC;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  border-style: none;
+  margin-bottom: 10px;
+  width: 80%;
+
 }
 
-a:hover, a:active {
-    background-color: #55758C;
+button:hover {
+  background: #55758C;
+  text-decoration: none;
 }
 
 
 #account {
+  display: none;
   padding: 40px;
   width: 35%;
   background-color: #F7F7F7;

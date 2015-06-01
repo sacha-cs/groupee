@@ -5,6 +5,6 @@ function loaded() {
 	document.getElementById('username').value = username;
 }
 
-// function toggleAccountSettings() {
-// 	document.getElementById('account').style.display = 'block';
-// }
+function toggleAccountSettings() {
+	document.getElementById('account').style.display = 'block';
+}
