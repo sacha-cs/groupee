@@ -14,6 +14,7 @@ getHandler = require('./getHandlers.js');
 require('./userFunctions');
 chat = require('./chatServer');
 require('./todosServer');
+require('./noteServer');
 require('./whiteboardServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';

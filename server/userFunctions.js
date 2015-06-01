@@ -368,5 +368,4 @@ function addGroupChat(request, response, client, done, callback, group_id) {
             callback(chat_id);
         });
     });
-
 }
