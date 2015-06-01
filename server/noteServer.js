@@ -72,18 +72,18 @@ function getNotes(request, response) {
             done(client);
             if(err) { return utils.respondError(err, response); }
             
-            var responseString = "";
+            var responseObjs = [];
             if(result.rows.length > 0) {
                 for(var i = 0; i < result.rows.length; i++) {
                     var row = result.rows[i];
-                    var noteTitle = encodeURIComponent(row.note_title);
-                    var noteContent = encodeURIComponent(row.note_content);
+                    var noteTitle = row.note_title;
+                    var noteContent = row.note_content;
                     var noteId = row.note_id;
-                    responseString += "noteId=" + noteId + "&noteTitle=" + noteTitle + "&noteContent=" + noteContent + "#";
+                    var info = {noteId: noteId, noteTitle: noteTitle, noteContent: noteContent};
+                    responseObjs.push(info);
                 }
             }
-            response.write(responseString);
-            response.end();
+            response.end(JSON.stringify(responseObjs));
         });
     });
 }

@@ -43,7 +43,11 @@ function sendUpdate(id) {
         return;
     }
 
-    // Something is different, so we can send some data. 
+    // Otherwise, something is different, so we can send some data. 
+
+    // We pass ensureSent into HttpClient to ensure that the update has finished before
+    // continuing, which is useful for updating the note a user is currently focused on 
+    // during a page refresh,
     var aClient = new HttpClient(ensureSent);
     if (noteInfo[id].saved) {
         // Update the note with the given id.
@@ -115,15 +119,11 @@ function getAllNotes() {
 	var notes = document.getElementById("notes"); 
 	var aClient = new HttpClient();
 	aClient.get('get_notes', function(response) {
-		var noteList = response.split("#");
-		for (var i = 0; i < noteList.length-1 ; i++) {
-			var noteStuff = noteList[i].split("&");
-            var noteId = noteStuff[0].split("=")[1];
-            var noteTitle = noteStuff[1].split("=")[1];
-            var noteContent = noteStuff[2].split("=")[1];
-            var info = {noteId : noteId,
-            	        title : escapeHtml(decodeURIComponent(noteTitle)),   
-                        content : escapeHtml(decodeURIComponent(noteContent)),
+		var noteList = JSON.parse(response);
+		for (var i = 0; i < noteList.length ; i++) {
+            var info = {noteId : noteList[i].noteId,
+            	        title : noteList[i].noteTitle,   
+                        content : noteList[i].noteContent,
                         saved: true};
             
             noteInfo[lastId] = info; 
