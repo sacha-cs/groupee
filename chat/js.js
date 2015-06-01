@@ -40,7 +40,8 @@ function startChat() {
     window.addEventListener("focus", function() { 
         tabOpen = true;
         document.title = oldTitle;
-        lastSeenMessage = lastMessageID;
+        if(chatOpen)
+            lastSeenMessage = lastMessageID;
     });
 }
 
@@ -65,9 +66,7 @@ function updateChat() {
             var newMessages = lastMessageID - lastSeenMessage;
             if(!tabOpen) {
                 document.title = "(" + (newMessages) + ") " + oldTitle;
-            } else {
-                lastSeenMessage = lastMessageID;
-            }
+            } 
             if(!chatOpen) {
                 var icon = document.getElementById("new-messages-icon");
                 icon.style.display = "block";
@@ -75,6 +74,9 @@ function updateChat() {
             }
             if(!tabOpen || !chatOpen) {
                 chatSound.play();
+            }
+            if(tabOpen && chatOpen) {
+                lastSeenMessage = lastMessageID;
             }
         }
         updateChat();
