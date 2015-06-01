@@ -7,26 +7,33 @@ var tabOpen;
 var lastSeenMessage;
 
 var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
+var input;
+var chatOpen = true;
+
+function toggleChat() {
+
+	chatOpen = !chatOpen;
+
+	if (chatOpen) {
+		document.getElementById("content").style.left = "350px";
+		document.getElementById("chat-toggle").style.left = "285px";
+	} else {
+		document.getElementById("content").style.left = "50px";
+		document.getElementById("chat-toggle").style.left = "0px";		
+	}
+
+}
 
 function startChat() {
     lastMessageID = 0;
     updateChat();
 
-    document.getElementById('message').onkeypress = function(e) {
-        var event = e || window.event;
-        var charCode = event.which || event.keyCode;
-
-        if ( charCode == '13' ) {
-            sendMessage();
-            return false;
-        }
-    }
     oldTitle = document.title;
+    
+    resetChatBox();
     tabOpen = true;
-
     window.addEventListener("blur", function() { 
         tabOpen = false;
-        lastSeenMessage = lastMessageID;
     });
     window.addEventListener("focus", function() { 
         tabOpen = true;
@@ -75,7 +82,6 @@ function sendMessage() {
     function (response) {
     });
     chatBox.value = "";
-    chatBox.focus();
 }
 
 function addMessageToChat(user, message) {
@@ -101,4 +107,35 @@ function addMessageToChat(user, message) {
 
     if(isScrolledToBottom)
         chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+}
+
+function resizeChatBox() {
+    var chatBox = document.getElementById("chat-box");
+    var chatMessages = document.getElementById("chat-messages");
+    var height = (input.scrollHeight + 2);
+    input.style.height = "0px";
+    input.style.height = height + "px";
+    chatBox.style.height = (height + 25) + "px";
+    chatMessages.style.height = "calc(100% - " + (height + 75) + "px)";
+}
+
+function keyEntered(e) {
+    var event = e || window.event;
+    var charCode = event.which || event.keyCode;
+
+    if ( charCode == '13' && !e.shiftKey) {
+        sendMessage();
+        e.preventDefault();
+        resetChatBox();
+        input.focus();
+    }
+}
+
+function resetChatBox() {
+    document.getElementById("chat-box").innerHTML = 
+        "<textarea id='message'></textarea>";
+    input = document.getElementById("message");
+    input.onkeypress = keyEntered;
+    input.oninput = resizeChatBox;
+    resizeChatBox();
 }
