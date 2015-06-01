@@ -16,6 +16,12 @@ ul,li {
 ul {
     overflow:hidden; /* What should happen when text overflows a box. */
     padding:3em;
+
+    /* Fade the notes in on load */
+    animation: fadein 2s;
+    -moz-animation: fadein 2s; /* Firefox */
+    -webkit-animation: fadein 2s; /* Safari and Chrome */
+    -o-animation: fadein 2s; /* Opera */
 }
 
 ul li {
@@ -61,7 +67,42 @@ ul li {
     -moz-transition:-moz-transform .15s linear;
     -o-transition:-o-transform .15s linear;
     -webkit-transition:-webkit-transform .15s linear;
+}
 
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-o-keyframes fadein { /* Opera */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Tilt every second link four degrees to the right, offsetting it by 5px from the top. */
@@ -113,6 +154,10 @@ ul li textarea {
     background: rgba(0, 0, 0, 0); /* transparent background */
     resize: none; /* We don't want the user to resize the title! */
     border-style: none; 
+}
+
+ul li textarea.vert {
+    resize: vertical;
 }
 
 ul li:hover #delete {
