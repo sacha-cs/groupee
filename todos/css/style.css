@@ -7,6 +7,10 @@ body {
   overflow-x: hidden;
 }
 
+#content {
+  width: 60%;
+}
+
 #wrapper {
   position: relative;
   width: 100%;
@@ -43,7 +47,6 @@ body {
   margin-left: 4%;
   margin-right: 4%;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px black; 
   border-radius: 10px;
 }
 
@@ -63,7 +66,6 @@ body {
   margin-left: 4%;
   margin-right: 4%;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px black; 
   border-radius: 10px;
 }
 
@@ -78,7 +80,6 @@ body {
   margin-left: 4%;
   margin-right: 4%;
   margin-bottom: 80px;
-  box-shadow: 0px 0px 30px 0px black; 
   border-radius: 10px;
 }
 
