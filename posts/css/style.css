@@ -1,9 +1,3 @@
-/* Asterisk is a universal selector, matching a single element of any type! */
-* { 
-    margin:0;
-    padding:0;
-}
-
 h2, p {
     font-size:100%;
     font-weight:normal;
@@ -219,8 +213,8 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 #new-note-icon {
-    height:70px;
-    width:70px;
+    height:50px;
+    width:50px;
 }
 
 .content {
