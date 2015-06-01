@@ -2,6 +2,11 @@ var chatRefreshRate = 1000;
 var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 
 var lastMessageID;
+var oldTitle;
+var tabOpen;
+var lastSeenMessage;
+
+var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
 
 function startChat() {
     lastMessageID = 0;
@@ -16,6 +21,18 @@ function startChat() {
             return false;
         }
     }
+    oldTitle = document.title;
+    tabOpen = true;
+
+    window.addEventListener("blur", function() { 
+        tabOpen = false;
+        lastSeenMessage = lastMessageID;
+    });
+    window.addEventListener("focus", function() { 
+        tabOpen = true;
+        document.title = oldTitle;
+        lastSeenMessage = lastMessageID;
+    });
 }
 
 function updateChat() {
@@ -35,6 +52,11 @@ function updateChat() {
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
                 addMessageToChat(user, decodeURIComponent(textMsg));
+            }
+            if(!tabOpen) {
+                document.title = "(" + (lastMessageID - lastSeenMessage) +
+                                 ") " + oldTitle;
+                chatSound.play();
             }
         }
         updateChat();
@@ -78,5 +100,5 @@ function addMessageToChat(user, message) {
     chat.innerHTML += htmlMsg;    
 
     if(isScrolledToBottom)
-              chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+        chat.scrollTop = chat.scrollHeight - chat.clientHeight;
 }

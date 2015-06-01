@@ -1,40 +1,42 @@
 function setUpListeners() {
-    document.getElementById('username').onkeypress = keyListener;
-    document.getElementById('password').onkeypress = keyListener;
-    if(window.location.pathname!="/login/" &&
-       window.location.pathname!="/login/index.html")
-        document.getElementById('passwordconfirm').onkeypress = keyListener;
+	document.getElementsByClassName('username')[0].onkeypress = keyListenerLogin;
+    document.getElementsByClassName('password')[0].onkeypress = keyListenerLogin;
+	document.getElementsByClassName('username')[1].onkeypress = keyListenerRegister;
+    document.getElementsByClassName('password')[1].onkeypress = keyListenerRegister;
+    document.getElementById('passwordconfirm').onkeypress = keyListenerRegister;
 }
 
-function keyListener(e) {
+function keyListenerLogin(e) {
     var event = e || window.event;
     var charCode = event.which || event.keyCode;
 
-    if ( charCode == '13' ) {
-        console.log(window.location.pathname);
-        if(window.location.pathname=="/login/" ||
-           window.location.pathname=="/login/index.html")
+    if (charCode == '13')
             login();
-        else
-            register();
-        return false;
-    }
 }
+
+function keyListenerRegister(e) {
+    var event = e || window.event;
+    var charCode = event.which || event.keyCode;
+
+    if (charCode == '13')
+            register();
+}
+
 
 function login()
 {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+    var username = document.getElementsByClassName('username')[0].value;
+    var password = document.getElementsByClassName('password')[0].value;
 
-    setErrorText("");
+    setErrorTextLogin("");
     if(username == "" || password == "")
     {
-        setErrorText("Please fill out all fields.");
+        setErrorTextLogin("Please fill out all fields.");
         return;
     }
 
     aClient = new HttpClient();
-    aClient.post('login', 'username=' + username + 
+    aClient.post('/login/login', 'username=' + username + 
                           '&password=' + password, 
     function (response) {
         var correct = response[0];
@@ -42,72 +44,79 @@ function login()
             var parts = response.slice(1).split('#');
             document.cookie="seshCookie="+parts[0]+";path=/";
             document.cookie="username="+parts[1]+";path=/";
-            window.location = "/groups/index.html";
+            window.location = "/groups/";
         } else {
             switch(response.slice(1)) {
                 case "IncorrectPassword":
-                    setErrorText("Incorrect Password.");
+                    setErrorTextLogin("Incorrect Password.");
                     break;
                  case "NoUser":
-                    setErrorText("No User with that Username.");
+                    setErrorTextLogin("No User with that Username.");
                     break;
                  case "EmptyFields":
-                    setErrorText("Please fill out all the fields.");
+                    setErrorTextLogin("Please fill out all the fields.");
                     break;
             }
         }
     });
 }
 
-function setErrorText(error) {
+function setErrorTextLogin(error) {
+    document.getElementById("loginError").innerHTML = error;
+    return;
+}
 
-    document.getElementById("error").innerHTML = error;
+function setErrorTextRegister(error) {
+    document.getElementById("registerError").innerHTML = error;
     return;
 }
 
 function register()
 {
-    setErrorText("");
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
+    setErrorTextRegister("");
+    var username = document.getElementsByClassName("username")[1].value;
+    var password = document.getElementsByClassName("password")[1].value;
     var passwordconfirm = document.getElementById("passwordconfirm").value;
 
     if(username == "" || password == "" || passwordconfirm == "")
     {
-        setErrorText("Please fill out all fields.");
+        setErrorTextRegister("Please fill out all fields.");
         return;
     }
 
     if(password != passwordconfirm)
     {
-        setErrorText("Passwords do not match");
+        setErrorTextRegister("Passwords do not match");
         return;
     }
 
     aClient = new HttpClient();
-    aClient.post('register', 'username=' + username + 
+    aClient.post('/login/register', 'username=' + username + 
                          '&password=' + password +
                          '&passwordconfirm=' + passwordconfirm,
     function (response) {
         var correct = response[0];
         if(correct == "Y") {
-            window.location = "/login/";
+            var parts = response.slice(1).split('#');
+            document.cookie="seshCookie="+parts[0]+";path=/";
+            document.cookie="username="+parts[1]+";path=/";
+            window.location = "/welcome";
         } else {
             switch(response.slice(1)) {
                 case "UsernameTaken":
-                    setErrorText("Username is already taken")
+                    setErrorTextRegister("Username is already taken")
                     break;
                 case "UnknownError":
-                    setErrorText("Something went wrong...");
+                    setErrorTextRegister("Something went wrong...");
                     break;
                  case "PasswordsDifferent":
-                    setErrorText("Passwords do not match");
+                    setErrorTextRegister("Passwords do not match");
                     break;
                  case "EmptyFields":
-                    setErrorText("Please fill out all the fields.");
+                    setErrorTextRegister("Please fill out all the fields.");
                     break;
                 case "InvalidCharacters":
-                    setErrorText("Invalid characters used in username/password");
+                    setErrorTextRegister("Invalid characters used in username/password");
                     break;
             }
         }

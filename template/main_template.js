@@ -5,10 +5,10 @@ function toggleChat() {
 	chatOpen = !chatOpen;
 
 	if (chatOpen) {
-		document.getElementById("content").style.left = "300px";
+		document.getElementById("content").style.left = "350px";
 		document.getElementById("chat-toggle").style.left = "285px";
 	} else {
-		document.getElementById("content").style.left = "15px";
+		document.getElementById("content").style.left = "50px";
 		document.getElementById("chat-toggle").style.left = "0px";		
 	}
 
@@ -18,8 +18,10 @@ function templateLoaded() {
     var userName = getCookie("username");
     var groupText = document.getElementById("navbar-group");
     var userText = document.getElementById("navbar-self");
+    var avatarImage = document.getElementById("avatar-self");
     groupText.innerHTML = "<p>" + groupName + "</p>";
     userText.innerHTML = "<p>Welcome, " + userName + "!</p>";
+    avatarImage.innerHTML = "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
 
 	document.getElementById("chat").addEventListener("mousewheel", function (e) {
 	    var delta = e.wheelDelta || -e.detail;

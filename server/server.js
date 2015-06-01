@@ -4,6 +4,7 @@ fs = require('fs');
 formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
+request = require('request');
 
 utils = require('./utils');
 
@@ -11,7 +12,7 @@ postHandler = require('./postHandlers.js');
 getHandler = require('./getHandlers.js');
 
 require('./userFunctions');
-require('./chatServer');
+chat = require('./chatServer');
 require('./todosServer');
 require('./noteServer');
 require('./whiteboardServer');
@@ -34,6 +35,7 @@ else
     port = parseInt(port);
 
 http.createServer(serverListener).listen(port);
+chat.getAllChatHistory();
 console.log("Listening on port " + port);
 
 function serverListener(request, response) {
@@ -123,9 +125,15 @@ function returnFile(request, response) {
         case '.wav':
             contentType = 'audio/wav';
             break;
+        case '.mp3':
+            contentType = 'audio/mp3';
+            break;
     }
-
-    fs.readFile(filePath, 'utf-8', function(error, content) {
+    
+    var encoding = '';
+    if(contentType == 'text/html' || contentType == 'text/js')
+        encoding = 'utf-8';
+    fs.readFile(filePath, encoding, function(error, content) {
         if (error) {
             if(error.code == 'ENOENT') {
                 console.log("404ing! " + filePath);

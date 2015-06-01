@@ -1,7 +1,7 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="/template/css/template.css">
-        <script type="text/javascript" src="/template/template.js"></script>
+        <script type="text/javascript" src="/template/main_template.js"></script>
         <script type="text/javascript" src="/chat/js.js"></script>
         <?headers?>
         <title><?title?></title>
@@ -10,23 +10,37 @@
     <body onload="startChat(); templateLoaded()">
 
     <div id="navbar">
-        <span id="navbar-home">
-            <p>Go Home </p>
+        <span onclick="window.location='/home/'" id="navbar-home">
+           <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
         </span>
         <span id="navbar-group">
         </span>
         <span id="navbar-right">
+            <span onclick="window.location='/groups/'" id="navbar-groups">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groups.png">
+                <span id="popover-groups">Groups</span>
+            </span>
+
+            <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/logout.png">
+                <span id="popover-logout">Log out</span>
+            </span> 
+
             <span id="navbar-self">
             </span>
-              <span onclick="logout(); window.location='/login/index.html' "id="navbar-logout">
-                  <p>Log out</p>
-              </span> 
+
+            <span id="avatar-self">
+            </span> 
         </span>
     </div>
 
-
     <div id="chat-left">
         <div id="chat-toggle" onclick="toggleChat()">
+            <span id="half1"></span>
+            <span id="half2"></span>    
+            <div id="chat-toggle-icon">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/chat-icon.png">
+            </div>
         </div>
 
         <div id="chat-messages">

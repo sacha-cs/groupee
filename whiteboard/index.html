@@ -6,40 +6,62 @@ Whiteboard
 <link rel="stylesheet" href="css/style.css">
 <script src = "js.js"></script> 
 <?content?>
-    <div id=wrapper>
+    <div id="wrapper">
         <canvas id="board" width=800 height=500>Upgrade your browser to use the whiteboard!</canvas>
         <canvas id="networkTempBoard0" width=800 height=500></canvas>
         <canvas id="networkTempBoard1" width=800 height=500></canvas>
         <canvas id="tempBoard" width=800 height=500></canvas>
     </div>
-    <br />
 
-    Current Tool: <span id="currTool">Pen</span><br />
+    <div id="tools">
+        <div class="tool">
+            <span id="currTool">
+                Pen
+            </span><br />
+        </div>
 
+        <div class="tool" id="select-tool">
+            <input type='radio' name='selectedTool' checked="checked" value='valuable' id="pen" onclick="selectPen()" /><label for="pen"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="text" onclick="selectText()" /><label for="text"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="rectangle" onclick="selectRectangle()" /><label for="rectangle"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="circle" onclick="selectCircle()" /><label for="circle"></label>
+            <input type='radio' name='selectedTool' value='valuable' id="line" onclick="selectLine()" /><label for="line"></label>
+        </div>
 
-    Line Thickness:
-    <input type=range min=3 max=30 value=5 step=1 oninput="setUserPenThickness(value)">
-    <br />
+        <div class="tool" id="line-thickness">
+                <img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/line-thickness.png'>
+                <div id="line-thickness-input">
+                    <input type=range min=3 max=30 value=5 step=1 oninput="setUserPenThickness(value)">
+                </div>
+        </div>
 
-    Colour: 
-    <input type="color" value="#000000" onchange="setUserPenColour(value)"/>
-    <br />
+        <div class="tool" id="colour">
+            <img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/palette.png'>
+            <div id="colour-input">
+                    <span id="line-border-label">
+                        <label>Line/Border Colour:</label> 
+                    </span>
+                    <span id="line-border-input">
+                        <input type="color" value="#000000" onchange="setUserPenColour(value)"/>
+                    </span>
 
-    Fill/Text Colour: 
-    <input type="color" value="#000000" onchange="setUserFillColour(value)"/>
-    <br />
+                    <span id="fill-text-label">
+                        <label>Fill/Text Colour:</label> 
+                    </span>
+                    <span id="fill-text-input">
+                        <input type="color" value="#000000" onchange="setUserFillColour(value)"/>
+                    </span>
+            </div>
+        </div>
 
-    Tool:
-    <button onclick="selectPen()">Pen</button>
-    <button onclick="selectText()">Text</button>
-    <button onclick="selectRectangle()">Rectangle</button>
-    <button onclick="selectLine()">Line</button>
-    <button onclick="selectCircle()">Circle</button>
-    <br />
+        <div class="tool" id="text-size">
+            <img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/text-size.png'>
+            <div id="text-size-input">
+                <input type=range min=12 max=60 value=16 step=1 oninput="setUserTextSize(value)">
+            </div>
+        </div>
 
-    Text size:
-    <input type=range min=12 max=60 value=16 step=1 oninput="setUserTextSize(value)">
-
-    <div id=hiddenWrapper>
-    <textarea id="textHidden"></textarea>
+        <div id="hiddenWrapper">
+            <textarea id="textHidden"></textarea>
+        </div>
     </div>

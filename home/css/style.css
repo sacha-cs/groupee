@@ -1,5 +1,4 @@
 body {
-  background: #2c3e50;
   font-family: 'Helvetica', sans-serif;
 }
 
@@ -25,7 +24,7 @@ body {
   font-weight: 300;
   font-size: 21px;
   line-height: 1.2;
-  color: rgb(255, 255, 255);
+  color: black;
   text-align: center;
   width: 142px;
   height: 28px;
