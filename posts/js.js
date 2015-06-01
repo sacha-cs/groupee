@@ -121,17 +121,18 @@ function getAllNotes() {
 	aClient.get('get_notes', function(response) {
 		var noteList = JSON.parse(response);
 		for (var i = 0; i < noteList.length ; i++) {
-            var info = {noteId : noteList[i].noteId,
-            	        title : noteList[i].noteTitle,   
-                        content : noteList[i].noteContent,
-                        saved: true};
-            
-            noteInfo[lastId] = info; 
+            var currentNote = noteList[i];
+            noteInfo[lastId] = {noteId: currentNote.noteId,
+                                title: currentNote.noteTitle,
+                                content: currentNote.noteContent,
+                                saved: true}; 
+
             notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                                   "<textarea class='note-title' maxlength='15' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + info.title + "</textarea>" +
-                                   "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + info.content + "</textarea>" +
+                                   "<textarea class='note-title' maxlength='15' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
+                                   "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
                                    "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
                                "</li>";
+
             lastId++;
     	}
 	});
