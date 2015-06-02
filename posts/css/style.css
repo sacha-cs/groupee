@@ -8,7 +8,6 @@ ul,li {
 }
 
 ul {
-    overflow:hidden; /* What should happen when text overflows a box. */
     padding:3em;
 
     /* Fade the notes in on load */
@@ -168,6 +167,8 @@ ul li:hover #delete {
     font-weight: bold;
     height: 30px;
     width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .note-content {
@@ -201,15 +202,15 @@ ul li:hover #delete {
 /* NICE SCROLLBAR */
 
 textarea::-webkit-scrollbar {
-  width: 5px;  /* for vertical scrollbars */
+    width: 5px;  /* for vertical scrollbars */
 }
 
 textarea::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 textarea::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #new-note-icon {
@@ -261,3 +262,4 @@ textarea::-webkit-scrollbar-thumb {
     z-index: 99;
 }
 */                 
+
