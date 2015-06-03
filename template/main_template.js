@@ -21,7 +21,7 @@ function templateLoaded() {
     var avatarImage = document.getElementById("avatar-self");
     groupText.innerHTML = "<p>" + groupName + "</p>";
     userText.innerHTML = "<p>Welcome, " + userName + "!</p>";
-    avatarImage.innerHTML = "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
+    avatarImage.innerHTML += "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
 
 	document.getElementById("chat").addEventListener("mousewheel", function (e) {
 	    var delta = e.wheelDelta || -e.detail;
