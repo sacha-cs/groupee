@@ -39,6 +39,10 @@ function getCookie(cname) {
     return "";
 }
 
+function setCookie(cname, value) {
+    document.cookie = cname + "=" + value + ";path=/";
+}
+
 function setErrorText(error) {
 
     document.getElementById("error").innerHTML = error;
