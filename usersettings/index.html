@@ -29,12 +29,13 @@ Profile Settings
 
 	<div id="password">
 		<h1>Change your password</h1></br>
-		<input type="password" id="avatar" placeholder="Current password">
-		<input type="password" id="avatar" placeholder="New password">
-		<input type="password" id="avatar" placeholder="Retype new password">
+		<input type="password" id="current-password" placeholder="Current password">
+		<input type="password" id="new-password" placeholder="New password">
+		<input type="password" id="new-password-confirm" placeholder="Retype new password">
         <input type="submit" name="submit" class="password password-submit" value="Go" onclick="changePassword()">
         <div class="feedback-text">
-            <div id="password-error"></div>
+            <div id="error"></div>
+            <div id="success"></div>
         </div>
 	</div>
 

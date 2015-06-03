@@ -6,6 +6,7 @@ getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
 getHandler.addHandler("groups/set_viewing_group", setGroup);
 postHandler.addHandler("usersettings/change_avatar", changeAvatar);
+postHandler.addHandler("usersettings/change_password", changePassword);
 
 function login(request, response, params) {
 
@@ -379,6 +380,7 @@ function changeAvatar(req, response, data) {
     var user = utils.getUser(req);
 
     var r = request.post('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, resp, body) {
+        console.log("Body: " + body);
         fs.unlink('../tmp/' + fileName);
     });
 
@@ -388,3 +390,39 @@ function changeAvatar(req, response, data) {
     form.append('avatar', fs.createReadStream('../tmp/' + fileName), {filename: fileName});
 
 }   
+
+function changePassword(request, response, params) {
+    var user = utils.getUser(request);
+
+    var checkCorrectPasswordQuery = "SELECT * " +
+                                    "FROM users " +
+                                    "WHERE username='" + user + "'";
+    
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) {
+            return utils.respondPlain(response, "NServerError");
+        }
+        
+        client.query(checkCorrectPasswordQuery, function(err, checkCorrectPasswordResult) {
+            if(err) {
+                return utils.respondPlain(response, "NServerError");
+            }
+    
+            var expected = checkCorrectPasswordResult.rows[0].pwdhash;
+            
+            if(!passwordHash.verify(params.currentPassword, expected)) {
+                return utils.respondPlain(response, "NIncorrectPassword");
+            } else {
+                var hashedNewPassword = passwordHash.generate(params.newPassword);
+                var changePasswordQuery = "UPDATE users " +
+                                          "SET pwdhash='" + hashedNewPassword + "' " +
+                                          "WHERE username='" + user + "'";
+                client.query(changePasswordQuery, function(err, changePasswordResult) {
+                    done(client);
+                    return utils.respondPlain(response, "YPasswordChangedSuccessfully");
+                });
+
+            }
+        });
+    });
+}
