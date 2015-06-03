@@ -7,9 +7,10 @@ var lastMoved = -1;
 
 // Gets note html
 function getNoteHtml(id, title, content) {
+    //TODO: Make 'move' image only appear on hover.
     var html = "";
     if (!(title || content)) {
-        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+        html = "<li id='note" + id + "' ondrop='drop(event)' draggable='true'>" + 
                    "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'></textarea>" +
                    "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'></textarea>" +
                    "<div id='note-controller" + id + "'>" + 
@@ -18,7 +19,7 @@ function getNoteHtml(id, title, content) {
                    "</div>" +
                "</li>";
     } else {
-        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+        html = "<li id='note" + id + "' ondrop='drop(event)' draggable='true'>" + 
                    "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title + "</textarea>" +
                    "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
                    "<div id='note-controller" + id + "'>" + 
@@ -149,8 +150,9 @@ function getAllNotes() {
                                 title: currentNote.noteTitle,
                                 content: currentNote.noteContent,
                                 saved: true}; 
-
             notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
+            document.getElementById('note' + lastId).style.left = currentNote.xCoord;
+            document.getElementById('note' + lastId).style.top = currentNote.yCoord;
             lastId++;
     	}
 	});
@@ -175,11 +177,11 @@ function loaded() {
 
 function allowDrop(ev) {
     ev.preventDefault();
-    return false;
 }
 
 // Get the offset between where the user clicked on the element and the top left corner.
 function drag(ev) {
+    // TODO: Make whole note draggable. 
     var element = ev.target.parentElement.parentElement;
     lastMoved = element.id.slice(4);
     var style = window.getComputedStyle(ev.target.parentElement.parentElement, null);
@@ -190,12 +192,28 @@ function drag(ev) {
 
 // Unpack the offsets and use them to position the element relative to the mouse pointer.
 function drop(ev) {
+    // TODO: save coordinates in the database on drop.
     var offset = ev.dataTransfer.getData("text/plain").split(',');
     var dm = document.getElementById("move" + lastMoved).parentElement.parentElement;
-    dm.style.left = (ev.clientX + parseInt(offset[0],10)) + 'px';
-    dm.style.top = (ev.clientY + parseInt(offset[1],10)) + 'px';
+    var xCoord = ev.clientX + parseInt(offset[0],10);
+    var yCoord = ev.clientY + parseInt(offset[1],10);
+    dm.style.left = xCoord + 'px';
+    dm.style.top = yCoord + 'px';
+    
+    var data = {x: xCoord, y: yCoord, noteId: noteInfo[lastMoved].noteId};
+   
+    // Save the new coordinates of the note in the database.
+	var aClient = new HttpClient();
+    aClient.post('update_note', JSON.stringify(data),
+        function(response) {
+            var correct = response[0];
+            if (correct == "N") {
+                // TODO: Handle errors.
+            }
+        }
+    );
+    
     ev.preventDefault();
-    return false;
 }
 
 
