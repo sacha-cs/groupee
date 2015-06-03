@@ -7,7 +7,6 @@ var lastMoved = -1;
 
 // Gets note html
 function getNoteHtml(id, title, content) {
-    //TODO: Make 'move' image only appear on hover.
     var html = "";
     if (!(title || content)) {
         html = "<li id='note" + id + "' ondrop='drop(event)' draggable='true'>" + 
@@ -192,7 +191,6 @@ function drag(ev) {
 
 // Unpack the offsets and use them to position the element relative to the mouse pointer.
 function drop(ev) {
-    // TODO: save coordinates in the database on drop.
     var offset = ev.dataTransfer.getData("text/plain").split(',');
     var dm = document.getElementById("move" + lastMoved).parentElement.parentElement;
     var xCoord = ev.clientX + parseInt(offset[0],10);
