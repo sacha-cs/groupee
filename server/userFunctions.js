@@ -8,6 +8,8 @@ getHandler.addHandler("groups/set_viewing_group", setGroup);
 postHandler.addHandler("usersettings/change_avatar", changeAvatar);
 postHandler.addHandler("usersettings/change_password", changePassword);
 
+var FormData = require("form-data");
+
 function login(request, response, params) {
 
     //Check we have both a username and password
@@ -374,20 +376,21 @@ function addGroupChat(request, response, client, done, callback, group_id) {
 }
 
 function changeAvatar(req, response, data) {
-    response.writeHead("303", {'Location' : '/usersettings/' });
-    response.end();
 
     var user = utils.getUser(req);
+    var fileName = user + '.png';
 
-    var r = request.post('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, resp, body) {
-        console.log("Body: " + body);
-        fs.unlink('../tmp/' + fileName);
+    var form = new FormData();
+    form.append('username', user);
+    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {
+        filename : fileName
     });
 
-    var form = r.form();
-    var fileName = user + '.png';
-    form.append('username', user);
-    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {filename: fileName});
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
+        fs.unlink('../tmp/' + fileName);
+        response.writeHead("303", {'Location' : '/usersettings/' });
+        response.end();
+    });
 
 }   
 
