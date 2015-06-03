@@ -2,8 +2,8 @@ var groups = {};
 
 postHandler.addHandler("calendar/post_event", calendarPostEvent);
 getHandler.addHandler("calendar/calendar_update", calendarUpdate);
-//postHandler.addHandler("calendar/change_date", changeDate);
-//postHandler.addHandler("calendar/delete_event", deleteEvent);
+postHandler.addHandler("calendar/change_date", changeDate);
+postHandler.addHandler("calendar/delete_event", deleteEvent);
 
 
 function createGroupData(group) {
