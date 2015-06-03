@@ -2,6 +2,8 @@ var noteInfo = [];
 var imgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
 var lastId = 0;
 var ensureSent = false;
+var offsetData;
+var lastMoved = -1;
 
 // Adds a new note.
 function addNote() {
@@ -9,7 +11,7 @@ function addNote() {
     var noteLength = notes.children.length;
 
     // Create an empty note.
-    notes.innerHTML += "<li draggable=true ondragstart='drag(event)' id='note" + lastId + "'>" + 
+    notes.innerHTML += "<li id='note" + lastId + "'>" + 
                            "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
                            "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
                            "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
@@ -127,12 +129,14 @@ function getAllNotes() {
                                 content: currentNote.noteContent,
                                 saved: true}; 
 
-            notes.innerHTML += "<li draggable=true ondragstart='drag(event)' id='note" + lastId + "'>" + 
+            notes.innerHTML += "<li id='note" + lastId + "' ondrop='drop(event)'>" + 
                                    "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
                                    "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
-                                   "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
+                                   "<div id='note-controller" + lastId + "'>" + 
+                                       "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" + 
+                                       "<img id='move" + lastId + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
+                                   "</div>" +
                                "</li>";
-
             lastId++;
     	}
 	});
@@ -150,27 +154,34 @@ window.onbeforeunload = function() {
 
 function loaded() {
     getAllNotes();
+    var content = document.getElementById("content"); 
+    content.addEventListener("drop", drop);
+    content.addEventListener("dragover", allowDrop);
 }
 
+function allowDrop(ev) {
+    ev.preventDefault();
+    return false;
+}
+
+// Get the offset between where the user clicked on the element and the top left corner.
 function drag(ev) {
-    /*var style = window.getComputedStyle(ev.target, null);
-    ev.dataTransfer.setData("text/plain", 
-        (parseInt(style.getPropertyValue("left"),10) - ev.clientX) + ',' + 
-        (parseInt(style.getPropertyValue("top"),10) - ev.clientY));*/
-}
-
-function dragOver(ev) {
-    /*ev.preventDefault();
-    return false;*/
+    var element = ev.target.parentElement.parentElement;
+    lastMoved = element.id.slice(4);
+    var style = window.getComputedStyle(ev.target.parentElement.parentElement, null);
+    offsetData = (parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + 
+                 (parseInt(style.getPropertyValue("top"),10) - event.clientY);
+    ev.dataTransfer.setData("text/plain", offsetData);
 }
 
 // Unpack the offsets and use them to position the element relative to the mouse pointer.
 function drop(ev) {
-    /*var offset = ev.dataTransfer.getData("text/plain").split(',');
-    var id = evev.activeElement.parentElement.id.slice(4);
-    var dm = document.getElementById('note' + id);
+    var offset = ev.dataTransfer.getData("text/plain").split(',');
+    var dm = document.getElementById("move" + lastMoved).parentElement.parentElement;
     dm.style.left = (ev.clientX + parseInt(offset[0],10)) + 'px';
     dm.style.top = (ev.clientY + parseInt(offset[1],10)) + 'px';
     ev.preventDefault();
-    return false;*/
+    return false;
 }
+
+

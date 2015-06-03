@@ -18,6 +18,9 @@ ul {
 }
 
 ul li {
+    position: absolute; 
+    left: 0;
+    top: 0;
     text-decoration:none;
     color:#000;
     background:#ffc;
@@ -103,7 +106,7 @@ ul li:nth-child(even) {
     -o-transform:rotate(4deg);
     -webkit-transform:rotate(4deg);
     -moz-transform:rotate(4deg);
-    position:relative;
+    /*position:relative;*/
     top:5px;
     background:#cfc;
 }
@@ -113,7 +116,7 @@ ul li:nth-child(3n) {
     -o-transform:rotate(-3deg);
     -webkit-transform:rotate(-3deg);
     -moz-transform:rotate(-3deg);
-    position:relative;
+    /*position:relative;*/
     top:-5px;
     background:#ccf;
 }
@@ -123,23 +126,23 @@ ul li:nth-child(5n) {
     -o-transform:rotate(5deg);
     -webkit-transform:rotate(5deg);
     -moz-transform:rotate(5deg);
-    position:relative;
+    /*position:relative;*/
     top:-10px;
 }
 
 /* Zoom in the notes on hover and focus. */
 ul li:hover, ul li:focus {
     /* Shadows */
-    -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
-    -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);
-    box-shadow:10px 10px 7px rgba(0,0,0,.7);
+    -moz-box-shadow:10px 10px 15px rgba(0,0,0,.7);
+    -webkit-box-shadow: 10px 10px 15px rgba(0,0,0,.7);
+    box-shadow:10px 10px 15px rgba(0,0,0,.7);
 
     /* Zoom in */
-    -webkit-transform: scale(1.25);
-    -moz-transform: scale(1.25);
-    -o-transform: scale(1.25);
+    -webkit-transform: scale(1.15);
+    -moz-transform: scale(1.15);
+    -o-transform: scale(1.15);
 
-    position:relative;
+    /*position:relative;*/
     z-index:5; /* Higher z-index ensures enlarged note covers the others. */
 }
 
@@ -193,6 +196,11 @@ ul li:hover #delete {
     display:none;
 }
 
+#move {
+    width: 30px;
+    height: 30px;
+}
+
 #new-note:hover, #new-note:focus {
     -webkit-transform: scale(1.2);
     -webkit-transition:-webkit-transform .15s linear;
@@ -218,48 +226,9 @@ textarea::-webkit-scrollbar-thumb {
     width:50px;
 }
 
-.content {
+#content {
     margin-top: 35px;
+    height: 90%;
+    width: 90%;
 }
-
-/*
-.tooltip {
-    display: inline;
-    position: relative;
-}
-
-.tooltip:hover {
-    color: #c00;
-    text-decoration: none;
-}
-
-.tooltip:hover:after {
-    background: #111;
-    background: rgba(0,0,0,.8);
-    border-radius: .5em;
-    bottom: 1.35em;
-    color: #fff;
-    content: attr(title);
-    display: block;
-    left: 1em;
-    padding: .3em 1em;
-    position: absolute;
-    text-shadow: 0 1px 0 #000;
-    white-space: nowrap;
-    z-index: 98;
-}
-
-.tooltip:hover:before {
-    border: solid;
-    border-color: #111 transparent;
-    border-color: rgba(0,0,0,.8) transparent;
-    border-width: .4em .4em 0 .4em;
-    bottom: 1em;
-    content: "";
-    display: block;
-    left: 2em;
-    position: absolute;
-    z-index: 99;
-}
-*/                 
 
