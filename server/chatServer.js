@@ -37,9 +37,11 @@ function chatSendMessage(request, response, params) {
         client.query(getGroupQuery, function(err, result) {
             if(err) { return console.log(err); }
             var chatID = result.rows[0].chat_id;
+            var safeMessage = params.chatmessage.replace(/'/g, "''");
+            console.log(safeMessage);
             var addMessageQuery = "INSERT INTO chat_messages " +
                                   "VALUES(" + chatID + ", '" + username +
-                                      "', now(), '" + params.chatmessage + "');"
+                                      "', now(), '" + safeMessage + "');"
             client.query(addMessageQuery, function(err, result) {
                 if(err) { return console.log(err); }
                 done(client);
