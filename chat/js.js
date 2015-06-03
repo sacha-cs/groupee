@@ -10,25 +10,6 @@ var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/ava
 var input;
 var chatOpen = true;
 
-function toggleChat() {
-
-	chatOpen = !chatOpen;
-    var cookieValue;
-	if (chatOpen) {
-		document.getElementById("content").style.left = "335px";
-		document.getElementById("chat-left").style.left = "0px";
-        document.getElementById("new-messages-icon").style.display = "none";
-        cookieValue = "true";
-	} else {
-		document.getElementById("content").style.left = "50px";
-		document.getElementById("chat-left").style.left = "-285px";		
-        cookieValue = "false";
-	}
-    
-    setCookie("chatOpen", cookieValue);
-
-}
-
 function startChat() {
     if(getCookie("chatOpen") == "") {
         setCookie("chatOpen", "true");
@@ -36,7 +17,7 @@ function startChat() {
     if(getCookie("chatOpen") == "false") {
         setTransitions("0s");
         toggleChat();
-        setTransitions("0.5s");
+ //       setTransitions("0.5s");
     }
     lastMessageID = 0;
     lastSeenMessage = 0;
@@ -57,6 +38,25 @@ function startChat() {
     });
 }
 
+function toggleChat() {
+
+	chatOpen = !chatOpen;
+    var cookieValue;
+	if (chatOpen) {
+		document.getElementById("content").style.left = "335px";
+		document.getElementById("chat-left").style.left = "0px";
+        document.getElementById("new-messages-icon").style.display = "none";
+        cookieValue = "true";
+	} else {
+		document.getElementById("content").style.left = "50px";
+		document.getElementById("chat-left").style.left = "-285px";		
+        cookieValue = "false";
+	}
+    
+    setCookie("chatOpen", cookieValue);
+
+}
+
 function updateChat() {
     var chat = document.getElementById("chat");
     aClient = new HttpClient();
@@ -73,7 +73,7 @@ function updateChat() {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
-                addMessageToChat(user, decodeURIComponent(textMsg));
+//                addMessageToChat(user, decodeURIComponent(textMsg));
             }
             var newMessages = lastMessageID - lastSeenMessage;
             if(!tabOpen) {
@@ -163,4 +163,17 @@ function resetChatBox() {
     input.onkeypress = keyEntered;
     input.oninput = resizeChatBox;
     resizeChatBox();
+}
+
+function setTransitions(time) {
+    var chat = document.getElementById("chat-left");
+    var content = document.getElementById("content");
+    chat.style["-webkit-transition"] = "left " + time + " ease";
+    chat.style["-moz-transition"] = "left " + time + " ease";
+    chat.style["-o-transition"] = "left " + time + " ease";
+    chat.style["transition"] = "left " + time + " ease";
+    content.style["-webkit-transition"] = "left " + time + " ease";
+    content.style["-moz-transition"] = "left " + time + " ease";
+    content.style["-o-transition"] = "left " + time + " ease";
+    content.style["transition"] = "left " + time + " ease";
 }
