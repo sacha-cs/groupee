@@ -5,17 +5,38 @@ var ensureSent = false;
 var offsetData;
 var lastMoved = -1;
 
+// Gets note html
+function getNoteHtml(id, title, content) {
+    var html = "";
+    if (!(title || content)) {
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'></textarea>" +
+                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'></textarea>" +
+                   "<div id='note-controller" + id + "'>" + 
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + imgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
+                   "</div>" +
+               "</li>";
+    } else {
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title + "</textarea>" +
+                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
+                   "<div id='note-controller" + id + "'>" + 
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + imgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
+                   "</div>" +
+               "</li>";
+    }
+    return html;
+}
+
 // Adds a new note.
 function addNote() {
     var notes = document.getElementById("notes"); 
     var noteLength = notes.children.length;
 
     // Create an empty note.
-    notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                           "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
-                           "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
-                           "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
-                       "</li>";
+    notes.innerHTML += getNoteHtml(lastId, null, null);
     noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false};
     lastId++;
 
@@ -129,14 +150,7 @@ function getAllNotes() {
                                 content: currentNote.noteContent,
                                 saved: true}; 
 
-            notes.innerHTML += "<li id='note" + lastId + "' ondrop='drop(event)'>" + 
-                                   "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
-                                   "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
-                                   "<div id='note-controller" + lastId + "'>" + 
-                                       "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" + 
-                                       "<img id='move" + lastId + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
-                                   "</div>" +
-                               "</li>";
+            notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
             lastId++;
     	}
 	});
