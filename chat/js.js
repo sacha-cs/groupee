@@ -13,19 +13,31 @@ var chatOpen = true;
 function toggleChat() {
 
 	chatOpen = !chatOpen;
-
+    var cookieValue;
 	if (chatOpen) {
 		document.getElementById("content").style.left = "335px";
 		document.getElementById("chat-left").style.left = "0px";
         document.getElementById("new-messages-icon").style.display = "none";
+        cookieValue = "true";
 	} else {
 		document.getElementById("content").style.left = "50px";
 		document.getElementById("chat-left").style.left = "-285px";		
+        cookieValue = "false";
 	}
+    
+    setCookie("chatOpen", cookieValue);
 
 }
 
 function startChat() {
+    if(getCookie("chatOpen") == "") {
+        setCookie("chatOpen", "true");
+    }
+    if(getCookie("chatOpen") == "false") {
+        setTransitions("0s");
+        toggleChat();
+        setTransitions("0.5s");
+    }
     lastMessageID = 0;
     lastSeenMessage = 0;
     updateChat();
