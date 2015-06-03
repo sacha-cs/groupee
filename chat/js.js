@@ -9,6 +9,7 @@ var lastSeenMessage;
 var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
 var input;
 var chatOpen = true;
+var firstUpdate = true;
 
 function startChat() {
     if(getCookie("chatOpen") == "") {
@@ -17,7 +18,9 @@ function startChat() {
     if(getCookie("chatOpen") == "false") {
         setTransitions("0s");
         toggleChat();
-        setTransitions("0.5s");
+        setTimeout( function() {
+            setTransitions("0.5s");
+        }, 500);
     }
     lastMessageID = 0;
     lastSeenMessage = 0;
@@ -74,18 +77,19 @@ function updateChat() {
             if(!tabOpen) {
                 document.title = "(" + (newMessages) + ") " + oldTitle;
             } 
-            if(!chatOpen) {
+            if(!chatOpen && !firstUpdate) {
                 var icon = document.getElementById("new-messages-icon");
                 icon.style.display = "block";
                 icon.innerHTML = newMessages;
             }
-            if(!tabOpen || !chatOpen) {
+            if((!tabOpen || !chatOpen) && !firstUpdate) {
                 chatSound.play();
             }
-            if(tabOpen && chatOpen) {
+            if((tabOpen && chatOpen) || firstUpdate) {
                 lastSeenMessage = lastMessageID;
             }
         }
+        firstUpdate = false;
         updateChat();
     });
 }
