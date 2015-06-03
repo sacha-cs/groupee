@@ -23,7 +23,6 @@ ul li {
     top: 60px;
     text-decoration:none;
     color:#000;
-    background:#ffc;
     display:block;
     height:10em;
     width:10em;
@@ -60,9 +59,9 @@ ul li {
 
     /* Make a clean and smooth transition from tilted to zoomed.
        If something is to change to this element, do it gradually during a quarter of a second. */
-    -moz-transition:-moz-transform .15s linear;
-    -o-transition:-o-transform .15s linear;
-    -webkit-transition:-webkit-transform .15s linear;
+    -moz-transition:-moz-transform .15s ease;
+    -o-transition:-o-transform .15s ease;
+    -webkit-transition:-webkit-transform .15s ease;
 }
 
 @keyframes fadein {
@@ -108,7 +107,6 @@ ul li:nth-child(even) {
     -moz-transform:rotate(4deg);
     /*position:relative;*/
     top:65px;
-    background:#cfc;
 }
 
 /* Tilt every 3rd link 3 degrees to the left, push it up by 5px. */
@@ -118,7 +116,6 @@ ul li:nth-child(3n) {
     -moz-transform:rotate(-3deg);
     /*position:relative;*/
     top:55px;
-    background:#ccf;
 }
 
 /* Tilt every 5th link by 5 degress to the right, push it up by 10px. */
@@ -185,7 +182,7 @@ ul li:hover #delete {
 
 #new-note {
     -webkit-transform: scale(1);
-    -webkit-transition:-webkit-transform .15s linear;
+    -webkit-transition:-webkit-transform .15s ease;
     display:block;
     float:left;
     margin-right:15px;
@@ -210,7 +207,7 @@ img[id^="move"] {
 
 #new-note:hover, #new-note:focus {
     -webkit-transform: scale(1.2);
-    -webkit-transition:-webkit-transform .15s linear;
+    -webkit-transition:-webkit-transform .15s ease;
     position:relative;
 }
 
@@ -233,4 +230,5 @@ textarea::-webkit-scrollbar-thumb {
     height:50px;
     width:50px;
 }
+
 

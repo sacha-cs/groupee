@@ -1,5 +1,6 @@
 var noteInfo = [];
-var imgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
+var delImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
+var movImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png';
 var lastId = 0;
 var ensureSent = false;
 var offsetData;
@@ -9,44 +10,53 @@ var lastMoved = -1;
 function getNoteHtml(id, title, content) {
     var html = "";
     if (!(title || content)) {
-        html = "<li id='note" + id + "' ondrop='drop(event)' draggable='true'>" + 
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
                    "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'></textarea>" +
                    "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'></textarea>" +
                    "<div id='note-controller" + id + "'>" + 
-                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + imgStr + "'>" + 
-                       "<img id='move" + id + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
                    "</div>" +
                "</li>";
     } else {
-        html = "<li id='note" + id + "' ondrop='drop(event)' draggable='true'>" + 
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
                    "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title + "</textarea>" +
                    "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
                    "<div id='note-controller" + id + "'>" + 
-                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + imgStr + "'>" + 
-                       "<img id='move" + id + "' ondragstart=drag(event) src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png'>" +
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
                    "</div>" +
                "</li>";
     }
     return html;
 }
 
+function getColour() {
+    var cols = ["#cfc", "#ccf", "#ffc"];
+    var index = Math.floor(Math.random() * 3);
+    return cols[index];
+}
+
 // Adds a new note.
 function addNote() {
+    // TODO: Store note's colour locally and/or in database.
     var notes = document.getElementById("notes"); 
-    var noteLength = notes.children.length;
+    var newColour = getColour();
 
     // Create an empty note.
     notes.innerHTML += getNoteHtml(lastId, null, null);
-    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false};
+    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false, colour: newColour};
     lastId++;
 
     // Iterate through all notes, set their values and re-add the 'lost' event listeners. 
+    var noteLength = notes.children.length;
     for (var i = 0; i < noteLength; i++) {
         var currentId = parseInt(notes.children[i].id.slice(4));
 
         // Strings are immutable in Javascript, so the whole HTML string is written over! 
         document.getElementById("title" + currentId).value = noteInfo[currentId].title;
-        document.getElementById("content" + currentId).value = noteInfo[currentId].content; 
+        document.getElementById("content" + currentId).value = noteInfo[currentId].content;
+        document.getElementById("note" + currentId).style.background = noteInfo[currentId].colour;
     }
 }
 
@@ -148,10 +158,12 @@ function getAllNotes() {
             noteInfo[lastId] = {noteId: currentNote.noteId,
                                 title: currentNote.noteTitle,
                                 content: currentNote.noteContent,
-                                saved: true}; 
+                                saved: true,   
+                                color: getColour()}; 
             notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
             document.getElementById('note' + lastId).style.left = currentNote.xCoord;
             document.getElementById('note' + lastId).style.top = currentNote.yCoord;
+            document.getElementById('note' + lastId).style.background = noteInfo[lastId].color;
             lastId++;
     	}
 	});
@@ -210,7 +222,6 @@ function drop(ev) {
             }
         }
     );
-    
     ev.preventDefault();
 }
 
