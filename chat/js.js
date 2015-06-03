@@ -73,7 +73,7 @@ function updateChat() {
                 var currMsg = msgInfo[i].split(";");
                 var user = currMsg[0].split("=")[1];
                 var textMsg = currMsg[1].split("=")[1];
-//                addMessageToChat(user, decodeURIComponent(textMsg));
+                addMessageToChat(user, decodeURIComponent(textMsg));
             }
             var newMessages = lastMessageID - lastSeenMessage;
             if(!tabOpen) {
