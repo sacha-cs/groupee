@@ -63,18 +63,13 @@ function updateChat() {
     var d = new Date();
     aClient.get('/chat/chat_update?last='+lastMessageID + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
     function(response) {
-        var res = response.split("#");
-        var newID = parseInt(res[0]);
-        var msgInfo = res[1].split("\n");
+        response = JSON.parse(response);
+        var newID = response.newID;
         if (newID > lastMessageID)
         {
             lastMessageID = newID;
-            for (i = 0; i < msgInfo.length -1; i++) {
-                var currMsg = msgInfo[i].split(";");
-                var user = currMsg[0].split("=")[1];
-                var textMsg = currMsg[1].split("=")[1];
-                addMessageToChat(user, decodeURIComponent(textMsg));
-            }
+            var msgInfo = response.messages;
+            addMessagesToChat(msgInfo);
             var newMessages = lastMessageID - lastSeenMessage;
             if(!tabOpen) {
                 document.title = "(" + (newMessages) + ") " + oldTitle;
@@ -103,32 +98,44 @@ function sendMessage() {
 
     aClient = new HttpClient();
     var d = new Date();
-    aClient.post('/chat/send_message', "chatmessage="+ encodeURIComponent(message) + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
+    var data = {
+        chatmessage: message,
+        time: d.getMinutes() + ":" + d.getSeconds()
+    };
+    aClient.post('/chat/send_message', JSON.stringify(data),
     function (response) {
     });
     chatBox.value = "";
 }
 
-function addMessageToChat(user, message) {
+function addMessagesToChat(messages) {
     var chat = document.getElementById("chat");
     var isScrolledToBottom = chat.scrollHeight - chat.clientHeight <= chat.scrollTop + 1;
     var messenger;
-    if (getCookie("username") == user) {
-        messenger = "self";
-    } else {
-        messenger = "other";
+    var allHTML = "";
+    var user;
+    var message;
+    for(var i = 0; i < messages.length; i++) {
+        user = messages[i].user;
+        message = messages[i].chatmessage;
+        if (getCookie("username") == user) {
+            messenger = "self";
+        } else {
+            messenger = "other";
+        }
+        var htmlMsg = "<li class=\"" + messenger + "\">" + 
+                            "<span class=\"avatar\">" +
+                                "<img class=\"avatarimage\" src='" + filePath + "avatars/" + user + ".png'/>" +
+                            "</span>" +
+                            "<span class=\"messages\">" +
+                                "<p><u>" + user + ":</u> " + message + "</p>" +
+                            "</span>" +
+                        "</li>";
+
+        allHTML += htmlMsg;    
     }
 
-    var htmlMsg = "<li class=\"" + messenger + "\">" + 
-                        "<span class=\"avatar\">" +
-                            "<img class=\"avatarimage\" src='" + filePath + "avatars/" + user + ".png'/>" +
-                        "</span>" +
-                        "<span class=\"messages\">" +
-                            "<p><u>" + user + ":</u> " + message + "</p>" +
-                        "</span>" +
-                    "</li>";
-
-    chat.innerHTML += htmlMsg;    
+    chat.innerHTML += allHTML;
 
     if(isScrolledToBottom)
         chat.scrollTop = chat.scrollHeight - chat.clientHeight;
