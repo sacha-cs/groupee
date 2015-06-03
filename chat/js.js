@@ -17,7 +17,7 @@ function startChat() {
     if(getCookie("chatOpen") == "false") {
         setTransitions("0s");
         toggleChat();
- //       setTransitions("0.5s");
+        setTransitions("0.5s");
     }
     lastMessageID = 0;
     lastSeenMessage = 0;
