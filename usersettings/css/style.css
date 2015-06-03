@@ -56,7 +56,7 @@ button:hover {
 }
 
 
-#account, #password, #groups {
+#account, #password {
   display: none;
   padding: 30px;
   width: 35%;
@@ -67,7 +67,7 @@ button:hover {
   overflow: hidden;
 }
 
-#account h1, #password h1, #groups h1 {
+#account h1, #password h1 {
   font-weight: 100;
   text-align: center;
   font-size: 2.0em;
