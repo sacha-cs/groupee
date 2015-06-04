@@ -8,7 +8,6 @@ var lastMoved = -1;
 
 // BUG:  New notes moved and then data entered end up in corner on refresh.
 // BUG:  Colours change on refresh.
-// TODO: Make add new note button persistent on scroll.
 
 // Gets note html
 function getNoteHtml(id, title, content) {
@@ -71,8 +70,10 @@ function sendUpdate(id) {
 
     var actualTitle = document.getElementById("title" + id).value;
     var actualContent = document.getElementById("content" + id).value;
+    var xCoord = document.getElementById("note" + id).style.left;
+    var yCoord = document.getElementById("note" + id).style.top;
 
-    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1};
+    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1, x:xCoord, y:yCoord};
 
     // We don't want to do anything if there are no changed that have been made to the note. 
     if (expectedTitle == actualTitle && expectedContent == actualContent) {
@@ -211,21 +212,24 @@ function drop(ev) {
     var dm = document.getElementById("move" + lastMoved).parentElement.parentElement;
     var xCoord = ev.clientX + parseInt(offset[0],10);
     var yCoord = ev.clientY + parseInt(offset[1],10);
+    var id = noteInfo[lastMoved].noteId;
     dm.style.left = xCoord + 'px';
     dm.style.top = yCoord + 'px';
     
-    var data = {x: xCoord, y: yCoord, noteId: noteInfo[lastMoved].noteId};
+    var data = {x: xCoord, y: yCoord, noteId: id};
    
     // Save the new coordinates of the note in the database.
-	var aClient = new HttpClient();
-    aClient.post('update_note', JSON.stringify(data),
-        function(response) {
-            var correct = response[0];
-            if (correct == "N") {
-                // TODO: Handle errors.
+    if (id != -1) {
+        var aClient = new HttpClient();
+        aClient.post('update_note', JSON.stringify(data),
+            function(response) {
+                var correct = response[0];
+                if (correct == "N") {
+                    // TODO: Handle errors.
+                }
             }
-        }
-    );
+        );
+    }
     ev.preventDefault();
 }
 

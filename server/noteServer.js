@@ -31,19 +31,14 @@ function updateNote(request, response, data) {
     var id = parsedData.noteId;
     var title = parsedData.noteTitle;
     var content = parsedData.noteContent;
-    var updateNoteQuery = (parsedData.x && parsedData.y) ? 
-        (
-            "UPDATE note " + 
-            "SET x=" + parsedData.x + ", y=" + parsedData.y + " " + 
-            "WHERE note_id=" + id 
-        ):
-        ( 
-            "UPDATE note " +
-            "SET note_title='" + title + "', " +
-            "note_content='" + content + "' " +
-            "WHERE note_id=" + id
-        );
 
+    var updateNoteQuery = 
+        "UPDATE note " +
+        "SET note_title='" + title + "', " +
+        "note_content='" + content + "' " +
+        ((parsedData.x && parsedData.y) ? (", x=" + parseInt(parsedData.x, 10) + ", y=" + parseInt(parsedData.y, 10) + " ") : "") +
+        "WHERE note_id=" + id;
+    
 	pg.connect(connectionString, function(err, client, done) {
 	 	client.query(updateNoteQuery, function(err, result) {
             done(client);
