@@ -235,5 +235,4 @@ textarea::-webkit-scrollbar-thumb {
 
 #content {
     position: fixed;
-    overflow: scroll;
 }
