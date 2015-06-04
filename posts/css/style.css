@@ -186,6 +186,8 @@ ul li:hover #delete {
     display:block;
     float:left;
     margin-right:15px;
+    position: fixed;
+    z-index: 5;
 }
 
 div[id^="note-controller"] {
@@ -208,7 +210,7 @@ img[id^="move"] {
 #new-note:hover, #new-note:focus {
     -webkit-transform: scale(1.2);
     -webkit-transition:-webkit-transform .15s ease;
-    position:relative;
+    position: fixed;
 }
 
 /* NICE SCROLLBAR */
@@ -231,4 +233,7 @@ textarea::-webkit-scrollbar-thumb {
     width:50px;
 }
 
-
+#content {
+    position: fixed;
+    overflow: scroll;
+}
