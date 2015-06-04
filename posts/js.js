@@ -1,29 +1,64 @@
 var noteInfo = [];
-var imgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
+var delImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
+var movImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png';
 var lastId = 0;
 var ensureSent = false;
+var offsetData;
+var lastMoved = -1;
+
+// BUG:  New notes moved and then data entered end up in corner on refresh.
+// BUG:  Colours change on refresh.
+
+// Gets note html
+function getNoteHtml(id, title, content) {
+    var html = "";
+    if (!(title || content)) {
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'></textarea>" +
+                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'></textarea>" +
+                   "<div id='note-controller" + id + "'>" + 
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
+                   "</div>" +
+               "</li>";
+    } else {
+        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
+                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title + "</textarea>" +
+                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
+                   "<div id='note-controller" + id + "'>" + 
+                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
+                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
+                   "</div>" +
+               "</li>";
+    }
+    return html;
+}
+
+function getColour() {
+    var cols = ["#cfc", "#ccf", "#ffc"];
+    var index = Math.floor(Math.random() * 3);
+    return cols[index];
+}
 
 // Adds a new note.
 function addNote() {
     var notes = document.getElementById("notes"); 
-    var noteLength = notes.children.length;
+    var newColour = getColour();
 
     // Create an empty note.
-    notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                           "<textarea class='note-title' onblur='sendUpdate(" + lastId + ")' maxlength='10' id='title" + lastId + "' placeholder='Untitled'></textarea>" +
-                           "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'></textarea>" +
-                           "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
-                       "</li>";
-    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false};
+    notes.innerHTML += getNoteHtml(lastId, null, null);
+    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false, colour: newColour};
     lastId++;
 
     // Iterate through all notes, set their values and re-add the 'lost' event listeners. 
+    var noteLength = notes.children.length;
     for (var i = 0; i < noteLength; i++) {
         var currentId = parseInt(notes.children[i].id.slice(4));
 
         // Strings are immutable in Javascript, so the whole HTML string is written over! 
         document.getElementById("title" + currentId).value = noteInfo[currentId].title;
-        document.getElementById("content" + currentId).value = noteInfo[currentId].content; 
+        document.getElementById("content" + currentId).value = noteInfo[currentId].content;
+        document.getElementById("note" + currentId).style.background = noteInfo[currentId].colour;
     }
 }
 
@@ -35,8 +70,10 @@ function sendUpdate(id) {
 
     var actualTitle = document.getElementById("title" + id).value;
     var actualContent = document.getElementById("content" + id).value;
+    var xCoord = document.getElementById("note" + id).style.left;
+    var yCoord = document.getElementById("note" + id).style.top;
 
-    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1};
+    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1, x:xCoord, y:yCoord};
 
     // We don't want to do anything if there are no changed that have been made to the note. 
     if (expectedTitle == actualTitle && expectedContent == actualContent) {
@@ -122,17 +159,16 @@ function getAllNotes() {
 		var noteList = JSON.parse(response);
 		for (var i = 0; i < noteList.length ; i++) {
             var currentNote = noteList[i];
+            var colour = getColour();
             noteInfo[lastId] = {noteId: currentNote.noteId,
                                 title: currentNote.noteTitle,
                                 content: currentNote.noteContent,
-                                saved: true}; 
-
-            notes.innerHTML += "<li id='note" + lastId + "'>" + 
-                                   "<textarea class='note-title' maxlength='10' onblur='sendUpdate(" + lastId + ")' id='title" + lastId + "' placeholder='Untitled'>" + currentNote.noteTitle + "</textarea>" +
-                                   "<textarea class='note-content' onblur='sendUpdate(" + lastId + ")' id='content" + lastId + "' placeholder='Your content here'>" + currentNote.noteContent + "</textarea>" +
-                                   "<img onclick='deleteNote(" + lastId + ")' id='delete' src='" + imgStr + "'>" +
-                               "</li>";
-
+                                saved: true,   
+                                colour: colour}; 
+            notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
+            document.getElementById('note' + lastId).style.left = currentNote.xCoord;
+            document.getElementById('note' + lastId).style.top = currentNote.yCoord;
+            document.getElementById('note' + lastId).style.background = colour;
             lastId++;
     	}
 	});
@@ -150,4 +186,52 @@ window.onbeforeunload = function() {
 
 function loaded() {
     getAllNotes();
+    var content = document.getElementById("content"); 
+    content.addEventListener("drop", drop);
+    content.addEventListener("dragover", allowDrop);
+    inNotesPage = true;
 }
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+// Get the offset between where the user clicked on the element and the top left corner.
+function drag(ev) {
+    // TODO: Make whole note draggable. 
+    var element = ev.target.parentElement.parentElement;
+    lastMoved = element.id.slice(4);
+    var style = window.getComputedStyle(ev.target.parentElement.parentElement, null);
+    offsetData = (parseInt(style.getPropertyValue("left"),10) - event.clientX) + ',' + 
+                 (parseInt(style.getPropertyValue("top"),10) - event.clientY);
+    ev.dataTransfer.setData("text/plain", offsetData);
+}
+
+// Unpack the offsets and use them to position the element relative to the mouse pointer.
+function drop(ev) {
+    var offset = ev.dataTransfer.getData("text/plain").split(',');
+    var dm = document.getElementById("move" + lastMoved).parentElement.parentElement;
+    var xCoord = ev.clientX + parseInt(offset[0],10);
+    var yCoord = ev.clientY + parseInt(offset[1],10);
+    var id = noteInfo[lastMoved].noteId;
+    dm.style.left = xCoord + 'px';
+    dm.style.top = yCoord + 'px';
+    
+    var data = {x: xCoord, y: yCoord, noteId: id};
+   
+    // Save the new coordinates of the note in the database.
+    if (id != -1) {
+        var aClient = new HttpClient();
+        aClient.post('update_note', JSON.stringify(data),
+            function(response) {
+                var correct = response[0];
+                if (correct == "N") {
+                    // TODO: Handle errors.
+                }
+            }
+        );
+    }
+    ev.preventDefault();
+}
+
+

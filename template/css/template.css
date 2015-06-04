@@ -266,7 +266,7 @@ li {
 	top: 50px;
 	left: 335px;
 	min-height: calc(100% - 50px);
-	min-width: 350px;
+	min-width: calc(100% - 350px);
 	-webkit-transition: left 0.5s ease;
   -moz-transition: left 0.5s ease;
   -o-transition: left 0.5s ease;
