@@ -18,5 +18,4 @@ function hideForm(event) {
 			albums[i].style.opacity = 1;
 		}
 	}
-	// document.getElementById("content").removeEventListener('click', hideForm);
 }
