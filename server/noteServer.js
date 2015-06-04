@@ -48,7 +48,6 @@ function updateNote(request, response, data) {
         "UPDATE note " +
         "SET " + toUpdate.join(',') +
         "WHERE note_id=" + id;
-    console.log(updateNoteQuery);
 	pg.connect(connectionString, function(err, client, done) {
 	 	client.query(updateNoteQuery, function(err, result) {
             done(client);
