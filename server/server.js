@@ -4,6 +4,7 @@ fs = require('fs');
 formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
+FormData = require("form-data");
 
 utils = require('./utils');
 
