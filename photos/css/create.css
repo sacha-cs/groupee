@@ -94,3 +94,15 @@
 }
 
 
+.create-text {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+
+.create-card p {
+    color: #c33;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
