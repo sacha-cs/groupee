@@ -35,6 +35,45 @@ function createAlbum() {
 	aClient.post('create_album', 'albumName=' + albumName +
 								 '&description=' + description, 
 	function(response) {
+		if (response[0] == "Y") {
+			location.reload(true);
+		} else {
+			setErrorText("Something went wrong...");
+		}
+	});
+}
 
+function loaded() {
+	getAllAlbums();
+}
+
+function getAllAlbums() {
+
+	var content = document.getElementById("content");
+
+	var aClient = new HttpClient();
+	aClient.get('get_albums', function(response) {
+		console.log(response);
+		var albumItemList = response.split("#");
+		for (var i = 0 ; i < albumItemList.length-1 ; i++) {
+			var albumItem = albumItemList[i].split("&");
+			var albumIdInfo = albumItem[0];
+			var albumNameInfo = albumItem[1];
+			var albumDescriptionInfo = albumItem[2];
+            var info = {albumId : albumIdInfo.split("=")[1],
+            			albumName : escapeHtml(decodeURIComponent(albumNameInfo.split("=")[1])),
+            			albumDescription : escapeHtml(decodeURIComponent(albumDescriptionInfo.split("=")[1]))};
+
+            var albumHtml = "<div class='view' id='" + info.albumId + "'>" +   
+     					    "<img src='http://www.vincedelmontefitness.com/blog/wp-content/uploads/2013/11/iStock_000015817907Small.jpg'/>" +  
+     					    "<div class='mask'>" +  
+     						"<h2>" + info.albumName + "</h2>" +  
+     						"<p>" + info.albumDescription + "</p>" + 
+         					"<a href='#' class='info'>Open Album</a>" +   
+							"</div>" +  
+							"</div>";
+
+           	content.innerHTML += albumHtml;
+		}
 	});
 }
