@@ -19,3 +19,22 @@ function hideForm(event) {
 		}
 	}
 }
+
+function createAlbum() {
+	var albumName = document.getElementById('album_name').value;
+	var description = document.getElementById('description').value;
+
+	setErrorText("");
+    if(albumName == "")
+    {
+        setErrorText("Please enter an album name");
+        return;
+    }
+
+	var aClient = new HttpClient();
+	aClient.post('create_album', 'albumName=' + albumName +
+								 '&description=' + description, 
+	function(response) {
+
+	});
+}
