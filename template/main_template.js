@@ -1,18 +1,3 @@
-var chatOpen = true;
-
-function toggleChat() {
-
-	chatOpen = !chatOpen;
-
-	if (chatOpen) {
-		document.getElementById("content").style.left = "350px";
-		document.getElementById("chat-toggle").style.left = "285px";
-	} else {
-		document.getElementById("content").style.left = "50px";
-		document.getElementById("chat-toggle").style.left = "0px";		
-	}
-
-}
 function templateLoaded() {
     var groupName = getCookie("group-name");
     var userName = getCookie("username");
@@ -21,7 +6,7 @@ function templateLoaded() {
     var avatarImage = document.getElementById("avatar-self");
     groupText.innerHTML = "<p>" + groupName + "</p>";
     userText.innerHTML = "<p>Welcome, " + userName + "!</p>";
-    avatarImage.innerHTML = "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
+    avatarImage.innerHTML += "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
 
 	document.getElementById("chat").addEventListener("mousewheel", function (e) {
 	    var delta = e.wheelDelta || -e.detail;
