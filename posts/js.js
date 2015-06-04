@@ -154,11 +154,11 @@ function deleteNote(id) {
 function getAllNotes() {
 	var notes = document.getElementById("notes"); 
 	var aClient = new HttpClient();
-    var colour = getColour();
 	aClient.get('get_notes', function(response) {
 		var noteList = JSON.parse(response);
 		for (var i = 0; i < noteList.length ; i++) {
             var currentNote = noteList[i];
+            var colour = getColour();
             noteInfo[lastId] = {noteId: currentNote.noteId,
                                 title: currentNote.noteTitle,
                                 content: currentNote.noteContent,
