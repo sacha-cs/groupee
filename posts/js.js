@@ -6,6 +6,10 @@ var ensureSent = false;
 var offsetData;
 var lastMoved = -1;
 
+// BUG:  New notes moved and then data entered end up in corner on refresh.
+// BUG:  Colours change on refresh.
+// TODO: Make add new note button persistent on scroll.
+
 // Gets note html
 function getNoteHtml(id, title, content) {
     var html = "";
@@ -39,7 +43,6 @@ function getColour() {
 
 // Adds a new note.
 function addNote() {
-    // TODO: Store note's colour locally and/or in database.
     var notes = document.getElementById("notes"); 
     var newColour = getColour();
 
@@ -151,6 +154,7 @@ function deleteNote(id) {
 function getAllNotes() {
 	var notes = document.getElementById("notes"); 
 	var aClient = new HttpClient();
+    var colour = getColour();
 	aClient.get('get_notes', function(response) {
 		var noteList = JSON.parse(response);
 		for (var i = 0; i < noteList.length ; i++) {
@@ -159,11 +163,11 @@ function getAllNotes() {
                                 title: currentNote.noteTitle,
                                 content: currentNote.noteContent,
                                 saved: true,   
-                                color: getColour()}; 
+                                colour: colour}; 
             notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
             document.getElementById('note' + lastId).style.left = currentNote.xCoord;
             document.getElementById('note' + lastId).style.top = currentNote.yCoord;
-            document.getElementById('note' + lastId).style.background = noteInfo[lastId].color;
+            document.getElementById('note' + lastId).style.background = colour;
             lastId++;
     	}
 	});
