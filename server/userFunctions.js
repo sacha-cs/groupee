@@ -8,8 +8,6 @@ getHandler.addHandler("groups/set_viewing_group", setGroup);
 postHandler.addHandler("usersettings/change_avatar", changeAvatar);
 postHandler.addHandler("usersettings/change_password", changePassword);
 
-var FormData = require("form-data");
-
 function login(request, response, params) {
 
     //Check we have both a username and password

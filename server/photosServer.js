@@ -19,8 +19,8 @@ function createAlbum(request, response, params) {
 			done(client);
 
 			var albumId = insertAlbumResult.rows[0].album_id;
-			//TODO: write some php script to create directory for that albumId
-			
+			createAlbumDirectory(group_id, albumId);
+
 			if (err) { return utils.respondError(err, response); }
 
 			return utils.respondPlain(response, "Y");
@@ -52,10 +52,20 @@ function getAllAlbums(request, response, params) {
 									  "&description=" + description + "#";
 				}
 			}
-			
+
 			response.write(responseString);
 			response.end();
 	
 		});
 	});
 }
+
+function createAlbumDirectory(group_id, album_id) {
+    var form = new FormData();
+    form.append('group_id', group_id);
+    form.append('album_id', album_id);
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createAlbumDirectory.php', function (err, res) {
+    });
+}
+
