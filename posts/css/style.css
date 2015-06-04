@@ -8,7 +8,6 @@ ul,li {
 }
 
 ul {
-    overflow:hidden; /* What should happen when text overflows a box. */
     padding:3em;
 
     /* Fade the notes in on load */
@@ -19,9 +18,11 @@ ul {
 }
 
 ul li {
+    position: absolute; 
+    left: 50px;
+    top: 60px;
     text-decoration:none;
     color:#000;
-    background:#ffc;
     display:block;
     height:10em;
     width:10em;
@@ -58,9 +59,9 @@ ul li {
 
     /* Make a clean and smooth transition from tilted to zoomed.
        If something is to change to this element, do it gradually during a quarter of a second. */
-    -moz-transition:-moz-transform .15s linear;
-    -o-transition:-o-transform .15s linear;
-    -webkit-transition:-webkit-transform .15s linear;
+    -moz-transition:-moz-transform .15s ease;
+    -o-transition:-o-transform .15s ease;
+    -webkit-transition:-webkit-transform .15s ease;
 }
 
 @keyframes fadein {
@@ -104,9 +105,8 @@ ul li:nth-child(even) {
     -o-transform:rotate(4deg);
     -webkit-transform:rotate(4deg);
     -moz-transform:rotate(4deg);
-    position:relative;
-    top:5px;
-    background:#cfc;
+    /*position:relative;*/
+    top:65px;
 }
 
 /* Tilt every 3rd link 3 degrees to the left, push it up by 5px. */
@@ -114,9 +114,8 @@ ul li:nth-child(3n) {
     -o-transform:rotate(-3deg);
     -webkit-transform:rotate(-3deg);
     -moz-transform:rotate(-3deg);
-    position:relative;
-    top:-5px;
-    background:#ccf;
+    /*position:relative;*/
+    top:55px;
 }
 
 /* Tilt every 5th link by 5 degress to the right, push it up by 10px. */
@@ -124,23 +123,23 @@ ul li:nth-child(5n) {
     -o-transform:rotate(5deg);
     -webkit-transform:rotate(5deg);
     -moz-transform:rotate(5deg);
-    position:relative;
-    top:-10px;
+    /*position:relative;*/
+    top:50px;
 }
 
 /* Zoom in the notes on hover and focus. */
 ul li:hover, ul li:focus {
     /* Shadows */
-    -moz-box-shadow:10px 10px 7px rgba(0,0,0,.7);
-    -webkit-box-shadow: 10px 10px 7px rgba(0,0,0,.7);
-    box-shadow:10px 10px 7px rgba(0,0,0,.7);
+    -moz-box-shadow:10px 10px 15px rgba(0,0,0,.7);
+    -webkit-box-shadow: 10px 10px 15px rgba(0,0,0,.7);
+    box-shadow:10px 10px 15px rgba(0,0,0,.7);
 
     /* Zoom in */
-    -webkit-transform: scale(1.25);
-    -moz-transform: scale(1.25);
-    -o-transform: scale(1.25);
+    -webkit-transform: scale(1.15);
+    -moz-transform: scale(1.15);
+    -o-transform: scale(1.15);
 
-    position:relative;
+    /*position:relative;*/
     z-index:5; /* Higher z-index ensures enlarged note covers the others. */
 }
 
@@ -155,10 +154,9 @@ ul li textarea.vert {
 }
 
 ul li:hover #delete {
-    display: initial;
     right:5px;
     bottom:5px;
-    position: absolute;
+    position:absolute;
     height:25px;
     width:25px;
 }
@@ -168,6 +166,8 @@ ul li:hover #delete {
     font-weight: bold;
     height: 30px;
     width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .note-content {
@@ -182,82 +182,54 @@ ul li:hover #delete {
 
 #new-note {
     -webkit-transform: scale(1);
-    -webkit-transition:-webkit-transform .15s linear;
+    -webkit-transition:-webkit-transform .15s ease;
     display:block;
     float:left;
     margin-right:15px;
+    position: fixed;
+    z-index: 5;
 }
 
-#delete {
+div[id^="note-controller"] {
     display:none;
+}
+
+ul li:hover div[id^="note-controller"] {
+    display:inline-block;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+img[id^="move"] {
+    left: 5px;
+    bottom: 5px;
+    width: 25px;
+    position: absolute;
 }
 
 #new-note:hover, #new-note:focus {
     -webkit-transform: scale(1.2);
-    -webkit-transition:-webkit-transform .15s linear;
-    position:relative;
+    -webkit-transition:-webkit-transform .15s ease;
+    position: fixed;
 }
 
 /* NICE SCROLLBAR */
 
 textarea::-webkit-scrollbar {
-  width: 5px;  /* for vertical scrollbars */
+    width: 5px;  /* for vertical scrollbars */
 }
 
 textarea::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 textarea::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #new-note-icon {
+    padding-top: 15px;
     height:50px;
     width:50px;
 }
 
-.content {
-    margin-top: 35px;
-}
-
-/*
-.tooltip {
-    display: inline;
-    position: relative;
-}
-
-.tooltip:hover {
-    color: #c00;
-    text-decoration: none;
-}
-
-.tooltip:hover:after {
-    background: #111;
-    background: rgba(0,0,0,.8);
-    border-radius: .5em;
-    bottom: 1.35em;
-    color: #fff;
-    content: attr(title);
-    display: block;
-    left: 1em;
-    padding: .3em 1em;
-    position: absolute;
-    text-shadow: 0 1px 0 #000;
-    white-space: nowrap;
-    z-index: 98;
-}
-
-.tooltip:hover:before {
-    border: solid;
-    border-color: #111 transparent;
-    border-color: rgba(0,0,0,.8) transparent;
-    border-width: .4em .4em 0 .4em;
-    bottom: 1em;
-    content: "";
-    display: block;
-    left: 2em;
-    position: absolute;
-    z-index: 99;
-}
-*/                 
