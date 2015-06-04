@@ -233,6 +233,3 @@ textarea::-webkit-scrollbar-thumb {
     width:50px;
 }
 
-#content {
-    position: fixed;
-}

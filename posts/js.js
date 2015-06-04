@@ -189,6 +189,7 @@ function loaded() {
     var content = document.getElementById("content"); 
     content.addEventListener("drop", drop);
     content.addEventListener("dragover", allowDrop);
+    inNotesPage = true;
 }
 
 function allowDrop(ev) {

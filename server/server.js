@@ -4,7 +4,6 @@ fs = require('fs');
 formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
-request = require('request');
 
 utils = require('./utils');
 
@@ -24,7 +23,9 @@ filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 sessionKeys = [];
 
 var disallowed = ["server"];
-var anonAvailable = ["login"];
+var anonAvailable = ["login", "favicon.ico"];
+
+getHandler.addHandler("favicon.ico", faviconResponse);
 
 var port = process.argv[2];
 if(!port)
@@ -49,15 +50,21 @@ function serverListener(request, response) {
     if(request.method=="POST") {
         var requestURL = request.url.substring(1);
         var handler = postHandler.getHandler(requestURL);
-
         if(handler != null) {
             if(!postHandler.useOwn(requestURL)) {
                 var form = new formidable.IncomingForm();
-                form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
+                form.uploadDir = '../tmp';
                 form.keepExtensions = true;
                 form.on("error", function(error) {
                     console.log(error);
                 });
+
+                if (requestURL == 'usersettings/change_avatar') {
+                    form.keepExtensions = false;
+                    form.on("fileBegin", function(name, file) {
+                        file.path = form.uploadDir + "/" + utils.getUser(request) + ".png";
+                    });
+                } 
                 form.parse(request, function(err, fields, files) {
                     handler(request, response, fields, files);
                 });
@@ -236,4 +243,9 @@ function requestDisallowed(url) {
             return true;
     }
     return false;
+}
+
+function faviconResponse(request, response) {
+    response.writeHead("301", {"Location": "http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/favicon.ico"});
+    response.end();
 }

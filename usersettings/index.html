@@ -1,0 +1,42 @@
+<?template?>
+/template/no_group_template.html
+<?title?>
+Profile Settings
+<?headers?>
+<script src="js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<?content?> 
+<div id="side-menu">
+	<div id="avatar">
+	</div>
+
+	<div id="options">
+		<button onclick="toggleAccountSettings()">General</button>
+		<button onclick="togglePasswordSettings()">Password</button>
+	</div>
+</div>
+
+<div id="user-settings"> 	
+
+	<div id="account">
+	    <h1>Change your avatar</h1></br>
+		<form action="/usersettings/change_avatar" method="post" enctype="multipart/form-data">
+			<input type="file" name="avatar" id="avatar" placeholder="Upload image">
+        	<input type="submit" name="submit" class="upload upload-submit" value="Go">
+		</form>
+	</div>
+
+	<div id="password">
+		<h1>Change your password</h1></br>
+		<input type="password" id="current-password" placeholder="Current password">
+		<input type="password" id="new-password" placeholder="New password">
+		<input type="password" id="new-password-confirm" placeholder="Retype new password">
+        <input type="submit" name="submit" class="password password-submit" value="Go" onclick="changePassword()">
+        <div class="feedback-text">
+            <div id="error"></div>
+            <div id="success"></div>
+        </div>
+	</div>
+
+</div>
+

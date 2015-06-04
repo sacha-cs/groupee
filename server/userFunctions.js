@@ -5,6 +5,10 @@ postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
 getHandler.addHandler("groups/set_viewing_group", setGroup);
+postHandler.addHandler("usersettings/change_avatar", changeAvatar);
+postHandler.addHandler("usersettings/change_password", changePassword);
+
+var FormData = require("form-data");
 
 function login(request, response, params) {
 
@@ -366,6 +370,61 @@ function addGroupChat(request, response, client, done, callback, group_id) {
         client.query(groupQuery, function(err, result) {
             if(err) { return utils.respondErr(response, err); }
             callback(chat_id);
+        });
+    });
+}
+
+function changeAvatar(req, response, data) {
+
+    var user = utils.getUser(req);
+    var fileName = user + '.png';
+
+    var form = new FormData();
+    form.append('username', user);
+    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {
+        filename : fileName
+    });
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
+        fs.unlink('../tmp/' + fileName);
+        response.writeHead("303", {'Location' : '/usersettings/' });
+        response.end();
+    });
+
+}   
+
+function changePassword(request, response, params) {
+    var user = utils.getUser(request);
+
+    var checkCorrectPasswordQuery = "SELECT * " +
+                                    "FROM users " +
+                                    "WHERE username='" + user + "'";
+    
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) {
+            return utils.respondPlain(response, "NServerError");
+        }
+        
+        client.query(checkCorrectPasswordQuery, function(err, checkCorrectPasswordResult) {
+            if(err) {
+                return utils.respondPlain(response, "NServerError");
+            }
+    
+            var expected = checkCorrectPasswordResult.rows[0].pwdhash;
+            
+            if(!passwordHash.verify(params.currentPassword, expected)) {
+                return utils.respondPlain(response, "NIncorrectPassword");
+            } else {
+                var hashedNewPassword = passwordHash.generate(params.newPassword);
+                var changePasswordQuery = "UPDATE users " +
+                                          "SET pwdhash='" + hashedNewPassword + "' " +
+                                          "WHERE username='" + user + "'";
+                client.query(changePasswordQuery, function(err, changePasswordResult) {
+                    done(client);
+                    return utils.respondPlain(response, "YPasswordChangedSuccessfully");
+                });
+
+            }
         });
     });
 }

@@ -98,6 +98,7 @@ img:last-of-type:not(#logo) {
 #title {
   background-image: url("http://www.doc.ic.ac.uk/project/2014/271/g1427136/backgrounds/blur-background13.jpg");
   background-attachment: fixed;  
+  padding-bottom: 0;
 }
 
 #slide1:before {
@@ -194,4 +195,29 @@ img:last-of-type:not(#logo) {
   border-color: #C25332;
   right: 0;
   top: 50%;
+}
+
+.container {
+  margin: 0 auto;
+}
+
+.arrow {
+  cursor: default;
+  border-color:transparent;
+  border-style:solid;
+  border-width:0 2em;
+  display:block;
+  height:0;
+  margin-top:10em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+  opacity:0.4;
+  text-indent:-9999px;
+  transform-origin: 50% 50%;
+  width:0;
+}
+
+.down {
+  border-top:2em solid #00b6f1;
 }
