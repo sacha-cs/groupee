@@ -25,20 +25,30 @@ function addNote(request, response, data) {
 	});
 }
 
+function queryCreator() {
+    
+}
+
 // Update a note with a given id.
 function updateNote(request, response, data) {
     var parsedData = JSON.parse(data);
     var id = parsedData.noteId;
     var title = parsedData.noteTitle;
     var content = parsedData.noteContent;
+    var x = parseInt(parsedData.x, 10);
+    var y = parseInt(parsedData.y, 10);
+    var toUpdate = [];
+
+    if (title) toUpdate.push("note_title='" + title + "' ");
+    if (content) toUpdate.push("note_content='" + content + "' ");
+    if (x) toUpdate.push("x=" + x + " ");
+    if (y) toUpdate.push("y=" + y + " ");
 
     var updateNoteQuery = 
         "UPDATE note " +
-        "SET note_title='" + title + "', " +
-        "note_content='" + content + "' " +
-        ((parsedData.x && parsedData.y) ? (", x=" + parseInt(parsedData.x, 10) + ", y=" + parseInt(parsedData.y, 10) + " ") : "") +
+        "SET " + toUpdate.join(',') +
         "WHERE note_id=" + id;
-    
+    console.log(updateNoteQuery);
 	pg.connect(connectionString, function(err, client, done) {
 	 	client.query(updateNoteQuery, function(err, result) {
             done(client);
