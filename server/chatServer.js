@@ -3,7 +3,7 @@ var messageNo=0;
 
 var groups = {};
 
-postHandler.addHandler("chat/send_message", chatSendMessage);
+postHandler.addHandler("chat/send_message", chatSendMessage, true);
 getHandler.addHandler("chat/chat_update", chatUpdate);
 
 function createGroupData(group) {
@@ -13,12 +13,12 @@ function createGroupData(group) {
 }
 
 function chatSendMessage(request, response, params) {
+    params = JSON.parse(params);
     var username = utils.getUser(request);
     var group = utils.getViewingGroup(request);
-    var safeMessage = encodeURIComponent(escapeHtml(decodeURIComponent(params.chatmessage)));
     if(!groups[group])
         createGroupData(group);
-    groups[group].messages.push({user:username, message:safeMessage});
+    groups[group].messages.push({user:username, message:params.chatmessage});
     groups[group].messageNo++;
     utils.respondPlain(response, "MessageRecieved");
 
@@ -37,6 +37,8 @@ function chatSendMessage(request, response, params) {
         client.query(getGroupQuery, function(err, result) {
             if(err) { return console.log(err); }
             var chatID = result.rows[0].chat_id;
+            var safeMessage = params.chatmessage.replace(/'/g, "''");
+            console.log(safeMessage);
             var addMessageQuery = "INSERT INTO chat_messages " +
                                   "VALUES(" + chatID + ", '" + username +
                                       "', now(), '" + safeMessage + "');"
@@ -73,14 +75,20 @@ function chatUpdate(request, response, params, checkForNew) {
     }
     
     response.writeHead(200, { "Content-Type": 'text/plain' });
-    response.write(groups[group].messageNo + "#");
+    var payload = {
+        newID: groups[group].messageNo,
+        messages: []
+    }
     while(last < groups[group].messageNo)
     {
         var message = groups[group].messages[last];
-        response.write("user=" + message.user + ";message=" + message.message + "\n");
+        payload.messages.push({
+            user: message.user,
+            chatmessage: message.message
+        });
         last++;
     }
-    response.end();
+    response.end(JSON.stringify(payload));
 }
 
 function requestTimedOut(requestData) {
