@@ -1,18 +1,3 @@
-var chatOpen = true;
-
-function toggleChat() {
-
-	chatOpen = !chatOpen;
-
-	if (chatOpen) {
-		document.getElementById("content").style.left = "350px";
-		document.getElementById("chat-toggle").style.left = "285px";
-	} else {
-		document.getElementById("content").style.left = "50px";
-		document.getElementById("chat-toggle").style.left = "0px";		
-	}
-
-}
 function templateLoaded() {
     var groupName = getCookie("group-name");
     var userName = getCookie("username");
