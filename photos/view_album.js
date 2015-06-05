@@ -1,9 +1,8 @@
 function loaded() {
-	var content = document.getElementById("content");
+    var content = document.getElementById("content");
     var aClient = new HttpClient();
     aClient.get('get_photos', function(response) {
         var photoInfo = JSON.parse(response);
-        console.log(photoInfo);
         for (var i = 0; i < photoInfo.photoList.length; i++) {
             var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "'>" +   
                                 "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
