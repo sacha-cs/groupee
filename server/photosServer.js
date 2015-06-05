@@ -72,6 +72,7 @@ function createAlbumDirectory(group_id, album_id) {
     });
 }
 
+
 function setViewingAlbum(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         var group_id = utils.getViewingGroup(request);
@@ -80,7 +81,8 @@ function setViewingAlbum(request, response, params) {
                                          "FROM albums " +
                                          "WHERE album_id=" + album_id + " AND group_id=" + group_id;
 
-        client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
+        // Check if the group actually owns the specific album.
+    	client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
             done(client);
             if (doesAlbumExistInGroupResult.rows.length == 1) {
                 // Safety check done
@@ -137,3 +139,4 @@ function uploadPhotos(request, response, data, files) {
         response.end();
     });
 }
+
