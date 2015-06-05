@@ -61,12 +61,15 @@ function serverListener(request, response) {
                     console.log(error);
                 });
 
-                if (requestURL == 'usersettings/change_avatar') {
-                    form.keepExtensions = false;
-                    form.on("fileBegin", function(name, file) {
-                        file.path = form.uploadDir + "/" + utils.getUser(request) + ".png";
-                    });
-                } 
+                var options = postHandler.getOptions(requestURL);
+                if(options) {
+                    for(var i in options) {
+                        if(options.hasOwnProperty(i)) {
+                            form[i] = options[i];
+                        }
+                    }
+                }
+
                 form.parse(request, function(err, fields, files) {
                     handler(request, response, fields, files);
                 });
