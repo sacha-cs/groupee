@@ -373,19 +373,17 @@ function addGroupChat(request, response, client, done, callback, group_id) {
     });
 }
 
-function changeAvatar(req, response, data) {
+function changeAvatar(req, response, data, files) {
 
     var user = utils.getUser(req);
-    var fileName = user + '.png';
+    var filePath = files.avatar.path;
 
     var form = new FormData();
     form.append('username', user);
-    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {
-        filename : fileName
-    });
+    form.append('avatar', fs.createReadStream(filePath));
 
     form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
-        fs.unlink('../tmp/' + fileName);
+        fs.unlink(filePath);
         response.writeHead("303", {'Location' : '/usersettings/' });
         response.end();
     });
