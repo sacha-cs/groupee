@@ -1,0 +1,67 @@
+#content {
+	width: calc(100% - 400px);
+}
+
+#scheduler {
+	width:100%;
+	height:100%;
+	padding:0;
+	margin:10px;
+	overflow:hidden;
+}  
+
+.cal_tab {
+  -webkit-font-smoothing: antialiased;
+  font-weight: 300;
+  font-size: 21px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.247059) 0px 7px 15px;
+}
+
+#cal_navline div {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+
+
+
+#prev_button {
+	float: right;
+	margin-right: 10px;
+}
+
+#next_button {
+	float: right;
+	margin-right: 10px;
+}
+
+.today_button {
+	float: right;
+	margin-right: 10px;
+}
+
+
+#cal_header {
+	width: 100%;
+}
+
+#cal_header div {
+	display: inline-block;
+	width: 14.28%;
+	margin:0;
+}
+
+#cal_data table {
+    border-collapse: collapse;
+    width:100%;
+    height: 100%;
+    background-color: #F5F5F5;
+}
+
+#cal_data th,#cal_data td {
+    border: 1px solid black;
+    width:14%;
+    height:40px;
+}

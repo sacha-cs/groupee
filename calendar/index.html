@@ -1,0 +1,40 @@
+<?template?>
+/template/main_template.html
+<?title?>
+Calendar
+<?headers?>
+<link rel="stylesheet" href="css/calendar.css">
+<script src = "calJS.js"></script> 
+<?content?>
+
+<div id="scheduler" class = "cal_container" style = "width:100%; height:100%">
+	<div id = "cal_navline">		
+		<div class = "cal_tab" id="day_tab"> Day </div>
+	    <div class = "cal_tab" id="week_tab"> Week </div>
+	    <div class = "cal_tab" id="month_tab"> Month </div>
+		<div id = "cal_date">  </div>
+		<div class = "button" id = "next_button">
+			<input value=">>" type ="button" onclick = "getNextMonth()">
+		</div>
+		<div class = "button" id = "prev_button"> 
+			<input value="<<" type ="button" onclick = "getPrevMonth()">
+		</div>
+		<div class = "today_button"> 
+			<input value="Today" type ="button" onclick = "getPresentMonth()">
+		</div>
+
+	</div>
+	<div id ="cal_data">
+		<table cellspacing ="0" cellpadding = "0">
+			<tbody  id="cal_table">
+				<tr><th>Sunday</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th><th>Saturday</th></tr>
+				<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+				<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+				<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+				<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+				<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+				<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
