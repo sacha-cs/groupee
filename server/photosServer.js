@@ -1,7 +1,7 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
-postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 getHandler.addHandler("photos/view_album", setViewingAlbum);
+postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 
 function createAlbum(request, response, params) {
 	
@@ -82,21 +82,14 @@ function setViewingAlbum(request, response, params) {
 
         // Check if the group actually owns the specific album.
     	client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
+            done(client);
     		if (doesAlbumExistInGroupResult.rows.length == 1) {
     			// Safety check done
     			// TODO: return all the photo_ids corresponding to the album_id in the response
-                var getAlbumsForGroupQuery = "SELECT photo_id " +
-                                             "FROM photos " +
-                                             "WHERE album_id=" + album_id;
             
                 // Store the album that we are currently viewing in the cookie.
                 utils.setViewingAlbum(request, album_id);
-                client.query(getAlbumsForGroupQuery, function(err, albumsResult) {
-    		        done(client);
-                    var albumList = albumsResult.rows;
-                    response.writeHead("307", {'Location' : 'view_album.html' }); 
-                    response.end(JSON.stringify(albumList));
-                });
+                response.writeHead("307", {'Location' : 'view_album.html' }); 
     		} else {
     			response.writeHead("307", {'Location' : '/404.html' });
     		}
