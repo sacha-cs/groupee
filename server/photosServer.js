@@ -101,18 +101,18 @@ function setViewingAlbum(request, response, params) {
 
 function getAllPhotos(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
-        var group_id = utils.getViewingGroup(request);
-        var album_id = utils.getViewingAlbum(request);  
+        var groupId = utils.getViewingGroup(request);
+        var albumId = utils.getViewingAlbum(request);  
         var getPhotosQuery = "SELECT photo_id " +
                              "FROM photos " +
-                             "WHERE album_id=" + album_id;
+                             "WHERE album_id=" + albumId;
         client.query(getPhotosQuery, function(err, result) {
             done(client);
-            var photoList = [];
+            var photoInfo = {groupId: groupId, albumId: albumId, photoList: []};
             for (var i = 0; i < result.rows.length; i++) {
-                photoList.push(result.rows[i].photo_id)
+                photoInfo.photoList.push(result.rows[i].photo_id);
             }
-            response.end(JSON.stringify(photoList));
+            response.end(JSON.stringify(photoInfo));
         });
     });
 }
