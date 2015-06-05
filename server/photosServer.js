@@ -122,21 +122,47 @@ function uploadPhotos(request, response, data, files) {
     var groupId = utils.getViewingGroup(request);
     var viewingAlbum = utils.getViewingAlbum(request);
 
-    var form = new FormData();
-    form.append('groupId', groupId);
-    form.append('numFiles', numFiles);
+	var form = new FormData();
+	form.append('groupId', groupId);
+	if (!numFiles) {
+		numFiles = 1;
+	} else {
+			form.append('numFiles', numFiles);
+	}
     form.append('albumId', viewingAlbum);
-    for (var i = 0 ; i < numFiles ; i++) {
-        console.log(files[i].path);
-        form.append(i, fs.createReadStream(files[i].path));
-    }
 
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadPhotos.php', function (err, res) {
-        for (var i = 0 ; i < numFiles ; i++) {
-            fs.unlink(files[i].path);
-        }
-        response.writeHead("303", {'Location' : '/photos/view_album.html' });
-        response.end();
-    });
+    pg.connect(connectionString, function(err, client, done) {
+    	var insertPhotoQuery = "INSERT INTO photos(album_id) " + 
+    	 					   "VALUES(" + viewingAlbum + ") RETURNING photo_id";
+
+    	for (var i = 0 ; i < numFiles ; i++) {
+    		(function(i) {
+	    	client.query(insertPhotoQuery, function(err, insertPhotoResult) {
+	    		var photo_id = insertPhotoResult.rows[0].photo_id;
+	    		if (numFiles == 1) {
+	    			form.append(photo_id, fs.createReadStream(files["upload[]"].path));
+	    		} else {
+	    			form.append(photo_id, fs.createReadStream(files["upload[]"][i].path));
+	    		}
+	    		if (i == numFiles-1) {
+	    			done(client);
+    			    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadPhotos.php', function (err, res) {
+    			    	res.pipe(process.stdout);
+				    	for (var i = 0 ; i < numFiles ; i++) {
+				    		if (numFiles == 1) {
+				        		fs.unlink(files["upload[]"].path);
+				    		} else {
+				    			fs.unlink(files["upload[]"][i].path);
+				    		}
+				    	}
+				        response.writeHead("303", {'Location' : '/photos/view_album.html' });
+				        response.end();
+			    	});
+	    		}
+	    	});
+	    	})(i); 
+	    }
+
+    })
 }
 
