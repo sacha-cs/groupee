@@ -86,7 +86,7 @@ function sendUpdate(id) {
     // continuing, which is useful for updating the note a user is currently focused on 
     // during a page refresh,
     var aClient = new HttpClient(ensureSent);
-    if (noteInfo[id].saved) {
+    if (noteInfo[id].saved) {   
         // Update the note with the given id.
         data.noteId = noteInfo[id].noteId;
         aClient.post('update_note', JSON.stringify(data),
