@@ -428,3 +428,11 @@ function changePassword(request, response, params) {
         });
     });
 }
+
+function createGroupDirectory(group_id) {
+    var form = new FormData();
+    form.append('group_id', group_id);
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createGroupDirectory.php', function (err, res) {
+    });
+}
