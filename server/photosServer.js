@@ -1,65 +1,66 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
+getHandler.addHandler("photos/get_photos", getAllPhotos);
 getHandler.addHandler("photos/view_album", setViewingAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 
 function createAlbum(request, response, params) {
-	
-	pg.connect(connectionString, function(err, client, done) {
-		if(err) { return utils.respondError(err ,response); }
+    
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) { return utils.respondError(err ,response); }
 
-		var group_id = utils.getViewingGroup(request);
-		var album_name = params.albumName;
-		var description = params.description;
+        var group_id = utils.getViewingGroup(request);
+        var album_name = params.albumName;
+        var description = params.description;
 
-		var insertAlbumQuery = "INSERT INTO albums(name, description, group_id) " +
-							  "VALUES('" + album_name + "', '" + 
-							  	description + "', " 
-							  	+ group_id + ") RETURNING album_id";  
+        var insertAlbumQuery = "INSERT INTO albums(name, description, group_id) " +
+                              "VALUES('" + album_name + "', '" + 
+                                description + "', " 
+                                + group_id + ") RETURNING album_id";  
 
-		client.query(insertAlbumQuery, function(err, insertAlbumResult) {
-			done(client);
+        client.query(insertAlbumQuery, function(err, insertAlbumResult) {
+            done(client);
 
-			var albumId = insertAlbumResult.rows[0].album_id;
-			createAlbumDirectory(group_id, albumId);
+            var albumId = insertAlbumResult.rows[0].album_id;
+            createAlbumDirectory(group_id, albumId);
 
-			if (err) { return utils.respondError(err, response); }
+            if (err) { return utils.respondError(err, response); }
 
-			return utils.respondPlain(response, "Y");
-		})
-	})
+            return utils.respondPlain(response, "Y");
+        })
+    })
 }
 
 function getAllAlbums(request, response, params) {
 
-	var group_id = utils.getViewingGroup(request);
-	var getAlbumsQuery = "SELECT album_id, name, description " +
-						 "FROM albums " + 
-						 "WHERE group_id='" + group_id + "'";
+    var group_id = utils.getViewingGroup(request);
+    var getAlbumsQuery = "SELECT album_id, name, description " +
+                         "FROM albums " + 
+                         "WHERE group_id='" + group_id + "'";
 
-	pg.connect(connectionString, function(err, client, done) {
-		client.query(getAlbumsQuery, function(err, result) {
-			done(client);
-			if(err) { return utils.respondError(err, response); }
-			
-			var responseString = "";
-			if (result.rows.length > 0) {
-				for (var i = 0 ; i < result.rows.length ; i++) {
-					var row = result.rows[i];
-					var albumId = row.album_id;
-					var albumName = encodeURIComponent(row.name);
-					var description = encodeURIComponent(row.description);
-					responseString += "albumId=" + albumId +
-									  "&albumName=" + albumName +  
-									  "&description=" + description + "#";
-				}
-			}
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(getAlbumsQuery, function(err, result) {
+            done(client);
+            if(err) { return utils.respondError(err, response); }
+            
+            var responseString = "";
+            if (result.rows.length > 0) {
+                for (var i = 0 ; i < result.rows.length ; i++) {
+                    var row = result.rows[i];
+                    var albumId = row.album_id;
+                    var albumName = encodeURIComponent(row.name);
+                    var description = encodeURIComponent(row.description);
+                    responseString += "albumId=" + albumId +
+                                      "&albumName=" + albumName +  
+                                      "&description=" + description + "#";
+                }
+            }
 
-			response.write(responseString);
-			response.end();
-	
-		});
-	});
+            response.write(responseString);
+            response.end();
+    
+        });
+    });
 }
 
 function createAlbumDirectory(group_id, album_id) {
@@ -74,35 +75,52 @@ function createAlbumDirectory(group_id, album_id) {
 
 function setViewingAlbum(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
-    	var group_id = utils.getViewingGroup(request);
-    	var album_id = params.album_id;	
-    	var doesAlbumExistInGroupQuery = "SELECT * " +
-    									 "FROM albums " +
-    									 "WHERE album_id=" + album_id + " AND group_id=" + group_id;
+        var group_id = utils.getViewingGroup(request);
+        var album_id = params.album_id; 
+        var doesAlbumExistInGroupQuery = "SELECT * " +
+                                         "FROM albums " +
+                                         "WHERE album_id=" + album_id + " AND group_id=" + group_id;
 
         // Check if the group actually owns the specific album.
     	client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
             done(client);
-    		if (doesAlbumExistInGroupResult.rows.length == 1) {
-    			// Safety check done
-    			// TODO: return all the photo_ids corresponding to the album_id in the response
+            if (doesAlbumExistInGroupResult.rows.length == 1) {
+                // Safety check done
+                // TODO: return all the photo_ids corresponding to the album_id in the response
             
                 // Store the album that we are currently viewing in the cookie.
                 utils.setViewingAlbum(request, album_id);
                 response.writeHead("307", {'Location' : 'view_album.html' }); 
-    		} else {
-    			response.writeHead("307", {'Location' : '/404.html' });
-    		}
-    		response.end();
-    	});
+            } else {
+                response.writeHead("307", {'Location' : '/404.html' });
+            }
+            response.end();
+        });
     }); 
 }
 
+function getAllPhotos(request, response, params) {
+    pg.connect(connectionString, function(err, client, done) {
+        var group_id = utils.getViewingGroup(request);
+        var album_id = utils.getViewingAlbum(request);  
+        var getPhotosQuery = "SELECT photo_id " +
+                             "FROM photos " +
+                             "WHERE album_id=" + album_id;
+        client.query(getPhotosQuery, function(err, result) {
+            done(client);
+            var photoList = [];
+            for (var i = 0; i < result.rows.length; i++) {
+                photoList.push(result.rows[i].photo_id)
+            }
+            response.end(JSON.stringify(photoList));
+        });
+    });
+}
 
 function uploadPhotos(request, response, data, files) {
-	var numFiles = files["upload[]"].length;
-	var groupId = utils.getViewingGroup(request);
-	var viewingAlbum = utils.getViewingAlbum(request);
+    var numFiles = files["upload[]"].length;
+    var groupId = utils.getViewingGroup(request);
+    var viewingAlbum = utils.getViewingAlbum(request);
 
 	var form = new FormData();
 	form.append('groupId', groupId);
@@ -146,8 +164,5 @@ function uploadPhotos(request, response, data, files) {
 	    }
 
     })
-
-
-
 }
 
