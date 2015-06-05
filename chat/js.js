@@ -50,22 +50,19 @@ function toggleChat() {
     if (chatOpen) {
         document.getElementById("content").style.left = "335px";
         document.getElementById("chat-left").style.left = "0px";
-        if (inNotesPage) {
-            document.getElementById("content").style.width = "" + (parseInt(window.innerWidth, 10) - 335) + "px" ;
-        }       
         document.getElementById("new-messages-icon").style.display = "none";
         cookieValue = "true";
     } else {
         document.getElementById("content").style.left = "50px";
-        if (inNotesPage) {
-            document.getElementById("content").style.width = "" + (parseInt(window.innerWidth, 10) - 50) + "px" ;
-        }
         document.getElementById("chat-left").style.left = "-285px";     
         cookieValue = "false";
     }
+ 
+    if (typeof chatHasToggled == "function") {
+        chatHasToggled(chatOpen);
+    }
     
     setCookie("chatOpen", cookieValue);
-
 }
 
 function updateChat() {
