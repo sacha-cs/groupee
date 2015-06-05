@@ -86,7 +86,7 @@ function sendUpdate(id) {
     // continuing, which is useful for updating the note a user is currently focused on 
     // during a page refresh,
     var aClient = new HttpClient(ensureSent);
-    if (noteInfo[id].saved) {
+    if (noteInfo[id].saved) {   
         // Update the note with the given id.
         data.noteId = noteInfo[id].noteId;
         aClient.post('update_note', JSON.stringify(data),
@@ -234,4 +234,11 @@ function drop(ev) {
     ev.preventDefault();
 }
 
-
+function chatHasToggled(chatOpen) {
+    var innerWidth = parseInt(window.innerWidth, 10);
+    if (chatOpen) {
+       document.getElementById("content").style.width = (innerWidth - 335) + "px" ;
+    } else  {
+       document.getElementById("content").style.width = (innerWidth - 50) + "px" ;
+    }
+}

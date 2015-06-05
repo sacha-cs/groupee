@@ -26,11 +26,27 @@ this.getViewingGroup = function(request) {
     }
 }
 
-/* Store the group that the user is currently viewing in the cookie. */
+// Store the group that the user is currently viewing in the cookie.
 this.setViewingGroup = function(request, groupId) {
     var seshCookie = this.getSessionCookie(request);
     if(seshCookie && sessionKeys[seshCookie]) {
         sessionKeys[seshCookie].groupViewing = groupId;
+    }
+}
+
+// Return the id of the album that the viewer is currently viewing. 
+this.getViewingAlbum = function(request) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        return sessionKeys[seshCookie].albumViewing;
+    }
+}
+
+// Store album that the user is currently viewing in the cookie.
+this.setViewingAlbum = function(request, albumId) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        sessionKeys[seshCookie].albumViewing = albumId;
     }
 }
 
