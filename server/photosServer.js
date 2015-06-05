@@ -1,7 +1,7 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
-getHandler.addHandler("photos/view_album", setAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
+getHandler.addHandler("photos/view_album", setViewingAlbum);
 
 function createAlbum(request, response, params) {
 	
@@ -71,7 +71,8 @@ function createAlbumDirectory(group_id, album_id) {
     });
 }
 
-function setAlbum(request, response, params) {
+
+function setViewingAlbum(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
     	var group_id = utils.getViewingGroup(request);
     	var album_id = params.album_id;	
@@ -79,12 +80,23 @@ function setAlbum(request, response, params) {
     									 "FROM albums " +
     									 "WHERE album_id=" + album_id + " AND group_id=" + group_id;
 
+        // Check if the group actually owns the specific album.
     	client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
-    		done(client);
     		if (doesAlbumExistInGroupResult.rows.length == 1) {
     			// Safety check done
-    			// TODO: return all the photo_id corresponding to the album_id in the response
-                response.writeHead("307", {'Location' : 'view_album.html' });
+    			// TODO: return all the photo_ids corresponding to the album_id in the response
+                var getAlbumsForGroupQuery = "SELECT photo_id " +
+                                             "FROM photos " +
+                                             "WHERE album_id=" + album_id;
+            
+                // Store the album that we are currently viewing in the cookie.
+                utils.setViewingAlbum(request, album_id);
+                client.query(getAlbumsForGroupQuery, function(err, albumsResult) {
+    		        done(client);
+                    var albumList = albumsResult.rows;
+                    response.writeHead("307", {'Location' : 'view_album.html' }); 
+                    response.end(JSON.stringify(albumList));
+                });
     		} else {
     			response.writeHead("307", {'Location' : '/404.html' });
     		}
@@ -117,3 +129,4 @@ function uploadPhotos(request, response, data, files) {
     });
 
 }
+
