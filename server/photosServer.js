@@ -1,5 +1,6 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
+getHandler.addHandler("photos/view_album", setAlbum);
 
 function createAlbum(request, response, params) {
 	
@@ -69,3 +70,24 @@ function createAlbumDirectory(group_id, album_id) {
     });
 }
 
+function setAlbum(request, response, params) {
+    pg.connect(connectionString, function(err, client, done) {
+    	var group_id = utils.getViewingGroup(request);
+    	var album_id = params.album_id;	
+    	var doesAlbumExistInGroupQuery = "SELECT * " +
+    									 "FROM albums " +
+    									 "WHERE album_id=" + album_id + " AND group_id=" + group_id;
+
+    	client.query(doesAlbumExistInGroupQuery, function(err, doesAlbumExistInGroupResult) {
+    		done(client);
+    		if (doesAlbumExistInGroupResult.rows.length == 1) {
+    			// Safety check done
+    			// TODO: return all the photo_id corresponding to the album_id in the response
+                response.writeHead("307", {'Location' : 'view_album.html' });
+    		} else {
+    			response.writeHead("307", {'Location' : '/404.html' });
+    		}
+    		response.end();
+    	});
+    }); 
+}

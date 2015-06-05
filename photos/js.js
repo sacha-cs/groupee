@@ -53,7 +53,6 @@ function getAllAlbums() {
 
 	var aClient = new HttpClient();
 	aClient.get('get_albums', function(response) {
-		console.log(response);
 		var albumItemList = response.split("#");
 		for (var i = 0 ; i < albumItemList.length-1 ; i++) {
 			var albumItem = albumItemList[i].split("&");
@@ -69,11 +68,15 @@ function getAllAlbums() {
      					    "<div class='mask'>" +  
      						"<h2>" + info.albumName + "</h2>" +  
      						"<p>" + info.albumDescription + "</p>" + 
-         					"<a href='#' class='info'>Open Album</a>" +   
+         					"<a onclick='openAlbum(" + info.albumId + ")' class='info'>Open Album</a>" +   
 							"</div>" +  
 							"</div>";
 
            	content.innerHTML += albumHtml;
 		}
 	});
+}
+
+function openAlbum(album_id) {
+	window.location = "view_album?album_id=" + album_id; 
 }
