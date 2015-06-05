@@ -1,6 +1,7 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
 getHandler.addHandler("photos/view_album", setViewingAlbum);
+postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 
 function createAlbum(request, response, params) {
 	
@@ -93,4 +94,29 @@ function setViewingAlbum(request, response, params) {
     		response.end();
     	});
     }); 
+}
+
+
+function uploadPhotos(request, response, data, files) {
+	var numFiles = files["upload[]"].length;
+	var groupId = utils.getViewingGroup(request);
+	var viewingAlbum = utils.getViewingAlbum(request);
+
+	var form = new FormData();
+	form.append('groupId', groupId);
+	form.append('numFiles', numFiles);
+    form.append('albumId', viewingAlbum);
+    for (var i = 0 ; i < numFiles ; i++) {
+    	console.log(files[i].path);
+    	form.append(i, fs.createReadStream(files[i].path));
+    }
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadPhotos.php', function (err, res) {
+    	for (var i = 0 ; i < numFiles ; i++) {
+        	fs.unlink(files[i].path);
+    	}
+        response.writeHead("303", {'Location' : '/photos/view_album.html' });
+        response.end();
+    });
+
 }
