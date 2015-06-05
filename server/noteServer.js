@@ -10,11 +10,13 @@ function addNote(request, response, data) {
     var username = utils.getUser(request);
     var noteTitle = parsedData.noteTitle;
     var noteContent = parsedData.noteContent;
+    var x = parsedData.x ? parseInt(parsedData.x, 10) : 50;
+    var y = parsedData.y ? parseInt(parsedData.y, 10) : 60;
 
-    var insertNoteQuery = "INSERT INTO note(note_title, note_content, group_id, username) " +
-                          "VALUES('" + noteTitle + "', '" + noteContent + "', " + groupId + ", '" + username + "')" + 
+    var insertNoteQuery = "INSERT INTO note(note_title, note_content, group_id, username, x, y) " +
+                          "VALUES('" + noteTitle + "', '" + noteContent + "', " + 
+                                       groupId + ", '" + username + "', " + x + ", " + y + ")" + 
                           "RETURNING note_id"; 
-
 	pg.connect(connectionString, function(err, client, done) {
 	 	client.query(insertNoteQuery, function(err, result) {
             done(client);
@@ -38,7 +40,7 @@ function updateNote(request, response, data) {
     var x = parseInt(parsedData.x, 10);
     var y = parseInt(parsedData.y, 10);
     var toUpdate = [];
-
+    
     if (title) toUpdate.push("note_title='" + title + "' ");
     if (content) toUpdate.push("note_content='" + content + "' ");
     if (x) toUpdate.push("x=" + x + " ");
