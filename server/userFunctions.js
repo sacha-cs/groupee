@@ -15,30 +15,38 @@ function login(request, response, params) {
 
     //Check we have both a username and password
     if(!params.username || !params.password) {
-        return utils.respondPlain(response, "NEmptyFields");
+        payload.error = "Please fill out all fields";
+        return utils.respondJSON(response, payload);
     }
     
     //Usernames are all lowercase
     var username = params.username.toLowerCase();
     
     pg.connect(connectionString, function(err, client, done) {
+        payload = {
+            success : false
+        }
         if(err) {
             console.log(err);
-            return utils.respondPlain(response, "NServerError");
+            payload.error = "Internal Server Error";
+            return utils.respondJSON(response, payload);
         }
         
         var query = "SELECT * " +
                     "FROM users " +
                     "WHERE username='" + username + "'";
         client.query(query, function(err, result) {
+            done(client);
             if(err) {
                 console.log(err);
-                return utils.respondPlain(response, "NServerError");
+                payload.error = "Internal Server Error";
+                return utils.respondJSON(response, payload);
             }
             
             //If the user does not exit (i.e. no rows where username matches)
             if(result.rows.length == 0) {
-                return utils.respondPlain(response, "NNoUser");
+                payload.error = "No user with that username";
+                return utils.respondJSON(response, payload);
             }
     
             //Get the password hash from the database and compare it to
@@ -47,14 +55,17 @@ function login(request, response, params) {
             
             //If the password doesn't match
             if(!passwordHash.verify(params.password, expected)) {
-                return utils.respondPlain(response, "NIncorrectPassword");
+                payload.error = "Incorrect Password";
+                return utils.respondJSON(response, payload);
             }
             
             user_info = {"username" : username};
             //Create a new session cookie for the user and send it to them
             var seshCookie = createSessionCookie(user_info);
-            //TODO: convert to JSON
-            return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
+            payload.success = true;
+            payload.seshCookie = seshCookie;
+            payload.username = username;
+            return utils.respondJSON(response, payload);
         });
     });
 }
