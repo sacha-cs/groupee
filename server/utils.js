@@ -4,6 +4,11 @@ this.respondPlain = function (response, text) {
     response.end(text);
 }
 
+this.respondJSON = function(response, payload) {
+    response.writeHead(200, {'Content-Type': 'application/json'});
+    response.end(JSON.stringify(payload));
+}
+
 this.respondError = function(err, response) {
     console.log(err);
     return utils.respondPlain(response);

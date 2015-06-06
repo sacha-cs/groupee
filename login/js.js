@@ -31,32 +31,28 @@ function login()
     setErrorTextLogin("");
     if(username == "" || password == "")
     {
-        setErrorTextLogin("Please fill out all fields.");
+        setErrorTextLogin("Please fill out all fields");
         return;
     }
 
+    var loginButton = document.getElementById('login-button');
+    var loadingWheel = document.getElementById('login-loading');
+    loginButton.style.visibility = "hidden";
+    loadingWheel.style.display = "block";
     aClient = new HttpClient();
     aClient.post('/login/login', 'username=' + username + 
                           '&password=' + password, 
     function (response) {
-        var correct = response[0];
-        if(correct == "Y") {
-            var parts = response.slice(1).split('#');
-            document.cookie="seshCookie="+parts[0]+";path=/";
-            document.cookie="username="+parts[1]+";path=/";
+        response = JSON.parse(response);
+        var success = response.success;
+        if(success) {
+            document.cookie="seshCookie="+response.seshCookie+";path=/";
+            document.cookie="username="+response.username+";path=/";
             window.location = "/groups/";
         } else {
-            switch(response.slice(1)) {
-                case "IncorrectPassword":
-                    setErrorTextLogin("Incorrect Password.");
-                    break;
-                 case "NoUser":
-                    setErrorTextLogin("No User with that Username.");
-                    break;
-                 case "EmptyFields":
-                    setErrorTextLogin("Please fill out all the fields.");
-                    break;
-            }
+            loginButton.style.visibility = "visible";
+            loadingWheel.style.display = "none";
+            setErrorTextLogin(response.error);
         }
     });
 }

@@ -31,10 +31,11 @@
 				<div class="login-register-section">
         			<input type="text" name="username" class="username" placeholder="Username">
         			<input type="password" name="password" class="password" placeholder="Password">
-        			<input type="submit" name="submit" class="login login-submit" value="Log In" onclick=login()>
+        			<input type="submit" name="submit" class="login login-submit" id="login-button" value="Log In" onclick=login()>
         			<div class="login-text">
             			<div id="loginError"></div>
         			</div>
+                    <div class="loading" id="login-loading"></div>
 				</div>
 
 				<div class="login-register-section">
