@@ -124,11 +124,17 @@ function uploadPhotos(request, response, data, files) {
 
 	var form = new FormData();
 	form.append('groupId', groupId);
-	if (!numFiles) {
-		numFiles = 1;
-	} else {
-			form.append('numFiles', numFiles);
-	}
+    if (files["upload[]"].name != '') {
+    	if (!numFiles) {
+    		numFiles = 1;
+    	} else {
+    			form.append('numFiles', numFiles);
+    	}
+    } else {
+        fs.unlink(files["upload[]"].path);
+        response.writeHead("303", {'Location' : '/photos/view_album.html' });
+        response.end();
+    }
     form.append('albumId', viewingAlbum);
 
     pg.connect(connectionString, function(err, client, done) {
