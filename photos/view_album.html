@@ -7,6 +7,10 @@ Album photos
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="view_album.js"></script>
 <?content?>
+<div id="buttons">
+	<input type="submit" id="rename" class="album-settings" value="Rename Album" onclick="renameAlbum()">
+	<input type="submit" id="delete" class="album-settings" value="Delete Album" onclick="deleteAlbum()">
+</div>
 
 <div id="form-wrapper">
     <form action="/photos/upload_photos" method="post" enctype="multipart/form-data">
