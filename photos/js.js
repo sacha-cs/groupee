@@ -50,28 +50,24 @@ function loaded() {
 function getAllAlbums() {
 
 	var content = document.getElementById("content");
-
 	var aClient = new HttpClient();
-	aClient.get('get_albums', function(response) {
-		var albumItemList = response.split("#");
-		for (var i = 0 ; i < albumItemList.length-1 ; i++) {
-			var albumItem = albumItemList[i].split("&");
-			var albumIdInfo = albumItem[0];
-			var albumNameInfo = albumItem[1];
-			var albumDescriptionInfo = albumItem[2];
-            var info = {albumId : albumIdInfo.split("=")[1],
-            			albumName : escapeHtml(decodeURIComponent(albumNameInfo.split("=")[1])),
-            			albumDescription : escapeHtml(decodeURIComponent(albumDescriptionInfo.split("=")[1]))};
 
-            var albumHtml = "<div class='view' id='" + info.albumId + "'>" +   
+	aClient.get('get_albums', function(response) {
+		var albumItemList = JSON.parse(response);
+		for (var i = 0 ; i < albumItemList.length ; i++) {
+			var albumId = albumItemList[i].albumId;
+			var albumName = albumItemList[i].albumName;
+			var albumDescription = albumItemList[i].description;
+
+            var albumHtml = "<div class='view' id='" + albumId + "'>" +   
      					    "<img src='http://www.vincedelmontefitness.com/blog/wp-content/uploads/2013/11/iStock_000015817907Small.jpg'/>" +  
      					    "<div class='mask'>" +  
-     						"<h2>" + info.albumName + "</h2>" +  
-     						"<p>" + info.albumDescription + "</p>" + 
-         					"<a onclick='openAlbum(" + info.albumId + ")' class='info'>Open Album</a>" +   
+     						"<h2>" + albumName + "</h2>" +  
+     						"<p>" + albumDescription + "</p>" + 
+         					"<a onclick='openAlbum(" + albumId + ")' class='info'>Open Album</a>" +   
 							"</div>" +  
 							"</div>";
-
+    
            	content.innerHTML += albumHtml;
 		}
 	});
