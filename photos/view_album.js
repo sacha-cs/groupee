@@ -24,8 +24,8 @@ function openPhoto() {
 
 function popupForm() {
     document.getElementById("form-wrapper").style.display = 'initial';
-    document.getElementById("form-wrapper").style.width = document.getElementsByClassName("upload-card")[0].clientWidth;
-    document.getElementById("form-wrapper").style.height = document.getElementsByClassName("upload-card")[0].clientHeight;
+    document.getElementById("form-wrapper").style.width = document.getElementsByClassName("card")[0].clientWidth;
+    document.getElementById("form-wrapper").style.height = document.getElementsByClassName("card")[0].clientHeight;
     var photos = document.getElementsByClassName("photo");
     for (var i = 0 ; i < photos.length ; i++) {
         photos[i].style.opacity = 0.4;
@@ -36,7 +36,7 @@ function popupForm() {
 
 // Hides the upload form
 function hideForm(event) {
-    if (event.target.className != 'upload-card' && event.target.id != 'form-wrapper' && 
+    if (event.target.className != 'card' && event.target.id != 'form-wrapper' && 
         event.target.tagName != 'INPUT' && event.target.tagName != 'H1') {
         document.getElementById("form-wrapper").style.display = 'none';
         var photos = document.getElementsByClassName("photo");
