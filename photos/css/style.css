@@ -1,4 +1,4 @@
-.view {
+.view, .photo {
     width: 300px;
     height: 200px;
     margin: 10px;
@@ -26,6 +26,14 @@
     display: block;
     position: relative;
     width: 300px;
+}
+
+.photo img {
+    display: block;
+    /* For centering purposes. */
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .view h2 {
