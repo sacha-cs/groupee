@@ -1,6 +1,6 @@
 #form-wrapper {
-	  /*display: none;*/
-	  position:absolute;
+    display: none;
+    position:absolute;
     left:0;
     right:0;
     margin-left:auto;

@@ -12,6 +12,7 @@
 
 
 .create-card {
+  position : fixed;
   padding: 40px;
   width: 274px;
   background-color: #f5f5f5;
