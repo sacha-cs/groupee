@@ -19,3 +19,36 @@
     text-shadow: 0 1px rgba(0,0,0,0.3);
     background-color: #FF9A30;
 }
+
+#content {
+    margin-top: 30px;
+}
+
+#buttons {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.album-settings {
+    margin-right: 15px;
+    border: 0px;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1); 
+    background-color: #FF8300;
+    width: 150px;
+    height: 36px;
+    font-size: 14px;
+}
+
+.album-settings:hover {
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #FF9A30;
+}
+
+#delete {
+    background-color: #CC0000;
+}
+
+#delete:hover {
+    background-color: #DA4747;
+}
