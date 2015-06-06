@@ -26,6 +26,7 @@ var disallowed = ["server"];
 var anonAvailable = ["login", "favicon.ico"];
 
 getHandler.addHandler("favicon.ico", faviconResponse);
+getHandler.addHandler("", redirectToHome);
 
 var port = process.argv[2];
 if(!port)
@@ -247,5 +248,10 @@ function requestDisallowed(url) {
 
 function faviconResponse(request, response) {
     response.writeHead("301", {"Location": "http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/favicon.ico"});
+    response.end();
+}
+
+function redirectToHome(request, response) {
+    response.writeHead("301", {"Location": "home"});
     response.end();
 }
