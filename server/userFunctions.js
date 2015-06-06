@@ -77,19 +77,85 @@ function logout(request, response) {
 }
 
 function checkParams(response, params) {
+    var payload = {
+        success:false,
+    }
     if(!params.username || !params.password || !params.passwordconfirm) {
-            return utils.respondPlain(response, "NEmptyFields");
+        payload.error = "Please fill out all fields";
+        utils.respondJSON(response, payload);
+        return true;
     }
 
     if (!nameIsValid(params.username) || 
         !nameIsValid(params.group) ||
         !passwordIsValid(params.password)) {
-        return utils.respondPlain(response, "NInvalidCharacters");
+        payload.error = "Invalid characters in username/password";
+        utils.respondJSON(response, payload);
+        return true;
     }
 
     if (params.password != params.passwordconfirm) {
-        return utils.respondPlain(response, "NPasswordsDifferent");
+        payload.error = "Passwords different";
+        utils.respondJSON(response, payload);
+        return true;
     }
+
+    return false;
+}
+
+function register(request, response, params) {
+
+    if(checkParams(response, params)) {
+        return;
+    }
+
+    //Usernames are all lowercase
+    var username = params.username.toLowerCase();
+
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) { return utils.respondError(err, response); }
+
+        //Check username isn't taken
+        var usernameQuery = "SELECT * " +
+                    "FROM users " +
+                    "WHERE username='" + username + "'";
+
+        // Handle user insertion.
+        client.query(usernameQuery, function(err, checkResult) {
+            if(err) { return utils.respondError(err, response); }
+            
+            if(checkResult.rows.length > 0) {
+                var payload = {
+                    success: false,
+                    error: "Username already taken"
+                };
+                return utils.respondJSON(response, payload);
+            }
+
+            //Generate the password hash
+            var hashedPassword = passwordHash.generate(params.password);
+            
+            //And insert into database
+            usernameQuery = "INSERT INTO users(username, pwdhash) " +
+                    "VALUES('" + username + "', '" + hashedPassword + "')";
+            client.query(usernameQuery, function(err, checkResult) {
+                if(err) { return utils.respondError(err, response); }
+                done(client);
+                
+                // New user has just been created. 
+                createAvatar(username);
+                // login automatically after registration
+                var user_info = {"username" : username};
+                var seshCookie = createSessionCookie(user_info);
+                var payload = {
+                    success: true,
+                    seshCookie: seshCookie,
+                    username: username
+                };
+                return utils.respondJSON(response, payload);
+            });
+        });
+    });
 }
 
 function handleGroupInsertion(request, response, params) {
@@ -165,56 +231,10 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
     });
 }
 
-
-function register(request, response, params) {
-
-    checkParams(response, params);    
-
-    //Usernames are all lowercase
-    var username = params.username.toLowerCase();
-
-    pg.connect(connectionString, function(err, client, done) {
-        if(err) { return utils.respondError(err, response); }
-
-        //Check username isn't taken
-        var usernameQuery = "SELECT * " +
-                    "FROM users " +
-                    "WHERE username='" + username + "'";
-
-        // Handle user insertion.
-        client.query(usernameQuery, function(err, checkResult) {
-            if(err) { return utils.respondError(err, response); }
-            
-            if(checkResult.rows.length > 0) {
-                return utils.respondPlain(response, "NUsernameTaken");
-            }
-
-            //Generate the password hash
-            var hashedPassword = passwordHash.generate(params.password);
-            
-            //And insert into database
-            usernameQuery = "INSERT INTO users(username, pwdhash) " +
-                    "VALUES('" + username + "', '" + hashedPassword + "')";
-            client.query(usernameQuery, function(err, checkResult) {
-                if(err) { return utils.respondError(err, response); }
-                
-                // New user has just been created. 
-                createAvatar(username);
-                // login automatically after registration
-                var user_info = {"username" : username};
-                var seshCookie = createSessionCookie(user_info);
-                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
-            });
-        });
-    });
-}
-
 function createAvatar(user) {
-    request.post(
-    'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php',
-    { form: { username: user } },
-            function (error, response, body) {}
-    );
+    var form = new FormData();
+    form.append("username", user);
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php', function (error, response) {});
 }
 
 function nameIsValid(name) {
