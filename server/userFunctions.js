@@ -1,5 +1,6 @@
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
+getHandler.addHandler("login/logout", logout);
 postHandler.addHandler("groups/create", handleGroupInsertion);
 postHandler.addHandler("groups/add", addUserToGroup);
 getHandler.addHandler("groups/add_users", setAddUsersGroup);
@@ -49,24 +50,19 @@ function login(request, response, params) {
                 return utils.respondPlain(response, "NIncorrectPassword");
             }
             
-            //Check if the user is already in a group.
-            var inGroupQuery = "SELECT group_id FROM member_of WHERE username='" + username + "'";
-            var user_info = {};
-            client.query(inGroupQuery, function(err, result) {
-                done(client);
-                if(err) {
-                    console.log(err);
-                    return utils.respondPlain(response, "NServerError");
-                }
-
-                user_info = {"username" : username};
-                //Create a new session cookie for the user and send it to them
-                //seshCookie encodes the username and the groups that the user resides in.
-                var seshCookie = createSessionCookie(user_info);
-                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
-            });
+            user_info = {"username" : username};
+            //Create a new session cookie for the user and send it to them
+            var seshCookie = createSessionCookie(user_info);
+            //TODO: convert to JSON
+            return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
         });
     });
+}
+
+function logout(request, response) {
+    var seshCookie = utils.getSessionCookie(request);
+    delete sessionKeys[seshCookie];
+    utils.respondPlain(response, "");
 }
 
 function checkParams(response, params) {
@@ -223,7 +219,6 @@ function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
     var cookieString = user_info.username;
 
-    //TODO: have a not in group global const
     sessionKeys["" + seshCookie] = { username: user_info.username, groupViewing:-1 }
     return seshCookie;
 }
@@ -235,7 +230,7 @@ function addUserToGroup(request, response, params) {
 
     pg.connect(connectionString, function(err, client, done) {
         checkUserExists(request, response, client, done,
-            function(request, response, client, done) {
+            function() {
                 insertUserIntoMemberOf(request, response, client, done, 
                     function() {
                         done(client);
@@ -331,7 +326,7 @@ function checkUserExists(request, response, client, done, callback, username) {
             return utils.respondPlain(response, "NUserDoesNotExist");
         }
 
-        callback(request, response, client, done);
+        callback();
     });
 }
 
