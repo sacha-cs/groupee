@@ -34,23 +34,26 @@ function createAlbum(request, response, params) {
 function getAllAlbums(request, response, params) {
 
     var group_id = utils.getViewingGroup(request);
-    var getAlbumsQuery = "SELECT album_id, name, description " +
-                         "FROM albums " + 
-                         "WHERE group_id='" + group_id + "'";
+
+    var getAlbumsQuery =
+        "SELECT DISTINCT albums.album_id, albums.name, description, " +
+        "(MIN(photo_id) OVER (PARTITION BY albums.album_id)) " + 
+        "AS thumb FROM photos RIGHT JOIN albums USING (album_id) WHERE group_id=" + 
+        group_id;
 
     pg.connect(connectionString, function(err, client, done) {
         client.query(getAlbumsQuery, function(err, result) {
             done(client);
             if(err) { return utils.respondError(err, response); }
             
-            var responseList = [];
+            var responseObj = {groupId: group_id, albums: []};
             if (result.rows.length > 0) {
                 for (var i = 0 ; i < result.rows.length ; i++) {
                     var row = result.rows[i];
-                    responseList.push({albumId: row.album_id, albumName: row.name, description: row.description});
+                    responseObj.albums.push({albumId: row.album_id, albumName: row.name, description: row.description, thumb: row.thumb});
                 }
             }
-            response.write(JSON.stringify(responseList));
+            response.write(JSON.stringify(responseObj));
             response.end();
         });
     });
