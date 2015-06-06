@@ -53,14 +53,17 @@ function getAllAlbums() {
 	var aClient = new HttpClient();
 
 	aClient.get('get_albums', function(response) {
-		var albumItemList = JSON.parse(response);
-		for (var i = 0 ; i < albumItemList.length ; i++) {
-			var albumId = albumItemList[i].albumId;
-			var albumName = albumItemList[i].albumName;
-			var albumDescription = albumItemList[i].description;
+		var albumsInfo = JSON.parse(response);
+		for (var i = 0 ; i < albumsInfo.albums.length ; i++) {
+			var albumId = albumsInfo.albums[i].albumId;
+			var albumName = albumsInfo.albums[i].albumName;
+			var albumDescription = albumsInfo.albums[i].description;
+            var thumb = albumsInfo.albums[i].thumb;
 
-            var albumHtml = "<div class='view' id='" + albumId + "'>" +   
-     					    "<img src='http://www.vincedelmontefitness.com/blog/wp-content/uploads/2013/11/iStock_000015817907Small.jpg'/>" +  
+            var albumHtml = "<div class='view' id='" + albumId + "'>" + 
+                            "<img src=" + (thumb ? ("'http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                albumsInfo.groupId + "/photos/album" + albumId + "/thumbnail" + thumb + ".jpg'/>")
+                            : "'http://www.vincedelmontefitness.com/blog/wp-content/uploads/2013/11/iStock_000015817907Small.jpg'/>") +  
      					    "<div class='mask'>" +  
      						"<h2>" + albumName + "</h2>" +  
      						"<p>" + albumDescription + "</p>" + 
