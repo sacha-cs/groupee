@@ -14,7 +14,7 @@ function createAlbum(request, response, params) {
         var description = params.description;
 
         var insertAlbumQuery = "INSERT INTO albums(name, description, group_id) " +
-                              "VALUES('" + album_name + "', '" + 
+                               "VALUES('" + album_name + "', '" + 
                                 description + "', " 
                                 + group_id + ") RETURNING album_id";  
 
@@ -43,22 +43,15 @@ function getAllAlbums(request, response, params) {
             done(client);
             if(err) { return utils.respondError(err, response); }
             
-            var responseString = "";
+            var responseList = [];
             if (result.rows.length > 0) {
                 for (var i = 0 ; i < result.rows.length ; i++) {
                     var row = result.rows[i];
-                    var albumId = row.album_id;
-                    var albumName = encodeURIComponent(row.name);
-                    var description = encodeURIComponent(row.description);
-                    responseString += "albumId=" + albumId +
-                                      "&albumName=" + albumName +  
-                                      "&description=" + description + "#";
+                    responseList.push({albumId: row.album_id, albumName: row.name, description: row.description});
                 }
             }
-
-            response.write(responseString);
+            response.write(JSON.stringify(responseList));
             response.end();
-    
         });
     });
 }
