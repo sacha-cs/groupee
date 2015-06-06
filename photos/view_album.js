@@ -45,3 +45,10 @@ function hideForm(event) {
         }
     }
 }
+
+function deleteAlbum() {
+    var aClient = new HttpClient();
+    aClient.post('delete_album', function (response) {
+    });
+    window.location = '/photos/';
+}
