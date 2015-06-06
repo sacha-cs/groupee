@@ -3,6 +3,7 @@ getHandler.addHandler("photos/get_albums", getAllAlbums);
 getHandler.addHandler("photos/get_photos", getAllPhotos);
 getHandler.addHandler("photos/view_album", setViewingAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
+postHandler.addHandler("photos/delete_album", deleteAlbum);
 
 function createAlbum(request, response, params) {
     
@@ -166,5 +167,35 @@ function uploadPhotos(request, response, data, files) {
 	    }
 
     })
+}
+
+
+function deleteAlbum(request, response, files) {
+    // Remove from database in albums and photos table
+    // Run some php script to remove directory for the album
+    var albumToDelete = utils.getViewingAlbum(request);
+    var groupId = utils.getViewingGroup(request);
+
+
+    var removeFromAlbumsQuery = "DELETE FROM albums " +
+                                "WHERE album_id='" + albumToDelete + "'";
+
+    var removeFromPhotosQuery = "DELETE FROM photos " +
+                                "WHERE album_id='" + albumToDelete + "'";
+
+    var form = new FormData();
+    form.append('albumId', albumToDelete);
+    form.append('groupId', groupId);
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(removeFromPhotosQuery, function(err, removeFromAlbumsResult) {
+            client.query(removeFromAlbumsQuery, function(err, removeFromPhotosResult) {
+                done(client);
+                form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deleteAlbum.php');
+                response.end();
+            });
+        });
+    });
+
 }
 
