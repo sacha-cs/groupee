@@ -79,6 +79,7 @@ function addGroupsToPage() {
                     '<div id="group"> ' + 
                        '<div class="group-name">' + info.name + '</div>' +
                        '<div class="group-description">' + info.desc + '</div>' +
+                       '<div class="group-members">' + info.members + '</div>' + 
                     '</div>' +
                 '</div>';
                 

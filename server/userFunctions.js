@@ -307,26 +307,43 @@ function doesUserExistInGroup(request, response, client, done, callback, groupID
 
 function getAllGroups(request, response) {
     var currentUser = utils.getUser(request);
-    var getGroupInfoQuery = "SELECT group_name, description, group_id " + 
-                            "FROM groups NATURAL JOIN member_of " + 
-                            "WHERE username='" + currentUser + "'";
+    var getGroupInfoQuery = 
+        "SELECT group_name, description, groups.group_id, mo2.username " + 
+        "FROM groups " +
+        "JOIN member_of AS mo1 " +
+        "ON groups.group_id=mo1.group_id "+
+        "JOIN member_of AS mo2 " +
+        "ON groups.group_id=mo2.group_id "+
+        "WHERE mo1.username='" + currentUser + "'";
     pg.connect(connectionString, function(err, client, done) {
         client.query(getGroupInfoQuery, function(err, result) {
-            done(client);
-            if(err) { return utils.respondError(err, response); }
+            if(err) { 
+                done(client); 
+                return utils.respondError(err, response);
+            }
             
             var payload = {
                 success: true,
                 groups: []
             };
+            var addedIds = {};
             if(result.rows.length > 0) {
                 for(var i = 0; i < result.rows.length; i++) {
                     var row =  result.rows[i];
-                    payload.groups.push({
-                        name: row.group_name,
-                        desc: row.description,
-                        id: row.group_id
-                    });
+                    var pos = addedIds[row.group_id];
+                    if(pos == undefined) {
+                        var members = [row.username];
+                        pos = payload.groups.push({
+                                name: row.group_name,
+                                desc: row.description,
+                                id: row.group_id,
+                                members: members
+                              });
+                        pos--;
+                        addedIds[row.group_id] = pos;
+                    } else {
+                        payload.groups[pos].members.push(row.username);
+                    }
                 }
             }
             utils.respondJSON(response, payload);
