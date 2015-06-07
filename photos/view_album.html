@@ -7,6 +7,9 @@ Album photos
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="view_album.js"></script>
 <?content?>
+<div id="opacity-layer" onclick="hideGallery()"> 
+</div>
+
 <div id="buttons" onkeydown="hideRenamePopover()">
 	<input type="submit" id="rename" class="album-settings" value="Rename Album" onclick="showRenamePopover()">
 	<input type="submit" id="delete" class="album-settings" value="Delete Album" onclick="deleteAlbum()">
@@ -26,6 +29,7 @@ Album photos
         </div>
     </form>
 </div>
+
 
 <div id="gallery-view" onkeydown="changePhoto()">
 </div>
