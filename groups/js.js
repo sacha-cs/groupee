@@ -73,13 +73,21 @@ function addGroupsToPage() {
                 info.desc = escapeHtml(info.desc);
 
     
+                var avatars = "";
+                info.members.map(function(item) {
+                    avatars += "<span class='group-avatar'>" +
+                               "<img src='" + getAvatar(item) + "'>" + 
+                               "<div class='popover-avatar'>" + item + "</div>"+
+                               "</span>"
+                });
+
                 /* Crate a HTML element with containing the above information. */
                 /* When one clicks on a group, remember the group's id and move to Home. */
                 var groupHtml = '<div onclick="setGroup(' + info.id + ')" class="groupButton">' +
                     '<div id="group"> ' + 
                        '<div class="group-name">' + info.name + '</div>' +
                        '<div class="group-description">' + info.desc + '</div>' +
-                       '<div class="group-members">' + info.members + '</div>' + 
+                       '<span class="group-avatars">' + avatars + '</span>' +
                     '</div>' +
                 '</div>';
                 
