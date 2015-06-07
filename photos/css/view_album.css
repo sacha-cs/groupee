@@ -36,7 +36,7 @@
     color: #fff;
     text-shadow: 0 1px rgba(0,0,0,0.1); 
     background-color: #FF8300;
-    width: 150px;
+    width: 125px;
     height: 36px;
     font-size: 14px;
 }
@@ -133,4 +133,14 @@
 
 .delete {
     visibility: hidden;
+}
+
+#back {
+  height: 36px;
+  position: absolute;
+  cursor: pointer;
+}
+
+#rename {
+  margin-left: 50px;
 }
