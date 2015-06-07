@@ -7,9 +7,14 @@ Album photos
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <script src="view_album.js"></script>
 <?content?>
-<div id="buttons">
-	<input type="submit" id="rename" class="album-settings" value="Rename Album" onclick="renameAlbum()">
+<div id="buttons" onkeydown="hideRenamePopover()">
+	<input type="submit" id="rename" class="album-settings" value="Rename Album" onclick="showRenamePopover()">
 	<input type="submit" id="delete" class="album-settings" value="Delete Album" onclick="deleteAlbum()">
+	<div class="rename-popover">
+		<span id="rename-input">
+			<input type="text" id="newAlbumName" onkeydown="renameAlbum()">
+		</span>
+	</div>
 </div>
 
 <div id="form-wrapper">

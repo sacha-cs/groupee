@@ -52,3 +52,33 @@ function deleteAlbum() {
     });
     window.location = '/photos/';
 }
+
+function renameAlbum() {
+    if (event.keyCode == 27) {
+        document.getElementById("rename-input").style.visibility = 'hidden';
+        return;
+    }
+    if (event.keyCode == 13) {
+        var newAlbumName = document.getElementById("newAlbumName").value;
+        var aClient = new HttpClient();
+        aClient.post('rename_album', 'newAlbumName=' + newAlbumName,
+            function(response) {});
+        window.location = '/photos/view_album.html';
+    }
+}
+
+function showRenamePopover() {
+    var span = document.getElementById("rename-input");
+    if (span.style.visibility == 'hidden' || !span.style.visibility) {
+        span.style.visibility = 'visible';
+    } else {
+        span.style.visibility = 'hidden';
+    }
+}
+
+function hideRenamePopover() {
+    if (event.keyCode == 27) {
+        document.getElementById("rename-input").style.visibility = 'hidden';
+    }
+    return;
+}
