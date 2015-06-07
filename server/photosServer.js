@@ -5,6 +5,7 @@ getHandler.addHandler("photos/view_album", setViewingAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 postHandler.addHandler("photos/delete_album", deleteAlbum);
 postHandler.addHandler("photos/rename_album", renameAlbum);
+postHandler.addHandler("photos/delete_photo", deletePhoto);
 
 function createAlbum(request, response, params) {
     
@@ -214,4 +215,27 @@ function renameAlbum(request, response, params) {
             response.end();
         });
     });
+}
+
+function deletePhoto(request, response, params) {
+    var albumId = utils.getViewingAlbum(request);
+    var photoId = params.photoIdToDelete;
+    var groupId = utils.getViewingGroup(request);
+
+    var deletePhotoQuery = "DELETE FROM photos " +
+                           "WHERE photo_id=" + photoId;
+
+    var form = new FormData();
+    form.append('groupId', groupId);
+    form.append('albumId', albumId);
+    form.append('photoId', photoId);
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(deletePhotoQuery, function(err, deletePhotoResult) {
+            done(client);
+            form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deletePhoto.php');
+            response.pipe(process.stdout)
+            response.end();
+        });
+    })    
 }

@@ -18,7 +18,7 @@ function getAllPhotos() {
                                 "<img class='thumb' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInfo.groupId + "/photos/album" + photoInfo.albumId + "/thumbnail" + 
                                     photoInfo.photoList[i] + ".jpg'/>" +  
-                                "<img onclick='deletePhoto(" + i + ")' class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png'>" +
+                                "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png'>" +
                             "</div>";
             content.innerHTML += photoHtml;
         }
@@ -28,6 +28,7 @@ function getAllPhotos() {
 function openPhoto(index) {
     if (event.target.className == "delete") {
         deletePhoto(index);
+        return;
     }
     // TODO: Show photo in gallery view (and display comments).
     document.getElementById("opacity-layer").style.visibility = 'visible';
@@ -137,3 +138,13 @@ function hideGallery() {
     document.getElementById("gallery-view").style.visibility = 'hidden';
     document.getElementById("opacity-layer").style.visibility = 'hidden';
 }
+
+
+function deletePhoto(index) {
+    var photoIdToDelete = photoInformation.photoList[index];
+    var aClient = new HttpClient();
+    aClient.post("delete_photo", "photoIdToDelete=" + photoIdToDelete,
+        function(response) {
+            location.reload(true);
+        });
+} 
