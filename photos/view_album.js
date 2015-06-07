@@ -1,4 +1,10 @@
+var photoInformation;
+
 function loaded() {
+    getAllPhotos();
+}
+
+function getAllPhotos() {
     var content = document.getElementById("content");
     content.innerHTML += "<div onclick=popupForm() class='photo' id='new-photo'>" + 
                             "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/new-album.png'>" +
@@ -6,8 +12,9 @@ function loaded() {
     var aClient = new HttpClient();
     aClient.get('get_photos', function(response) {
         var photoInfo = JSON.parse(response);
+        photoInformation = photoInfo;
         for (var i = 0; i < photoInfo.photoList.length; i++) {
-            var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "'>" +   
+            var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "' onclick='openPhoto(" + i + ")'>" +   
                                 "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInfo.groupId + "/photos/album" + photoInfo.albumId + "/thumbnail" + 
                                     photoInfo.photoList[i] + ".jpg'/>" +  
@@ -18,8 +25,42 @@ function loaded() {
     });
 }
 
-function openPhoto() {
+function openPhoto(index) {
     // TODO: Show photo in gallery view (and display comments).
+    var gallery = document.getElementById("gallery-view");
+    var photoHtml = "<img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                    photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                                    photoInformation.photoList[index] + ".jpg'/>";
+    gallery.innerHTML = photoHtml;
+    gallery.tabIndex = "0";
+    gallery.focus();
+}
+
+function changePhoto() {
+    var gallery = document.getElementById("gallery-view");
+    var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
+
+    if (event.keyCode == 37) {
+
+        var nextPhotoToShowIndex = --currentPhotoIndex;
+        if (nextPhotoToShowIndex >= 0) {
+            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>";
+            gallery.innerHTML = photoHtml;
+        }
+
+    } else if (event.keyCode == 39) {
+
+        var nextPhotoToShowIndex = ++currentPhotoIndex;
+        if (nextPhotoToShowIndex < photoInformation.photoList.length) {
+            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>";
+            gallery.innerHTML = photoHtml;
+        }
+
+    }
 }
 
 function popupForm() {
