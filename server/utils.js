@@ -4,9 +4,21 @@ this.respondPlain = function (response, text) {
     response.end(text);
 }
 
-this.respondError = function(err, response) {
+this.respondJSON = function(response, payload) {
+    response.writeHead(200, {'Content-Type': 'application/json'});
+    response.end(JSON.stringify(payload));
+}
+
+this.respondError = function(err, response, errorMsg) {
     console.log(err);
-    return utils.respondPlain(response);
+    if(!errorMsg) {
+        errorMsg = "Internal Server Error";
+    }
+    var payload = {
+        success: false,
+        error: errorMsg
+    };
+    return utils.respondJSON(response, payload);
 }
 
 this.getUser = function(request) {
@@ -48,14 +60,6 @@ this.setViewingAlbum = function(request, albumId) {
     if(seshCookie && sessionKeys[seshCookie]) {
         sessionKeys[seshCookie].albumViewing = albumId;
     }
-}
-
-this.getSessionCookie = function(request) {
-    var cookie = request.headers.cookie;
-    if(!cookie) return;
-    var cookies = this.splitParams(cookie, ';');
-    var seshCookie = cookies.seshCookie;
-    return seshCookie;
 }
 
 this.getSessionCookie = function(request) {

@@ -10,6 +10,9 @@ function templateLoaded() {
 
 /* Log out the current user, and clear the session cookie. */
 function logout() { 
-    document.cookie="seshCookie=;path=/";
+    var client = new HttpClient(true);
+    client.get("/login/logout", function() {
+        document.cookie="seshCookie=;path=/";
+    });
 }
 

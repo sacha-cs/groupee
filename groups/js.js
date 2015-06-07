@@ -12,20 +12,19 @@ function createGroup() {
         return;
     }
 
+    var payload = {
+        group_name: groupname,
+        description: description,
+        privacy: privacy
+    }
     var aClient = new HttpClient();
-    aClient.post('create', 'group_name=' + groupname + 
-                           '&description=' + description + 
-                           '&privacy=' + privacy,
+    aClient.post('create', JSON.stringify(payload),
         function (response) { 
-            var correct = response[0];
-            if(correct == "N") {
-                switch(response.slice(1)) {
-                    case "UserExistsInGroup":
-                        setErrorText("You are already a member of this group.");
-                        break;
-                }
+            response = JSON.parse(response);
+            if(response.success) {
+                window.location = "add_users.html"; 
             } else { // No problems.
-               window.location = "add_users?group_id=" + response.slice(1); 
+                setErrorText(response.error);
             } 
         }
     );
@@ -47,16 +46,9 @@ function addUser() {
     var aClient = new HttpClient();
     aClient.post('add', 'username=' + username, 
         function (response) {
-            var correct = response[0];
-            if (correct == "N") {
-                switch(response.slice(1)) {
-                    case "UserExistsInGroup":
-                        setErrorText("The user is already a member of this group.");
-                        break;
-                    case "UserDoesNotExist":
-                        setErrorText("The user does not exist");
-                        break;
-                }
+            response = JSON.parse(response);
+            if (!response.success) {
+                setErrorText(response.error);
             } else {
                 document.getElementById("username").value = "";
                 setSuccessText("User added successfully");
@@ -74,39 +66,49 @@ function addGroupsToPage() {
        along with their descriptions. */
     aClient.get('/groups/get_all_groups',
         function(response) {
-            var groupInfoList = response.split("#");
-            for(var i = 0; i < groupInfoList.length-1; i++) {
-                var part = groupInfoList[i].split("&");
-                var nameInfo = part[0];
-                var descInfo = part[1];
-                var idInfo = part[2];
-                var info = {name : nameInfo.split("=")[1],  
-                            description : escapeHtml(decodeURIComponent(descInfo.split("=")[1])),   
-                            id : idInfo.split("=")[1] 
-                };
+            response = JSON.parse(response);
+            var allGroupHTML = "";
+            for(var i = 0; i < response.groups.length; i++) {
+                info = response.groups[i];
+                info.desc = escapeHtml(info.desc);
+
     
+                var avatars = "";
+                info.members.map(function(item) {
+                    avatars += "<span class='group-avatar'>" +
+                               "<img src='" + getAvatar(item) + "'>" + 
+                               "<div class='popover-avatar'>" + item + "</div>"+
+                               "</span>"
+                });
+
                 /* Crate a HTML element with containing the above information. */
                 /* When one clicks on a group, remember the group's id and move to Home. */
                 var groupHtml = '<div onclick="setGroup(' + info.id + ')" class="groupButton">' +
                     '<div id="group"> ' + 
                        '<div class="group-name">' + info.name + '</div>' +
-                       '<div class="group-description">' + info.description + '</div>' +
+                       '<div class="group-description">' + info.desc + '</div>' +
+                       '<span class="group-avatars">' + avatars + '</span>' +
                     '</div>' +
                 '</div>';
                 
-                groups.innerHTML += groupHtml;
-            }  
+                allGroupHTML += groupHtml;
+            }
+            groups.innerHTML = allGroupHTML;
+            document.getElementById("create-group").style.display = "block";
+            document.getElementById("loading").style.display = "none";
         }
     );
 }
 
 function setGroup(groupId) {
+    console.log("??");
     var aClient = new HttpClient();
     aClient.get('/groups/set_viewing_group?group_id=' + groupId, function(response) {
-        var correct = response[0]; /* User wants to view this group. */
-        if(correct == "Y") { 
+        response = JSON.parse(response);
+        if(response.success) { 
             /* Get the groupName from the response. */
-            var groupName = escapeHtml(decodeURIComponent(response.slice(1)));
+            var groupName = encodeURIComponent(escapeHtml(response.name));
+            console.log(groupName);
             document.cookie = "group-name=" + groupName + ";path=/";
             window.location = "/home/";
         }
