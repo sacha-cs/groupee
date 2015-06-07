@@ -27,11 +27,13 @@ function getAllPhotos() {
 
 function openPhoto(index) {
     // TODO: Show photo in gallery view (and display comments).
+    document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
     var photoHtml = "<img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                     photoInformation.photoList[index] + ".jpg'/>";
     gallery.innerHTML = photoHtml;
+    gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
     gallery.focus();
 }
@@ -122,4 +124,9 @@ function hideRenamePopover() {
         document.getElementById("rename-input").style.visibility = 'hidden';
     }
     return;
+}
+
+function hideGallery() {
+    document.getElementById("gallery-view").style.visibility = 'hidden';
+    document.getElementById("opacity-layer").style.visibility = 'hidden';
 }
