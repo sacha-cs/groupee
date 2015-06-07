@@ -119,3 +119,18 @@
     z-index: 19;
     opacity: 0.8;
 }
+
+.photo:hover .delete {
+    visibility: visible;
+    z-index:15;
+    transform: none !important;
+    top:0px !important;
+    right: 0px;
+    position:absolute !important;
+    height:25px;
+    width:25px;
+}
+
+.delete {
+    visibility: hidden;
+}
