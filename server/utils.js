@@ -9,9 +9,16 @@ this.respondJSON = function(response, payload) {
     response.end(JSON.stringify(payload));
 }
 
-this.respondError = function(err, response) {
+this.respondError = function(err, response, errorMsg) {
     console.log(err);
-    return utils.respondPlain(response);
+    if(!errorMsg) {
+        errorMsg = "Internal Server Error";
+    }
+    var payload = {
+        success: false,
+        error: errorMsg
+    };
+    return utils.respondJSON(response, payload);
 }
 
 this.getUser = function(request) {
