@@ -31,10 +31,11 @@
 				<div class="login-register-section">
         			<input type="text" name="username" class="username" placeholder="Username">
         			<input type="password" name="password" class="password" placeholder="Password">
-        			<input type="submit" name="submit" class="login login-submit" value="Log In" onclick=login()>
+        			<input type="submit" name="submit" class="login login-submit" id="login-button" value="Log In" onclick=login()>
         			<div class="login-text">
             			<div id="loginError"></div>
         			</div>
+                    <div class="loading" id="login-loading"></div>
 				</div>
 
 				<div class="login-register-section">
@@ -43,10 +44,11 @@
 				    <input type="text" name="username" class="username" placeholder="Pick a username">
     				<input type="password" name="password" class="password" placeholder="Password">
 				    <input type="password" name="passwordconfirm" id="passwordconfirm" placeholder="Retype Password">
-				    <input type="submit" name="submit" class="login login-submit" value="Register" onclick=register()>
+				    <input type="submit" name="submit" class="login login-submit" id="register-button" value="Register" onclick=register()>
 
 			        <div class="login-text">
 			            <div id="registerError"></div>
+                        <div class="loading" id="register-loading"></div>
 			        </div>
 
 				</div>

@@ -38,18 +38,11 @@ function changePassword() {
 		                                          '&newPassword=' + newPassword +
 		                                          '&newPasswordConfirm=' + newPasswordConfirm,
 	function(response) {
-		var correct = response[0];
-		if (correct == "Y") {
+        response = JSON.parse(response);
+		if (response.success) {
 			setSuccessText("Password changed successfully");
 		} else {
-			switch(response.slice(1)){
-				case "IncorrectPassword":
-					setErrorText("Password is incorrect");
-					break;
-				default:
-					setErrorText("An error has occured, please try again");
-					break;
-			}
+            setErrorText(response.error);
 		}
 	});
 }
