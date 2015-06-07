@@ -93,12 +93,14 @@ function addGroupsToPage() {
 }
 
 function setGroup(groupId) {
+    console.log("??");
     var aClient = new HttpClient();
     aClient.get('/groups/set_viewing_group?group_id=' + groupId, function(response) {
         response = JSON.parse(response);
         if(response.success) { 
             /* Get the groupName from the response. */
-            var groupName = escapeHtml(response.name);
+            var groupName = encodeURIComponent(escapeHtml(response.name));
+            console.log(groupName);
             document.cookie = "group-name=" + groupName + ";path=/";
             window.location = "/home/";
         }
