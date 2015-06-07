@@ -4,6 +4,7 @@ getHandler.addHandler("photos/get_photos", getAllPhotos);
 getHandler.addHandler("photos/view_album", setViewingAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 postHandler.addHandler("photos/delete_album", deleteAlbum);
+postHandler.addHandler("photos/rename_album", renameAlbum);
 
 function createAlbum(request, response, params) {
     
@@ -170,7 +171,7 @@ function uploadPhotos(request, response, data, files) {
 }
 
 
-function deleteAlbum(request, response, files) {
+function deleteAlbum(request, response, params) {
     // Remove from database in albums and photos table
     // Run some php script to remove directory for the album
     var albumToDelete = utils.getViewingAlbum(request);
@@ -199,3 +200,18 @@ function deleteAlbum(request, response, files) {
 
 }
 
+function renameAlbum(request, response, params) {
+    var albumToRename = utils.getViewingAlbum(request);
+    var newAlbumName = params.newAlbumName;
+
+    var renameAlbumQuery = "UPDATE albums " +
+                           "SET name='" + newAlbumName + "' " +
+                           "WHERE album_id=" + albumToRename;
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(renameAlbumQuery, function(err, renameAlbumResult) {
+            done(client);
+            response.end();
+        });
+    });
+}
