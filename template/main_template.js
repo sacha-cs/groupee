@@ -1,5 +1,5 @@
 function templateLoaded() {
-    var groupName = getCookie("group-name");
+    var groupName = decodeURIComponent(getCookie("group-name"));
     var userName = getCookie("username");
     var groupText = document.getElementById("navbar-group");
     var userText = document.getElementById("navbar-self");
