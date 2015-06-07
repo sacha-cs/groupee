@@ -28,7 +28,7 @@
     width: 300px;
 }
 
-.photo img {
+.thumb {
     display: block;
     /* For centering purposes. */
     position: relative;

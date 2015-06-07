@@ -15,10 +15,10 @@ function getAllPhotos() {
         photoInformation = photoInfo;
         for (var i = 0; i < photoInfo.photoList.length; i++) {
             var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "' onclick='openPhoto(" + i + ")'>" +   
-                                "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                "<img class='thumb' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInfo.groupId + "/photos/album" + photoInfo.albumId + "/thumbnail" + 
                                     photoInfo.photoList[i] + ".jpg'/>" +  
-                                "<a onclick='openPhoto(" + photoInfo.photoList[i] + ")'/>" +   
+                                "<img onclick='deletePhoto(" + i + ")' class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png'>" +
                             "</div>";
             content.innerHTML += photoHtml;
         }
@@ -26,6 +26,9 @@ function getAllPhotos() {
 }
 
 function openPhoto(index) {
+    if (event.target.className == "delete") {
+        deletePhoto(index);
+    }
     // TODO: Show photo in gallery view (and display comments).
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
@@ -39,6 +42,11 @@ function openPhoto(index) {
 }
 
 function changePhoto() {
+
+    if (event.keyCode == 27) {
+        hideGallery();
+    }
+
     var gallery = document.getElementById("gallery-view");
     var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
 
@@ -61,7 +69,6 @@ function changePhoto() {
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>";
             gallery.innerHTML = photoHtml;
         }
-
     }
 }
 
