@@ -106,14 +106,14 @@ body {
 }
 
 .loading {
-    position:absolute;
-    bottom:10px;
-    right:45px;
-    display:none;
     width:50px;
     height:50px;
     background-image: url("http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-loading.gif");
     background-size:contain;
+    position:absolute;
+    bottom:10px;
+    right:45px;
+    display:none;
 }
 
 /*LEFT COLUMN STYLING */
