@@ -27,7 +27,7 @@ function getAllPhotos() {
 
 function addCommentHtml(id) {
     return "<div class='card' id='comment'>" +
-            "<div id=comment-box></div>" + 
+            "<div id='comment-box'><ol id='comment-list'></ol></div>" + 
             "<input type='text' id='comment-field' placeholder='Add a comment' onkeydown='addComment(" + id + ")'>" +
         "</div>";
 }
@@ -59,23 +59,26 @@ function openPhoto(index) {
 function addComment(id) {
     var commentText = document.getElementById("comment-field").value;
 
-    setErrorText("");
-    if (commentText == "") {
-        setErrorText("You havent commented anything.");
-    }    
-
-    var aClient = new HttpClient();
-    var reqObj = {photoId: id, comment: commentText};
-    aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
-        if (!response.success) {
-            setErrorText(response.error);
-        } else {
-            // Add comment to comments list.
-            var commentList = document.getElementById("comment-list");
-            var commentItem = "<li><p>" + commentText + "</p></li>";
-            commentList.innerHtml += commentItem;
-        }
-    });
+    if (event.keyCode == 13) {
+        /* setErrorText("");
+        if (commentText == "") {
+            setErrorText("You havent commented anything.");
+        }*/    
+        
+        var aClient = new HttpClient();
+        var reqObj = {photoId: id, comment: commentText};
+        aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
+            response = JSON.parse(response);
+            if (!response.success) {
+               // Handle errors.
+            } else {
+                // Add comment to comments list.
+                var commentItem = "<li><p>" + commentText + "</p></li>";
+                document.getElementById("comment-list").innerHTML += commentItem;
+                console.log(document.getElementById("comment-list").innerHTML);
+            }
+        });
+    }
 }
 
 function changePhoto() {
