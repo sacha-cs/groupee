@@ -27,12 +27,14 @@ function getAllPhotos() {
 
 function addCommentHtml(id) {
     return "<div class='card' id='comment'>" +
-            "<div id='comment-box'><ol id='comment-list'></ol></div>" + 
-            "<input type='text' id='comment-field' placeholder='Add a comment' onkeydown='addComment(" + id + ")'>" +
+            "<div id=comment-box>" +
+            "</div>" + 
+            "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'/>" +
         "</div>";
 }
 
 function openPhoto(index) {
+
     if (event.target.className == "delete") {
         deletePhoto(index);
         return;
@@ -45,6 +47,8 @@ function openPhoto(index) {
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                     photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
                     "</div>";
+    var arg = photoInformation.photoList[index];
+
     gallery.innerHTML = photoHtml;
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
@@ -67,13 +71,14 @@ function addComment(id) {
             var reqObj = {photoId: id, comment: commentText};
             aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
                 response = JSON.parse(response);
+                document.getElementById("comment-field").value = "";
                 if (!response.success) {
                    // Handle errors.
                 } else {
                     // Add comment to comments list.
-                    var commentItem = "<li><p>" + commentText + "</p></li>";
-                    document.getElementById("comment-list").innerHTML += commentItem;
-                    console.log(document.getElementById("comment-list").innerHTML);
+                    var username = getCookie("username");
+                    var commentItem = "<li><span class='message'><p>" + "<u>" + username + "</u>: " + commentText + "</p></span></li>";
+                    document.getElementById("comment-box").innerHTML += commentItem;
                 }
             });
         }      
@@ -81,32 +86,31 @@ function addComment(id) {
 }
 
 function changePhoto() {
-    // "ESC" key pressed.
-    if (event.keyCode == 27) {
-        hideGallery();
-    }
+    // Make sure user is not entering text!
+    if (event.target.tagName != "INPUT") {
+        var keyBindings = {left: 37, right: 39, hide: 27};
+        var gallery = document.getElementById("gallery-view");
+        var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
+        var nextPhotoToShowIndex = 0;
+        
+        if (event.keyCode == keyBindings.left) {
+            nextPhotoToShowIndex = --currentPhotoIndex;
+        } else if (event.keyCode == keyBindings.right) {
+            nextPhotoToShowIndex = ++currentPhotoIndex;
+        } else if (event.keyCode == keyBindings.hide) {
+            hideGallery();
+        }
 
-    var gallery = document.getElementById("gallery-view");
-    var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
-    var keyMappings = {left: 37, right: 39};
-    var kc = event.keyCode;
-    var nextPhotoToShowIndex = currentPhotoIndex;
-
-    if (kc == keyMappings.right) {
-        nextPhotoToShowIndex = ++currentPhotoIndex;    
-    } else if (kc == keyMappings.left) {
-        nextPhotoToShowIndex = --currentPhotoIndex;
-    }
-
-    if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length) {
-        var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
-                            photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                            photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
-                            addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
-        gallery.innerHTML = photoHtml;
-        var image = document.getElementById(nextPhotoToShowIndex);
-        image.onload = function(){
-            document.getElementById("comment").style.height = image.height;
+        if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length) {
+            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
+                                addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
+            gallery.innerHTML = photoHtml;
+            var image = document.getElementById(nextPhotoToShowIndex);
+            image.onload = function(){
+                document.getElementById("comment").style.height = image.height;
+            }
         }
     }
 }
@@ -173,6 +177,7 @@ function hideRenamePopover() {
 }
 
 function hideGallery() {
+    document.getElementById("gallery-view").style.transition = 0 + "s";
     document.getElementById("gallery-view").style.visibility = 'hidden';
     document.getElementById("opacity-layer").style.visibility = 'hidden';
 }
@@ -186,3 +191,15 @@ function deletePhoto(index) {
             location.reload(true);
         });
 } 
+
+function chatHasToggled(chatOpen) {
+    var innerWidth = parseInt(window.innerWidth, 10);
+    document.getElementById("gallery-view").style.transition = 0.3 + "s";
+    if (chatOpen) {
+       document.getElementById("content").style.width = (innerWidth - 335) + "px" ;
+       document.getElementById("gallery-view").style.left = 335 + "px";
+    } else  {
+       document.getElementById("content").style.width = (innerWidth - 50) + "px" ;
+       document.getElementById("gallery-view").style.left = 0 + "px";
+    }
+}
