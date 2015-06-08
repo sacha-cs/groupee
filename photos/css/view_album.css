@@ -160,6 +160,7 @@
     padding: 0px;
 }
 
-.comment-item {
-    text-align: left;
+.message {
+  text-align: left;
+  word-wrap: break-word;
 }
