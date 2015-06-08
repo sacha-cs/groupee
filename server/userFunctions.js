@@ -7,6 +7,7 @@ getHandler.addHandler("groups/get_all_groups", getAllGroups);
 getHandler.addHandler("groups/set_viewing_group", setGroup);
 postHandler.addHandler("usersettings/change_avatar", changeAvatar);
 postHandler.addHandler("usersettings/change_password", changePassword);
+postHandler.addHandler("groupsettings/quit_group", quitGroup);
 
 var FormData = require("form-data");
 
@@ -481,4 +482,40 @@ function createGroupDirectory(group_id) {
 
     form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createGroupDirectory.php', function (err, res) {
     });
+}
+
+function quitGroup(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    var username = params.username;
+
+    var checkHowManyMembersQuery = "SELECT * " + 
+                                   "FROM member_of " +
+                                   "WHERE group_id=" + groupId;
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(checkHowManyMembersQuery, function(err, howManyMembersResult) {
+            if (howManyMembersResult.rows.length == 1) {
+                // delete entire group from groups and row from member_of
+                var deleteFromGroupsQuery = "DELETE FROM groups " +
+                                            "WHERE group_id=" + groupId;
+
+                client.query(deleteFromGroupsQuery, function(err, deleteFromGroupsResult) {
+                    if(err) {
+                        console.log(err);
+                    }
+                        done(client);
+                    });  
+            } else {
+                // delete user from member_of table
+                var deleteUserFromMemberOfQuery = "DELETE FROM member_of " +
+                                                  "WHERE group_id=" + groupId + 
+                                                  " AND username='" + username + "'";
+                client.query(deleteUserFromMemberOfQuery, function(err, deleteUserFromMemberOfResult) {
+                    done(client);
+                });
+            }
+        });
+    });
+    
+    response.end();
 }
