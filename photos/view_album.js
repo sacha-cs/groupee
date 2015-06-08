@@ -27,7 +27,11 @@ function getAllPhotos() {
 
 function addCommentHtml(id) {
     return "<div class='card' id='comment'>" +
-            "<div id=comment-box></div>" + 
+            "<div id=comment-box>" +
+                "<li class='comment-item'>" + 
+                    "<span class='message'><p><u>username:</u> This is my amazing comment blbaslbnadlnblkhl</p></span>" +
+                "</li>" +
+            "</div>" + 
             "<input type='text' id='comment-field' placeholder='Add a comment' onkeydown='addComment(" + id + ")'>" +
         "</div>";
 }
@@ -181,6 +185,7 @@ function hideRenamePopover() {
 }
 
 function hideGallery() {
+    document.getElementById("gallery-view").style.transition = 0 + "s";
     document.getElementById("gallery-view").style.visibility = 'hidden';
     document.getElementById("opacity-layer").style.visibility = 'hidden';
 }
@@ -194,3 +199,15 @@ function deletePhoto(index) {
             location.reload(true);
         });
 } 
+
+function chatHasToggled(chatOpen) {
+    var innerWidth = parseInt(window.innerWidth, 10);
+    document.getElementById("gallery-view").style.transition = 0.3 + "s";
+    if (chatOpen) {
+       document.getElementById("content").style.width = (innerWidth - 335) + "px" ;
+       document.getElementById("gallery-view").style.left = 335 + "px";
+    } else  {
+       document.getElementById("content").style.width = (innerWidth - 50) + "px" ;
+       document.getElementById("gallery-view").style.left = 0 + "px";
+    }
+}

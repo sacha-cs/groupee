@@ -137,10 +137,25 @@
 }
 
 #comment-box {
-    height: calc(100% - 60px);
+    height: calc(100% - 80px);
     overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #photo-wrapper {
     position: fixed;
+}
+
+#comment-box p {
+    color: black;
+    padding: 0px;
+}
+
+#comment-box li {
+    padding: 0px;
+}
+
+.comment-item {
+    text-align: left;
 }
