@@ -60,64 +60,53 @@ function addComment(id) {
     var commentText = document.getElementById("comment-field").value;
 
     if (event.keyCode == 13) {
-        /* setErrorText("");
         if (commentText == "") {
-            setErrorText("You havent commented anything.");
-        }*/    
-        
-        var aClient = new HttpClient();
-        var reqObj = {photoId: id, comment: commentText};
-        aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
-            response = JSON.parse(response);
-            if (!response.success) {
-               // Handle errors.
-            } else {
-                // Add comment to comments list.
-                var commentItem = "<li><p>" + commentText + "</p></li>";
-                document.getElementById("comment-list").innerHTML += commentItem;
-                console.log(document.getElementById("comment-list").innerHTML);
-            }
-        });
+            // TODO: Return warning message if no comment entered.
+        } else {
+            var aClient = new HttpClient();
+            var reqObj = {photoId: id, comment: commentText};
+            aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
+                response = JSON.parse(response);
+                if (!response.success) {
+                   // Handle errors.
+                } else {
+                    // Add comment to comments list.
+                    var commentItem = "<li><p>" + commentText + "</p></li>";
+                    document.getElementById("comment-list").innerHTML += commentItem;
+                    console.log(document.getElementById("comment-list").innerHTML);
+                }
+            });
+        }      
     }
 }
 
 function changePhoto() {
-
+    // "ESC" key pressed.
     if (event.keyCode == 27) {
         hideGallery();
     }
 
     var gallery = document.getElementById("gallery-view");
     var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
+    var keyMappings = {left: 37, right: 39};
+    var kc = event.keyCode;
+    var nextPhotoToShowIndex = currentPhotoIndex;
 
-    if (event.keyCode == 37) {
+    if (kc == keyMappings.right) {
+        nextPhotoToShowIndex = ++currentPhotoIndex;    
+    } else if (kc == keyMappings.left) {
+        nextPhotoToShowIndex = --currentPhotoIndex;
+    }
 
-        var nextPhotoToShowIndex = --currentPhotoIndex;
-        if (nextPhotoToShowIndex >= 0) {
-            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
-                                photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
-                                addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
-            gallery.innerHTML = photoHtml;
-            var image = document.getElementById(nextPhotoToShowIndex);
-            image.onload = function(){
-                document.getElementById("comment").style.height = image.height;
-            }
-        }
-
-    } else if (event.keyCode == 39) {
-
-        var nextPhotoToShowIndex = ++currentPhotoIndex;
-        if (nextPhotoToShowIndex < photoInformation.photoList.length) {
-            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
-                                photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
-                                addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
-            gallery.innerHTML = photoHtml;
-            var image = document.getElementById(nextPhotoToShowIndex);
-            image.onload = function(){
-                document.getElementById("comment").style.height = image.height;
-            }
+    if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length) {
+        var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                            photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                            photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
+                            addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
+        gallery.innerHTML = photoHtml;
+        var image = document.getElementById(nextPhotoToShowIndex);
+        image.onload = function(){
+            document.getElementById("comment").style.height = image.height;
         }
     }
 }
