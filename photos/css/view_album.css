@@ -83,6 +83,10 @@
 }
 
 #gallery-view img {
+    background-color: #f5f5f5;
+    -o-object-fit: contain;
+    object-fit: contain;
+    max-height: 500px;
     width: 600px;
     -webkit-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
