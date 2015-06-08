@@ -36,6 +36,19 @@ function getAllPhotos() {
     });
 }
 
+function addCommentHtml(id) {
+    return "<div class='card' id='comment'>" +
+        "<h1>Comments</h1><br>" +
+
+            "<input type='text' id='comment-field' placeholder='Add a comment'>" +
+            "<div id=comment-box></div>" + 
+            "<input type='submit' name='submit' class='card-submit' value='Send' onclick='addComment(" + id + ")'>" + 
+            "<div class='create-text'>" +
+                "<p id='error'></p>" +
+            "</div>" +
+        "</div>";
+}
+
 function openPhoto(index) {
     if (event.target.className == "delete") {
         deletePhoto(index);
@@ -44,13 +57,34 @@ function openPhoto(index) {
     // TODO: Show photo in gallery view (and display comments).
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
+    var commentHtml = addCommentHtml(photoInformation.photoList[index]);
     var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                    photoInformation.photoList[index] + ".jpg'/>" + commentHtml + "</div>";
+                                    photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
+                    "</div>";
     gallery.innerHTML = photoHtml;
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
     gallery.focus();
+}
+
+function addComment(id) {
+    var commentText = document.getElementById("comment-field").value;
+
+    setErrorText("");
+    if (commentText == "") {
+        setErrorText("You havent commented anything.");
+    }    
+
+    var aClient = new HttpClient();
+    var reqObj = {photoId: id, comment: commentText};
+    aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
+        if (!response.success) {
+            setErrorText(response.error);
+        } else {
+            //TODO: Add comment to comments list.
+        }
+    });
 }
 
 function changePhoto() {

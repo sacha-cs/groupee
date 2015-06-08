@@ -6,6 +6,7 @@ postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples"
 postHandler.addHandler("photos/delete_album", deleteAlbum);
 postHandler.addHandler("photos/rename_album", renameAlbum);
 postHandler.addHandler("photos/delete_photo", deletePhoto);
+postHandler.addHandler("photos/add_comment", addComment);
 
 function createAlbum(request, response, params) {
     
@@ -39,9 +40,9 @@ function getAllAlbums(request, response, params) {
     var group_id = utils.getViewingGroup(request);
 
     var getAlbumsQuery =
-        "SELECT DISTINCT albums.album_id, albums.name, description, " +
-        "(MIN(photo_id) OVER (PARTITION BY albums.album_id)) " + 
-        "AS thumb FROM photos RIGHT JOIN albums USING (album_id) WHERE group_id=" + 
+            "SELECT DISTINCT albums.album_id, albums.name, description, " +
+            "(MIN(photo_id) OVER (PARTITION BY albums.album_id)) " + 
+            "AS thumb FROM photos RIGHT JOIN albums USING (album_id) WHERE group_id=" + 
         group_id;
 
     pg.connect(connectionString, function(err, client, done) {
@@ -238,4 +239,23 @@ function deletePhoto(request, response, params) {
             response.end();
         });
     })    
+}
+
+function addComment(request, response, params) {
+    // *** HWY DOESN'T THIS WORK? 
+    // var parsedObj = JSON.parse(params);
+    var parsedObj = JSON.parse(Object.keys(params)[0]); 
+    var id = parsedObj.photoId;
+    var comment = parsedObj.comment;
+    
+    var addCommentQuery = "INSERT INTO photos_comments(text, photo_id) VALUES ('" + comment + "', " + id + ")";
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(addCommentQuery, function(err, result) {
+            done(client);
+            var payload = {
+                success: true,
+            }
+            utils.respondJSON(response, payload);
+        });         
+    });
 }
