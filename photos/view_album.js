@@ -96,6 +96,10 @@ function changePhoto() {
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
                                 addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
             gallery.innerHTML = photoHtml;
+            var image = document.getElementById(nextPhotoToShowIndex);
+            image.onload = function(){
+                document.getElementById("comment").style.height = image.height;
+            }
         }
 
     } else if (event.keyCode == 39) {
@@ -107,6 +111,10 @@ function changePhoto() {
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
                                 addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
             gallery.innerHTML = photoHtml;
+            var image = document.getElementById(nextPhotoToShowIndex);
+            image.onload = function(){
+                document.getElementById("comment").style.height = image.height;
+            }
         }
     }
 }
