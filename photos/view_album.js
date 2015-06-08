@@ -1,4 +1,15 @@
 var photoInformation;
+var commentHtml = 
+        "<div class='card' id='comment'>" +
+        "<h1>Comments</h1><br>" +
+
+            "<input type='text' id='comment-field' placeholder='Add a comment'>" +
+            "<div id=comment-box></div>" + 
+            "<input type='submit' name='submit' class='card-submit' value='Send' onclick='addComment()'>" + 
+            "<div class='create-text'>" +
+                "<p id='error'></p>" +
+            "</div>" +
+        "</div>";
 
 function loaded() {
     getAllPhotos();
@@ -35,7 +46,7 @@ function openPhoto(index) {
     var gallery = document.getElementById("gallery-view");
     var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                    photoInformation.photoList[index] + ".jpg'/><div id='comment'></div></div>";
+                                    photoInformation.photoList[index] + ".jpg'/>" + commentHtml + "</div>";
     gallery.innerHTML = photoHtml;
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
