@@ -38,14 +38,8 @@ function getAllPhotos() {
 
 function addCommentHtml(id) {
     return "<div class='card' id='comment'>" +
-        "<h1>Comments</h1><br>" +
-
-            "<input type='text' id='comment-field' placeholder='Add a comment'>" +
             "<div id=comment-box></div>" + 
-            "<input type='submit' name='submit' class='card-submit' value='Send' onclick='addComment(" + id + ")'>" + 
-            "<div class='create-text'>" +
-                "<p id='error'></p>" +
-            "</div>" +
+            "<input type='text' id='comment-field' placeholder='Add a comment' onkeydown='addComment(" + id + ")'>" +
         "</div>";
 }
 
@@ -66,6 +60,11 @@ function openPhoto(index) {
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
     gallery.focus();
+
+    var image = document.getElementById(index);
+    image.onload = function(){
+        document.getElementById("comment").style.height = image.height;
+    }
 }
 
 function addComment(id) {
