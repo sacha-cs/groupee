@@ -73,7 +73,7 @@
 
 #gallery-view {
     visibility: hidden;
-    position: absolute;
+    position: fixed;
     z-index: 20;
     width: 900px;
     left:0;
@@ -83,7 +83,6 @@
 }
 
 #gallery-view img {
-    position: fixed;
     width: 600px;
     -webkit-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
     -moz-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
@@ -117,7 +116,7 @@
 
 #comment {  
     float: right;
-    position: relative;
+    position: relative ;
     width: 260px;
     padding: 0px 20px 0px 20px;
     box-shadow: none;
@@ -140,4 +139,8 @@
 #comment-box {
     height: calc(100% - 60px);
     overflow-y: auto;
+}
+
+#photo-wrapper {
+    position: fixed;
 }
