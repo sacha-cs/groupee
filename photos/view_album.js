@@ -33,9 +33,9 @@ function openPhoto(index) {
     // TODO: Show photo in gallery view (and display comments).
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
-    var photoHtml = "<img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                    photoInformation.photoList[index] + ".jpg'/>";
+                                    photoInformation.photoList[index] + ".jpg'/><div id='comment'></div></div>";
     gallery.innerHTML = photoHtml;
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
