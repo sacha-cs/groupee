@@ -47,7 +47,7 @@ function openPhoto(index) {
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
     var commentHtml = addCommentHtml(photoInformation.photoList[index]);
-    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='" + prefix + "/groups/group" +
+    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' class='gallery-img' src='" + prefix + "/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                     photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
                     "</div>";
@@ -78,7 +78,9 @@ function addCommentToBox(text, id, username) {
                       "<span class='message'>" + 
                         "<p>" + "<u>" + username + "</u>: " + text + "</p>" + 
                       "</span>" + 
-                      "<img onclick='deleteComment(" + id + ")' class='delete-comment' src='" + prefix + "/icons/close.png'>"
+                      "<div class='delete-comment'>" +
+                      "<img id='delete-comment-img' onclick='deleteComment(" + id + ")' src='" + prefix + "/icons/close.png'>" +
+                      "</div>"
                       "</li>";
     document.getElementById("comment-box").innerHTML += commentHtml;
 }
@@ -104,7 +106,9 @@ function addComment(id) {
                                       "<span class='message'>" + 
                                         "<p>" + "<u>" + username + "</u>: " + commentText + "</p>" + 
                                       "</span>" + 
-                                      "<img onclick='deleteComment(" + response.id + ")' class='delete-comment' src='" + prefix + "/icons/close.png'>"
+                                      "<div class='delete-comment'>"
+                                      "<img id='delete-comment-img' onclick='deleteComment(" + response.id + ")' src='" + prefix + "/icons/close.png'>" +
+                                      "</div>"
                                       "</li>";
                     document.getElementById("comment-box").innerHTML += commentItem;
                 }
