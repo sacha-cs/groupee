@@ -1,5 +1,3 @@
-// TODO: getAllComments
-
 var photoInformation;
 var deleteIcon = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png';
 var prefix = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136';
@@ -102,15 +100,7 @@ function addComment(id) {
                 } else {
                     // Add comment to comments list.
                     var username = getCookie("username");
-                    var commentItem = "<li id='comment" + response.id + "'>" + 
-                                      "<span class='message'>" + 
-                                        "<p>" + "<u>" + username + "</u>: " + commentText + "</p>" + 
-                                      "</span>" + 
-                                      "<div class='delete-comment'>"
-                                      "<img id='delete-comment-img' onclick='deleteComment(" + response.id + ")' src='" + prefix + "/icons/close.png'>" +
-                                      "</div>"
-                                      "</li>";
-                    document.getElementById("comment-box").innerHTML += commentItem;
+                    addCommentToBox(commentText, response.id, username);
                 }
             });
         }      
