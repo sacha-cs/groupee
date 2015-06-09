@@ -141,8 +141,20 @@ body {
 }
 
 
-li {
-  padding: 0.5rem;
+.other {
+  padding-top: 0.3rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 15px;
+  overflow: hidden;
+  display: flex;
+}
+
+.self {
+    padding-top: 0.3rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-bottom: 0.5rem;
   overflow: hidden;
   display: flex;
 }
@@ -152,6 +164,7 @@ li {
 }
 
 .avatarimage {
+  border-radius: 25px;
   width: 40px;
 }
 
