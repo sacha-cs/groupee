@@ -1,4 +1,5 @@
 var photoInformation;
+var keyBindings = {left: 37, right: 39, esc: 27, enter: 13};
 var deleteIcon = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png';
 var prefix = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136';
 
@@ -52,6 +53,8 @@ function openPhoto(index) {
     var arg = photoInformation.photoList[index];
 
     gallery.innerHTML = photoHtml;
+    getComments(photoInformation.photoList[index]);
+
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
     gallery.focus();
@@ -61,14 +64,6 @@ function openPhoto(index) {
         document.getElementById("comment").style.height = image.height;
     }
 
-    var aClient = new HttpClient();
-    aClient.get('/photos/get_comments?photo_id=' + photoInformation.photoList[index], function(response) {
-        var commentInfo = JSON.parse(response);
-        for (var i = 0; i < commentInfo.comments.length; i++) {
-            var currentComment = commentInfo.comments[i];
-            addCommentToBox(currentComment.text, currentComment.id, "username");
-        }
-    });
 }
 
 function addCommentToBox(text, id, username) {
@@ -86,7 +81,7 @@ function addCommentToBox(text, id, username) {
 function addComment(id) {
     var commentText = document.getElementById("comment-field").value;
 
-    if (event.keyCode == 13) {
+    if (event.keyCode == keyBindings.enter) {
         if (commentText == "") {
             // TODO: Return warning message if no comment entered.
         } else {
@@ -115,11 +110,9 @@ function deleteComment(id) {
     });
 }
 
-
 function changePhoto() {
     // Make sure user is not entering text!
     if (event.target.tagName != "INPUT") {
-        var keyBindings = {left: 37, right: 39, hide: 27};
         var gallery = document.getElementById("gallery-view");
         var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
         var nextPhotoToShowIndex = 0;
@@ -131,7 +124,7 @@ function changePhoto() {
         } else if (event.keyCode == keyBindings.right) {
             nextPhotoToShowIndex = ++currentPhotoIndex;
             change = true;
-        } else if (event.keyCode == keyBindings.hide) {
+        } else if (event.keyCode == keyBindings.esc) {
             hideGallery();
         }
 
@@ -142,20 +135,27 @@ function changePhoto() {
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
                                 addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
             gallery.innerHTML = photoHtml;
+
+            getComments(photoInformation.photoList[nextPhotoToShowIndex]);
+
             var image = document.getElementById(nextPhotoToShowIndex);
-            image.onload = function(){
+            image.onload = function() {
                 document.getElementById("comment").style.height = image.height;
             }
-            var aClient = new HttpClient();
-            aClient.get('/photos/get_comments?photo_id=' + photoInformation.photoList[nextPhotoToShowIndex], function(response) {
-                var commentInfo = JSON.parse(response);
-                for (var i = 0; i < commentInfo.comments.length; i++) {
-                    var currentComment = commentInfo.comments[i];
-                    addCommentToBox(currentComment.text, currentComment.id, "username");
-                }
-            });
+
         }
     }
+}
+
+function getComments(photoId) {
+    var aClient = new HttpClient();
+    aClient.get('/photos/get_comments?photo_id=' + photoId, function(response) {
+        var commentInfo = JSON.parse(response);
+        for (var i = 0; i < commentInfo.comments.length; i++) {
+            var currentComment = commentInfo.comments[i];
+            addCommentToBox(currentComment.text, currentComment.id, "username");
+        }
+    });
 }
 
 function popupForm() {
@@ -190,11 +190,11 @@ function deleteAlbum() {
 }
 
 function renameAlbum() {
-    if (event.keyCode == 27) {
+    if (event.keyCode == keyBindings.esc) {
         document.getElementById("rename-input").style.visibility = 'hidden';
         return;
     }
-    if (event.keyCode == 13) {
+    if (event.keyCode == keyBindings.enter) {
         var newAlbumName = document.getElementById("newAlbumName").value;
         var aClient = new HttpClient();
         aClient.post('rename_album', 'newAlbumName=' + newAlbumName,
@@ -213,7 +213,7 @@ function showRenamePopover() {
 }
 
 function hideRenamePopover() {
-    if (event.keyCode == 27) {
+    if (event.keyCode == keyBindings.esc) {
         document.getElementById("rename-input").style.visibility = 'hidden';
     }
     return;
@@ -242,6 +242,3 @@ function chatHasToggled(chatOpen) {
     document.getElementById("gallery-view").style.left = (chatOpen ? 335 : 0) + "px";
 }
 
-function getAllComments() {
-        
-}
