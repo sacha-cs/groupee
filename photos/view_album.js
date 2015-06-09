@@ -86,15 +86,15 @@ function addComment(id) {
             // TODO: Return warning message if no comment entered.
         } else {
             var aClient = new HttpClient();
-            var reqObj = {photoId: id, comment: commentText};
+            var username = getCookie("username");
+            var reqObj = {photoId: id, comment: commentText, username: username};
             aClient.post('add_comment', JSON.stringify(reqObj), function(response) {
                 response = JSON.parse(response);
                 document.getElementById("comment-field").value = "";
                 if (!response.success) {
-                   // Handle errors.
+                    // Handle errors.
                 } else {
                     // Add comment to comments list.
-                    var username = getCookie("username");
                     addCommentToBox(commentText, response.id, username);
                 }
             });
@@ -111,12 +111,13 @@ function deleteComment(id) {
 }
 
 function changePhoto() {
+    var change = false;
+
     // Make sure user is not entering text!
     if (event.target.tagName != "INPUT") {
         var gallery = document.getElementById("gallery-view");
         var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
         var nextPhotoToShowIndex = 0;
-        var change = false;
         
         if (event.keyCode == keyBindings.left) {
             nextPhotoToShowIndex = --currentPhotoIndex;
@@ -142,7 +143,6 @@ function changePhoto() {
             image.onload = function() {
                 document.getElementById("comment").style.height = image.height;
             }
-
         }
     }
 }
@@ -153,7 +153,7 @@ function getComments(photoId) {
         var commentInfo = JSON.parse(response);
         for (var i = 0; i < commentInfo.comments.length; i++) {
             var currentComment = commentInfo.comments[i];
-            addCommentToBox(currentComment.text, currentComment.id, "username");
+            addCommentToBox(currentComment.text, currentComment.id, currentComment.username);
         }
     });
 }
