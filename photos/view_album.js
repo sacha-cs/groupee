@@ -98,7 +98,8 @@ function addComment(id) {
 function deleteComment(id) {
     var aClient = new HttpClient();
     aClient.post('delete_comment', 'id=' + id, function(response) {
-        // TODO: Remove from HTML.
+        // Remove from HTML.
+        document.getElementById('comment-box').removeChild(document.getElementById('comment' + id));
     });
 }
 
