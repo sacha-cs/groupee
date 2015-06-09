@@ -66,14 +66,20 @@ function openPhoto(index) {
 
 }
 
+function addDeleteCommentButton(id) {
+    return "<div class='delete-comment'>" +
+           "<img id='delete-comment-img' onclick='deleteComment(" + id + ")' " + 
+           "src='" + prefix + "/icons/close.png'>" +
+           "</div>";
+}
+
 function addCommentToBox(text, id, username) {
+    var currentUser = getCookie("username");
     var commentHtml = "<li id='comment" + id + "'>" + 
                       "<span class='message'>" + 
                         "<p>" + "<u>" + username + "</u>: " + text + "</p>" + 
                       "</span>" + 
-                      "<div class='delete-comment'>" +
-                      "<img id='delete-comment-img' onclick='deleteComment(" + id + ")' src='" + prefix + "/icons/close.png'>" +
-                      "</div>"
+                      (currentUser == username ? addDeleteCommentButton(id) : "") +
                       "</li>";
     document.getElementById("comment-box").innerHTML += commentHtml;
 }
