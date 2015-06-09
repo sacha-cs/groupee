@@ -25,6 +25,7 @@ function getAllPhotos() {
                             "</div>";
             content.innerHTML += photoHtml;
         }
+        document.getElementById("loading").style.display = "none";
     });
 }
 
