@@ -28,8 +28,8 @@ function getAllPhotos() {
     });
 }
 
-function addCommentHtml(id) {
-    return "<div class='card' id='comment'>" +
+function addCommentHtml(htmlId, id) {
+    return "<div class='comment card' id='comment-card" + htmlId + "'>" +
                 "<div id=comment-box>" +
                 "</div>" + 
                 "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'/>" +
@@ -45,25 +45,22 @@ function openPhoto(index) {
     // TODO: Show photo in gallery view (and display comments).
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
-    var commentHtml = addCommentHtml(photoInformation.photoList[index]);
-    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' class='gallery-img' src='" + prefix + "/groups/group" +
-                                    photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                    photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
+    var commentHtml = addCommentHtml(index, photoInformation.photoList[index]);
+    var photoHtml = "<div id=photo-wrapper>" + 
+                        "<img id='" + index + "' class='gallery-img' src='" + prefix + "/groups/group" +
+                        photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
+                        photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
                     "</div>";
-    var arg = photoInformation.photoList[index];
 
     gallery.innerHTML = photoHtml;
+
     getComments(photoInformation.photoList[index]);
 
     gallery.style.visibility = 'visible';
     gallery.tabIndex = "0";
     gallery.focus();
 
-    var image = document.getElementById(index);
-    image.onload = function(){
-        document.getElementById("comment").style.height = image.height;
-    }
-
+    resizeCommentBox(index);
 }
 
 function addDeleteCommentButton(id) {
@@ -77,7 +74,7 @@ function addCommentToBox(text, id, username) {
     var currentUser = getCookie("username");
     var commentHtml = "<li id='comment" + id + "'>" + 
                       "<span class='message'>" + 
-                        "<p>" + "<u>" + username + "</u>: " + text + "</p>" + 
+                      "<p>" + "<u>" + username + "</u>: " + text + "</p>" + 
                       "</span>" + 
                       (currentUser == username ? addDeleteCommentButton(id) : "") +
                       "</li>";
@@ -116,6 +113,14 @@ function deleteComment(id) {
     });
 }
 
+function resizeCommentBox(index) {
+    var image = document.getElementById(index);
+    console.log(document.getElementById(index));
+    image.onload = function() {
+        document.getElementById("comment-card" + index).style.height = image.height;
+    }
+}
+
 function changePhoto() {
     var change = false;
 
@@ -135,20 +140,15 @@ function changePhoto() {
             hideGallery();
         }
 
-
         if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length && change) {
             var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='" + prefix + "/groups/group" +
                                 photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
-                                addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
+                                addCommentHtml(nextPhotoToShowIndex, photoInformation.photoList[nextPhotoToShowIndex]);
             gallery.innerHTML = photoHtml;
 
             getComments(photoInformation.photoList[nextPhotoToShowIndex]);
-
-            var image = document.getElementById(nextPhotoToShowIndex);
-            image.onload = function() {
-                document.getElementById("comment").style.height = image.height;
-            }
+            resizeCommentBox(nextPhotoToShowIndex);
         }
     }
 }
