@@ -1,6 +1,7 @@
 postHandler.addHandler("photos/create_album", createAlbum);
 getHandler.addHandler("photos/get_albums", getAllAlbums);
 getHandler.addHandler("photos/get_photos", getAllPhotos);
+getHandler.addHandler("photos/get_comments", getAllComments);
 getHandler.addHandler("photos/view_album", setViewingAlbum);
 postHandler.addHandler("photos/upload_photos", uploadPhotos, false, {"multiples":true});
 postHandler.addHandler("photos/delete_album", deleteAlbum);
@@ -272,4 +273,27 @@ function deleteComment(request, response, params) {
             utils.respondJSON(response, payload);
         });
     })    
+}
+
+function getAllComments(request, response, params) {
+    var id = params.photo_id;
+    var getPhotosQuery = "SELECT comment_id, text FROM photos_comments " +
+                         "WHERE photo_id=" + id;
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(getPhotosQuery, function(err, result) {
+            done(client);
+            var commentList = [];
+            var data = result.rows;
+            for (var i = 0; i < data.length; i++) {
+                var row = data[i];
+                commentList.push({id: row.comment_id, text: row.text});
+            }
+            var payload = {
+                success: true,
+                comments: commentList
+            }
+            utils.respondJSON(response, payload);
+        });
+    }); 
+    
 }

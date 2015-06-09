@@ -1,5 +1,4 @@
 // TODO: getAllComments
-// TODO: removeComment
 
 var photoInformation;
 var deleteIcon = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png';
@@ -63,6 +62,25 @@ function openPhoto(index) {
     image.onload = function(){
         document.getElementById("comment").style.height = image.height;
     }
+
+    var aClient = new HttpClient();
+    aClient.get('/photos/get_comments?photo_id=' + photoInformation.photoList[index], function(response) {
+        var commentInfo = JSON.parse(response);
+        for (var i = 0; i < commentInfo.comments.length; i++) {
+            var currentComment = commentInfo.comments[i];
+            addCommentToBox(currentComment.text, currentComment.id, "username");
+        }
+    });
+}
+
+function addCommentToBox(text, id, username) {
+    var commentHtml = "<li id='comment" + id + "'>" + 
+                      "<span class='message'>" + 
+                        "<p>" + "<u>" + username + "</u>: " + text + "</p>" + 
+                      "</span>" + 
+                      "<img onclick='deleteComment(" + id + ")' class='delete-comment' src='" + prefix + "/icons/close.png'>"
+                      "</li>";
+    document.getElementById("comment-box").innerHTML += commentHtml;
 }
 
 function addComment(id) {
@@ -123,6 +141,7 @@ function changePhoto() {
             hideGallery();
         }
 
+
         if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length && change) {
             var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='" + prefix + "/groups/group" +
                                 photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
@@ -133,6 +152,14 @@ function changePhoto() {
             image.onload = function(){
                 document.getElementById("comment").style.height = image.height;
             }
+            var aClient = new HttpClient();
+            aClient.get('/photos/get_comments?photo_id=' + photoInformation.photoList[nextPhotoToShowIndex], function(response) {
+                var commentInfo = JSON.parse(response);
+                for (var i = 0; i < commentInfo.comments.length; i++) {
+                    var currentComment = commentInfo.comments[i];
+                    addCommentToBox(currentComment.text, currentComment.id, "username");
+                }
+            });
         }
     }
 }
@@ -219,4 +246,8 @@ function chatHasToggled(chatOpen) {
     document.getElementById("gallery-view").style.transition = 0.3 + "s";
     document.getElementById("content").style.width.left = (innerWidth - (chatOpen ? 335 : 50)) + "px";
     document.getElementById("gallery-view").style.left = (chatOpen ? 335 : 0) + "px";
+}
+
+function getAllComments() {
+        
 }
