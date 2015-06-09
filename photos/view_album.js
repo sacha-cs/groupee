@@ -120,7 +120,7 @@ function changePhoto() {
         }
 
         if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length) {
-            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+            var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='" + prefix + "/groups/group" +
                                 photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
                                 addCommentHtml(photoInformation.photoList[nextPhotoToShowIndex]);
@@ -213,11 +213,6 @@ function deletePhoto(index) {
 function chatHasToggled(chatOpen) {
     var innerWidth = parseInt(window.innerWidth, 10);
     document.getElementById("gallery-view").style.transition = 0.3 + "s";
-    if (chatOpen) {
-       document.getElementById("content").style.width = (innerWidth - 335) + "px" ;
-       document.getElementById("gallery-view").style.left = 335 + "px";
-    } else  {
-       document.getElementById("content").style.width = (innerWidth - 50) + "px" ;
-       document.getElementById("gallery-view").style.left = 0 + "px";
-    }
+    document.getElementById("content").style.width.left = (innerWidth - (chatOpen ? 335 : 50)) + "px";
+    document.getElementById("gallery-view").style.left = (chatOpen ? 335 : 0) + "px";
 }
