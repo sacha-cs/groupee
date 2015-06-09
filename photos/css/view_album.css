@@ -164,11 +164,17 @@
     text-align: left;
 }
 
+li:hover .delete-comment {
+  visibility: visible;
+}
+
 .delete-comment {
+    visibility: hidden;
     height:25px !important;
     width:25px !important;
     box-shadow: none !important;
-    right: 10px;
+    right: 20px;
+    margin-top: 10px;
     position: absolute;
 }
 
