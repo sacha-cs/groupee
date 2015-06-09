@@ -266,6 +266,10 @@ function deleteComment(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         client.query(deleteCommentQuery, function(err, result) {
             done(client);
+            var payload = {
+                success: true 
+            }
+            utils.respondJSON(response, payload);
         });
     })    
 }
