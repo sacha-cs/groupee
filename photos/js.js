@@ -73,6 +73,7 @@ function getAllAlbums() {
     
            	content.innerHTML += albumHtml;
 		}
+		document.getElementById("loading").style.display = "none";
 	});
 }
 
