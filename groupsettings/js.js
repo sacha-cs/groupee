@@ -6,12 +6,19 @@ function loaded() {
 function toggleUsersSettings() {
 	document.getElementById("add-users").style.display = 'block';
 	document.getElementById("quit-confirm").style.display = 'none';
+    document.getElementById("rename-group").style.display = 'none';
 }
 
 function toggleQuitSettings() {
 	document.getElementById("quit-confirm").style.display = 'block';
 	document.getElementById("add-users").style.display = 'none';
+    document.getElementById("rename-group").style.display = 'none';
+}
 
+function toggleRenameSettings() {
+    document.getElementById("rename-group").style.display = 'block';
+    document.getElementById("add-users").style.display = 'none';
+    document.getElementById("quit-confirm").style.display = 'none';
 }
 
 function addUser() {
@@ -47,4 +54,12 @@ function quitGroup() {
 		function(response) {});
 
 	window.location = '/groups/';
+}
+
+function renameGroup() {
+    var groupName = document.getElementById("group-new-name").value;
+
+    var aClient = new HttpClient();
+    aClient.post('rename_group', "groupName=" + groupName, function(response) {});
+    location.reload(true);
 }
