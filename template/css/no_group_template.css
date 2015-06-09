@@ -35,7 +35,6 @@ body {
     font-size: 11pt;
     height: 100%;
     float:right;
-    margin-right: 10px;
 }
 
 #navbar-right img {
@@ -52,13 +51,11 @@ body {
 #avatar-self {
   height: 50px;
   width: 50px;
+  vertical-align:middle;
+  margin-left:10px;
+  background-size:cover;
+  background-position:50% 50%;
 }
-
-#avatar-self img {
-  height:100%;
-  width: 100%;
-}
-
 
 #navbar-logout {
   position: relative;
