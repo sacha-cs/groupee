@@ -110,16 +110,19 @@ function changePhoto() {
         var gallery = document.getElementById("gallery-view");
         var currentPhotoIndex = gallery.getElementsByTagName("img")[0].id;
         var nextPhotoToShowIndex = 0;
+        var change = false;
         
         if (event.keyCode == keyBindings.left) {
             nextPhotoToShowIndex = --currentPhotoIndex;
+            change = true;
         } else if (event.keyCode == keyBindings.right) {
             nextPhotoToShowIndex = ++currentPhotoIndex;
+            change = true;
         } else if (event.keyCode == keyBindings.hide) {
             hideGallery();
         }
 
-        if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length) {
+        if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length && change) {
             var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='" + prefix + "/groups/group" +
                                 photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                 photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
