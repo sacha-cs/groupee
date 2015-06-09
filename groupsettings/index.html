@@ -12,7 +12,8 @@ Group Settings
 
 	<div id="options">
 		<button onclick="toggleUsersSettings()">Add users</button>
-		<button id="quit" onclick="toggleQuitSettings()">Quit this group</button>
+        <button onclick="toggleRenameSettings()">Rename group</button>
+		<button onclick="toggleQuitSettings()">Quit this group</button>
 	</div>
 </div>
 
@@ -34,5 +35,11 @@ Group Settings
     	<h1>Are you sure you want to quit the group?</h1><br>
         <input type="submit" name="submit" class="quit quit-submit" value="Confirm" onclick=quitGroup()>
 	</div>
+
+    <div id="rename-group">
+        <h1>Rename the group</h1><br>
+        <input type="text" name="group-new-name" id="group-new-name" placeholder="Enter new group name">
+        <input type="submit" name="submit" class="add add-submit" value="Rename" onclick=renameGroup()>
+    </div>
 </div>
 
