@@ -95,10 +95,14 @@ body {
   position: relative;
 }
 
-.group-avatar img {
+.avatar-img {
   width:40px;
   height:40px;
   border-radius:25px;
+  background-size:cover;
+  display:inline-block;
+  background-position: 50% 50%;
+  background-repeat: none;
 }
 
 .group-avatar .popover-avatar {
