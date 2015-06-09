@@ -8,6 +8,7 @@ getHandler.addHandler("groups/set_viewing_group", setGroup);
 postHandler.addHandler("usersettings/change_avatar", changeAvatar);
 postHandler.addHandler("usersettings/change_password", changePassword);
 postHandler.addHandler("groupsettings/quit_group", quitGroup);
+postHandler.addHandler("groupsettings/rename_group", renameGroup);
 
 var FormData = require("form-data");
 
@@ -517,5 +518,23 @@ function quitGroup(request, response, params) {
         });
     });
     
+    response.end();
+}
+
+
+function renameGroup(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    
+    var renameGroupQuery = "UPDATE groups " +
+                           "SET group_name='" + params.groupName + "' " +
+                           "WHERE group_id=" + groupId;
+
+    pg.connect(connectionString, function(err, client, done) {
+
+        client.query(renameGroupQuery, function(err, renameGroupResult) {
+            done(client);
+        });
+    });
+
     response.end();
 }
