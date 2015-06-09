@@ -76,7 +76,7 @@ function addGroupsToPage() {
                 var avatars = "";
                 info.members.map(function(item) {
                     avatars += "<span class='group-avatar'>" +
-                               "<img src='" + getAvatar(item) + "'>" + 
+                               "<div style='background-image:url(\"" + getAvatar(item) + "\")' class='avatar-img'></div>" + 
                                "<div class='popover-avatar'>" + item + "</div>"+
                                "</span>"
                 });
