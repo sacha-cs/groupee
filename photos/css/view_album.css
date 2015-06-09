@@ -118,7 +118,7 @@
     visibility: hidden;
 }
 
-#comment {  
+.comment.card {  
     float: right;
     position: relative ;
     width: 260px;
