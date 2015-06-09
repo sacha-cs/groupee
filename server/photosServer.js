@@ -7,6 +7,7 @@ postHandler.addHandler("photos/delete_album", deleteAlbum);
 postHandler.addHandler("photos/rename_album", renameAlbum);
 postHandler.addHandler("photos/delete_photo", deletePhoto);
 postHandler.addHandler("photos/add_comment", addComment);
+postHandler.addHandler("photos/delete_comment", deleteComment);
 
 function createAlbum(request, response, params) {
     
@@ -199,7 +200,6 @@ function deleteAlbum(request, response, params) {
             });
         });
     });
-
 }
 
 function renameAlbum(request, response, params) {
@@ -242,20 +242,30 @@ function deletePhoto(request, response, params) {
 }
 
 function addComment(request, response, params) {
-    // *** HWY DOESN'T THIS WORK? 
-    // var parsedObj = JSON.parse(params);
     var parsedObj = JSON.parse(Object.keys(params)[0]); 
     var id = parsedObj.photoId;
     var comment = parsedObj.comment;
     
-    var addCommentQuery = "INSERT INTO photos_comments(text, photo_id) VALUES ('" + comment + "', " + id + ")";
+    var addCommentQuery = "INSERT INTO photos_comments(text, photo_id) VALUES ('" + comment + "', " + id + ") RETURNING comment_id";
     pg.connect(connectionString, function(err, client, done) {
         client.query(addCommentQuery, function(err, result) {
             done(client);
             var payload = {
-                success: true,
+                success: true, id: result.rows[0].comment_id
             }
             utils.respondJSON(response, payload);
         });         
     });
+}
+
+function deleteComment(request, response, params) {
+    var id = params.id;
+    var deleteCommentQuery = "DELETE FROM photos_comments " +
+                             "WHERE comment_id=" + id;
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(deleteCommentQuery, function(err, result) {
+            done(client);
+        });
+    })    
 }

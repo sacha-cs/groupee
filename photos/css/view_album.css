@@ -159,3 +159,13 @@
 .comment-item {
     text-align: left;
 }
+
+.delete-comment {
+    height:25px !important;
+    width:25px !important;
+    box-shadow: none !important;
+    right: 10px;
+    position: absolute;
+}
+
+

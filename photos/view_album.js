@@ -1,4 +1,9 @@
+// TODO: getAllComments
+// TODO: removeComment
+
 var photoInformation;
+var deleteIcon = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png';
+var prefix = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136';
 
 function loaded() {
     getAllPhotos();
@@ -7,7 +12,7 @@ function loaded() {
 function getAllPhotos() {
     var content = document.getElementById("content");
     content.innerHTML += "<div onclick=popupForm() class='photo' id='new-photo'>" + 
-                            "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/new-album.png'>" +
+                            "<img src='" + prefix + "/icons/new-album.png'>" +
                          "</div>"
     var aClient = new HttpClient();
     aClient.get('get_photos', function(response) {
@@ -15,10 +20,10 @@ function getAllPhotos() {
         photoInformation = photoInfo;
         for (var i = 0; i < photoInfo.photoList.length; i++) {
             var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "' onclick='openPhoto(" + i + ")'>" +   
-                                "<img class='thumb' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                                "<img class='thumb' src='" + prefix + "/groups/group" +
                                     photoInfo.groupId + "/photos/album" + photoInfo.albumId + "/thumbnail" + 
                                     photoInfo.photoList[i] + ".jpg'/>" +  
-                                "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png'>" +
+                                "<img class='delete' src='" + deleteIcon + "'>" +
                             "</div>";
             content.innerHTML += photoHtml;
         }
@@ -27,10 +32,10 @@ function getAllPhotos() {
 
 function addCommentHtml(id) {
     return "<div class='card' id='comment'>" +
-            "<div id=comment-box>" +
-            "</div>" + 
-            "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'/>" +
-        "</div>";
+                "<div id=comment-box>" +
+                "</div>" + 
+                "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'/>" +
+            "</div>";
 }
 
 function openPhoto(index) {
@@ -43,7 +48,7 @@ function openPhoto(index) {
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
     var commentHtml = addCommentHtml(photoInformation.photoList[index]);
-    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+    var photoHtml = "<div id=photo-wrapper><img id='" + index + "' src='" + prefix + "/groups/group" +
                                     photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
                                     photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
                     "</div>";
@@ -77,13 +82,26 @@ function addComment(id) {
                 } else {
                     // Add comment to comments list.
                     var username = getCookie("username");
-                    var commentItem = "<li><span class='message'><p>" + "<u>" + username + "</u>: " + commentText + "</p></span></li>";
+                    var commentItem = "<li id='comment" + response.id + "'>" + 
+                                      "<span class='message'>" + 
+                                        "<p>" + "<u>" + username + "</u>: " + commentText + "</p>" + 
+                                      "</span>" + 
+                                      "<img onclick='deleteComment(" + response.id + ")' class='delete-comment' src='" + prefix + "/icons/close.png'>"
+                                      "</li>";
                     document.getElementById("comment-box").innerHTML += commentItem;
                 }
             });
         }      
     }
 }
+
+function deleteComment(id) {
+    var aClient = new HttpClient();
+    aClient.post('delete_comment', 'id=' + id, function(response) {
+        // TODO: Remove from HTML.
+    });
+}
+
 
 function changePhoto() {
     // Make sure user is not entering text!
