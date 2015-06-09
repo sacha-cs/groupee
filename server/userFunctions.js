@@ -178,6 +178,7 @@ function createNewGroup(request, response, params) {
         client.query(newGroupQuery, function(err, result) {
             if(err) { return utils.respondError(err, response); }
             var groupId = result.rows[0].group_id;
+            createGroupDirectory(groupId);
             insertUserIntoMemberOf(request, response, client, done, 
                 function() { 
                     addGroupChat(request, response, client, done,
