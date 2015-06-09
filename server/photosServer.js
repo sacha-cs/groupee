@@ -246,8 +246,11 @@ function addComment(request, response, params) {
     var parsedObj = JSON.parse(Object.keys(params)[0]); 
     var id = parsedObj.photoId;
     var comment = parsedObj.comment;
+    var username = parsedObj.username;
     
-    var addCommentQuery = "INSERT INTO photos_comments(text, photo_id) VALUES ('" + comment + "', " + id + ") RETURNING comment_id";
+    var addCommentQuery = "INSERT INTO photos_comments(text, photo_id, username) " + 
+                          "VALUES ('" + comment + "', " + id + ", '" + username + "') " +
+                          "RETURNING comment_id";
     pg.connect(connectionString, function(err, client, done) {
         client.query(addCommentQuery, function(err, result) {
             done(client);
@@ -277,7 +280,8 @@ function deleteComment(request, response, params) {
 
 function getAllComments(request, response, params) {
     var id = params.photo_id;
-    var getPhotosQuery = "SELECT comment_id, text FROM photos_comments " +
+    var getPhotosQuery = "SELECT comment_id, text, username " + 
+                         "FROM photos_comments " +
                          "WHERE photo_id=" + id;
     pg.connect(connectionString, function(err, client, done) {
         client.query(getPhotosQuery, function(err, result) {
@@ -286,7 +290,11 @@ function getAllComments(request, response, params) {
             var data = result.rows;
             for (var i = 0; i < data.length; i++) {
                 var row = data[i];
-                commentList.push({id: row.comment_id, text: row.text});
+                commentList.push({
+                    id: row.comment_id, 
+                    username: row.username,
+                    text: row.text
+                });
             }
             var payload = {
                 success: true,
