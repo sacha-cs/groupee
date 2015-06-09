@@ -133,8 +133,7 @@ function addMessagesToChat(messages) {
             messenger = "other";
         }
         var htmlMsg = "<li class=\"" + messenger + "\">" + 
-                            "<span class=\"avatar\">" +
-                                "<img class=\"avatarimage\" src='" + filePath + "avatars/" + user + ".png'/>" +
+                            "<span class=\"avatar\" style='background-image:url(\"" + getAvatar(user) + "\")'>" +
                             "</span>" +
                             "<span class=\"messages\">" +
                                 "<p><u>" + user + ":</u> " + message + "</p>" +
