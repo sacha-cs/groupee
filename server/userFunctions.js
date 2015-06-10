@@ -285,25 +285,6 @@ function addUserToGroup(request, response, params) {
 
 }
 
-function doesUserExistInGroup(request, response, client, done, callback, groupID) {
-    var username = utils.getUser(request);
-
-    // Check user is member of the group
-    var checkUserMemberQuery = "SELECT * " +
-                               "FROM member_of " +
-                               "WHERE username='" + username + "' AND group_id=" + groupID;
-
-    client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
-        if(err) { return utils.respondError(err, response); }
-
-        if(checkUserMemberResult.rows.length == 1) {
-            callback(true);
-        } else {
-            callback(false);
-        }
-    });
-}
-
 function getAllGroups(request, response) {
     var currentUser = utils.getUser(request);
     var getGroupInfoQuery = 
@@ -373,7 +354,7 @@ function checkUserExists(request, response, client, done, callback, username) {
 
 function setGroup(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
-        doesUserExistInGroup(request, response, client, done,
+        utils.doesUserExistInGroup(request, response, client, done,
             function(inGroup) {
                 var payload = {
                     success: false

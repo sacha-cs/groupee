@@ -101,7 +101,6 @@ function addGroupsToPage() {
 }
 
 function setGroup(groupId) {
-    console.log("??");
     var aClient = new HttpClient();
     aClient.get('/groups/set_viewing_group?group_id=' + groupId, function(response) {
         response = JSON.parse(response);
