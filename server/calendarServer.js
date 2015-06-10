@@ -1,6 +1,6 @@
 var groups = {};
 
-postHandler.addHandler("calendar/post_event", calendarPostEvent);
+postHandler.addHandler("calendar/post_event", calendarPostEvent, true);
 getHandler.addHandler("calendar/calendar_update", calendarUpdate);
 //postHandler.addHandler("calendar/change_date", changeDate);
 //postHandler.addHandler("calendar/delete_event", deleteEvent);
@@ -13,6 +13,7 @@ function createGroupData(group) {
 }
 
 function calendarPostEvent(req, res, params) {
+	params = JSON.parse(params);
 	console.log(params);
 	var username = utils.getUser(req);
 	var group = utils.getViewingGroup(req);
@@ -29,6 +30,7 @@ function calendarPostEvent(req, res, params) {
 						params.color + "', '" + params.text + "');" ;
 		client.query(insertQuery, function(err, insertEvent) {
 			if (err) { return utils.respondError(err, res); }
+			done(client);
 			return utils.respondPlain(res, "Event successfully updated");
 		});
 	});		
@@ -56,7 +58,7 @@ function calendarUpdate(req, res, params) {
 			}
 			res.writeHead(200, { "Content-Type": 'application/json' });
 			res.end(JSON.stringify(events));
-
+			done(client);
 		})
 	}); 
 
