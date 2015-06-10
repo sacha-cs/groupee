@@ -38,7 +38,6 @@ function chatSendMessage(request, response, params) {
             if(err) { return console.log(err); }
             var chatID = result.rows[0].chat_id;
             var safeMessage = params.chatmessage.replace(/'/g, "''");
-            console.log(safeMessage);
             var addMessageQuery = "INSERT INTO chat_messages " +
                                   "VALUES(" + chatID + ", '" + username +
                                       "', now(), '" + safeMessage + "');"

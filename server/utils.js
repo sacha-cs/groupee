@@ -85,3 +85,22 @@ this.splitParams = function(string, splitOn) {
     }
     return params;
 }
+
+this.doesUserExistInGroup = function(request, response, client, done, callback, groupID) {
+    var username = utils.getUser(request);
+
+    // Check user is member of the group
+    var checkUserMemberQuery = "SELECT * " +
+                               "FROM member_of " +
+                               "WHERE username='" + username + "' AND group_id=" + groupID;
+
+    client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
+        if(err) { return utils.respondError(err, response); }
+
+        if(checkUserMemberResult.rows.length == 1) {
+            callback(true);
+        } else {
+            callback(false);
+        }
+    });
+}
