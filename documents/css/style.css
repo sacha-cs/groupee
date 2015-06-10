@@ -45,3 +45,9 @@
 	border: solid black 1px;
 	font-weight: bold;
 }
+
+#documents-viewer iframe {
+	width: 80%;
+	height: 100%;
+}
+
