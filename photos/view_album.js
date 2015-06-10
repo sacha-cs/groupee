@@ -42,7 +42,7 @@ function openPhoto(index) {
         deletePhoto(index);
         return;
     }
-    // TODO: Show photo in gallery view (and display comments).
+
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
     var commentHtml = addCommentHtml(index, photoInformation.photoList[index]);
