@@ -9,6 +9,7 @@ postHandler.addHandler("usersettings/change_avatar", changeAvatar);
 postHandler.addHandler("usersettings/change_password", changePassword);
 postHandler.addHandler("groupsettings/quit_group", quitGroup);
 postHandler.addHandler("groupsettings/rename_group", renameGroup);
+getHandler.addHandler("groupsettings/get_space_used", getSpaceUsed);
 
 function login(request, response, params) {
 
@@ -516,4 +517,21 @@ function renameGroup(request, response, params) {
     });
 
     response.end();
+}
+
+
+function getSpaceUsed(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    var spaceUsed = '';
+    var form = new FormData();
+    form.append('group_id', groupId);
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/getSpaceUsed.php', function (err, res) {
+        res.on('data', function(chunk) {
+            spaceUsed += chunk;
+        });
+        res.on('end', function() {
+            response.write(spaceUsed);
+            response.end();
+        });
+    });
 }

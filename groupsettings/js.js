@@ -1,6 +1,7 @@
 function loaded() {
 	var groupName = decodeURIComponent(getCookie("group-name"));
 	document.getElementById("group-name").innerHTML = "<h1>" + groupName + "</h1>";
+    getSpaceUsed();
 }
 
 function toggleUsersSettings() {
@@ -62,4 +63,39 @@ function renameGroup() {
     var aClient = new HttpClient();
     aClient.post('rename_group', "groupName=" + groupName, function(response) {});
     location.reload(true);
+}
+
+function getSpaceUsed() {
+    var aClient = new HttpClient();
+    aClient.get('get_space_used', function(response) {
+        var spaceUsed = bytesToSize(response, 2);
+        document.getElementById("space-used").innerHTML = "Storage space used: " + spaceUsed;
+    })
+}
+
+
+function bytesToSize(bytes, precision) {  
+    var kilobyte = 1024;
+    var megabyte = kilobyte * 1024;
+    var gigabyte = megabyte * 1024;
+    var terabyte = gigabyte * 1024;
+   
+    if ((bytes >= 0) && (bytes < kilobyte)) {
+        return bytes + ' B';
+ 
+    } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
+        return (bytes / kilobyte).toFixed(precision) + ' KB';
+ 
+    } else if ((bytes >= megabyte) && (bytes < gigabyte)) {
+        return (bytes / megabyte).toFixed(precision) + ' MB';
+ 
+    } else if ((bytes >= gigabyte) && (bytes < terabyte)) {
+        return (bytes / gigabyte).toFixed(precision) + ' GB';
+ 
+    } else if (bytes >= terabyte) {
+        return (bytes / terabyte).toFixed(precision) + ' TB';
+ 
+    } else {
+        return bytes + ' B';
+    }
 }
