@@ -10,8 +10,6 @@ postHandler.addHandler("usersettings/change_password", changePassword);
 postHandler.addHandler("groupsettings/quit_group", quitGroup);
 postHandler.addHandler("groupsettings/rename_group", renameGroup);
 
-var FormData = require("form-data");
-
 function login(request, response, params) {
 
     //Check we have both a username and password
@@ -182,6 +180,7 @@ function createNewGroup(request, response, params) {
         client.query(newGroupQuery, function(err, result) {
             if(err) { return utils.respondError(err, response); }
             var groupId = result.rows[0].group_id;
+            createGroupDirectory(groupId);
             insertUserIntoMemberOf(request, response, client, done, 
                 function() { 
                     addGroupChat(request, response, client, done,
@@ -288,25 +287,6 @@ function addUserToGroup(request, response, params) {
 
 }
 
-function doesUserExistInGroup(request, response, client, done, callback, groupID) {
-    var username = utils.getUser(request);
-
-    // Check user is member of the group
-    var checkUserMemberQuery = "SELECT * " +
-                               "FROM member_of " +
-                               "WHERE username='" + username + "' AND group_id=" + groupID;
-
-    client.query(checkUserMemberQuery, function(err, checkUserMemberResult) {
-        if(err) { return utils.respondError(err, response); }
-
-        if(checkUserMemberResult.rows.length == 1) {
-            callback(true);
-        } else {
-            callback(false);
-        }
-    });
-}
-
 function getAllGroups(request, response) {
     var currentUser = utils.getUser(request);
     var getGroupInfoQuery = 
@@ -376,7 +356,7 @@ function checkUserExists(request, response, client, done, callback, username) {
 
 function setGroup(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
-        doesUserExistInGroup(request, response, client, done,
+        utils.doesUserExistInGroup(request, response, client, done,
             function(inGroup) {
                 var payload = {
                     success: false
@@ -416,18 +396,17 @@ function addGroupChat(request, response, client, done, callback, group_id) {
     });
 }
 
+
 function changeAvatar(req, response, data) {
     var user = utils.getUser(req);
-    var fileName = user + '.png';
+    var filePath = files.avatar.path;
 
     var form = new FormData();
     form.append('username', user);
-    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {
-        filename : fileName
-    });
+    form.append('avatar', fs.createReadStream(filePath));
 
     form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
-        fs.unlink('../tmp/' + fileName);
+        fs.unlink(filePath);
         response.writeHead("303", {'Location' : '/usersettings/' });
         response.end();
     });
