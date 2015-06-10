@@ -281,7 +281,7 @@ function getAllComments(request, response, params) {
     var id = params.photo_id;
     var viewingGroup = utils.getViewingGroup(request);
     var success = false;
-    var getCommentsQuery = "SELECT photo_id, comment_id, text, photos_comments.username, " +
+    var getCommentsQuery = "SELECT comment_id, text, photos_comments.username, " +
                            "photo_id, albums.group_id " +
                            "FROM (photos_comments " +
                            "RIGHT JOIN photos USING (photo_id)) " +
