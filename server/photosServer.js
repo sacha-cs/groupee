@@ -280,27 +280,44 @@ function deleteComment(request, response, params) {
 
 function getAllComments(request, response, params) {
     var id = params.photo_id;
-    var getPhotosQuery = "SELECT comment_id, text, username " + 
-                         "FROM photos_comments " +
-                         "WHERE photo_id=" + id;
+    var viewingGroup = utils.getViewingGroup(request);
+    var success = false;
+    var getCommentsQuery = "SELECT comment_id, text, photos_comments.username, " +
+                           "photo_id, albums.group_id " +
+                           "FROM (photos_comments " +
+                           "LEFT JOIN photos USING (photo_id)) " +
+                           "JOIN albums USING (album_id) " + 
+                           "WHERE photo_id=" + id;
+
     pg.connect(connectionString, function(err, client, done) {
-        client.query(getPhotosQuery, function(err, result) {
+        client.query(getCommentsQuery, function(err, result) {
             done(client);
             var commentList = [];
             var data = result.rows;
+            var payload = {
+                success: success,
+                comments: []
+            }
             for (var i = 0; i < data.length; i++) {
                 var row = data[i];
-                commentList.push({
-                    id: row.comment_id, 
-                    username: row.username,
-                    text: row.text
-                });
+                if (row.group_id == viewingGroup) { 
+                    commentList.push({
+                        id: row.comment_id, 
+                        username: row.username,
+                        text: row.text
+                    });
+                    success = true;
+                }
+            } 
+            
+            payload.success = success;
+            payload.comments = commentList;
+            if (!success) {
+                response.writeHead("307", {'Location' : '/404.html' });
+                response.end();
+            } else {
+                utils.respondJSON(response, payload);
             }
-            var payload = {
-                success: true,
-                comments: commentList
-            }
-            utils.respondJSON(response, payload);
         });
     }); 
     
