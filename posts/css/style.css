@@ -1,0 +1,235 @@
+h2, p {
+    font-size:100%;
+    font-weight:normal;
+}
+
+ul,li {
+    list-style:none;
+}
+
+ul {
+    padding:3em;
+
+    /* Fade the notes in on load */
+    animation: fadein 2s;
+    -moz-animation: fadein 2s; /* Firefox */
+    -webkit-animation: fadein 2s; /* Safari and Chrome */
+    -o-animation: fadein 2s; /* Opera */
+}
+
+ul li {
+    position: absolute; 
+    left: 50px;
+    top: 60px;
+    text-decoration:none;
+    color:#000;
+    display:block;
+    height:10em;
+    width:10em;
+    padding:1em;
+}
+
+ul li {
+    margin:1em;
+    float:left;
+}
+
+/* Titles of the notes. */
+ul li h2 {
+    font-size:140%;
+    font-weight:bold;
+    padding-bottom:10px;
+}
+
+/* Shadows. */
+ul li {
+    /* Firefox */
+    -moz-box-shadow:5px 5px 7px rgba(33,33,33,1);
+
+    /* Safari+Chrome */
+    -webkit-box-shadow: 5px 5px 7px rgba(33,33,33,.7); /* Dark grey */
+
+    /* Opera */
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+
+    /* -- Rotations -- */
+    -webkit-transform:rotate(-6deg);
+    -o-transform:rotate(-6deg);
+    -moz-transform:rotate(-6deg);
+
+    /* Make a clean and smooth transition from tilted to zoomed.
+       If something is to change to this element, do it gradually during a quarter of a second. */
+    -moz-transition:-moz-transform .15s ease;
+    -o-transition:-o-transform .15s ease;
+    -webkit-transition:-webkit-transform .15s ease;
+}
+
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-moz-keyframes fadein { /* Firefox */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+
+@-o-keyframes fadein { /* Opera */
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Tilt every second link four degrees to the right, offsetting it by 5px from the top. */
+ul li:nth-child(even) {
+    -o-transform:rotate(4deg);
+    -webkit-transform:rotate(4deg);
+    -moz-transform:rotate(4deg);
+    /*position:relative;*/
+    top:65px;
+}
+
+/* Tilt every 3rd link 3 degrees to the left, push it up by 5px. */
+ul li:nth-child(3n) {
+    -o-transform:rotate(-3deg);
+    -webkit-transform:rotate(-3deg);
+    -moz-transform:rotate(-3deg);
+    /*position:relative;*/
+    top:55px;
+}
+
+/* Tilt every 5th link by 5 degress to the right, push it up by 10px. */
+ul li:nth-child(5n) {
+    -o-transform:rotate(5deg);
+    -webkit-transform:rotate(5deg);
+    -moz-transform:rotate(5deg);
+    /*position:relative;*/
+    top:50px;
+}
+
+/* Zoom in the notes on hover and focus. */
+ul li:hover, ul li:focus {
+    /* Shadows */
+    -moz-box-shadow:10px 10px 15px rgba(0,0,0,.7);
+    -webkit-box-shadow: 10px 10px 15px rgba(0,0,0,.7);
+    box-shadow:10px 10px 15px rgba(0,0,0,.7);
+
+    /* Zoom in */
+    -webkit-transform: scale(1.15);
+    -moz-transform: scale(1.15);
+    -o-transform: scale(1.15);
+
+    /*position:relative;*/
+    z-index:5; /* Higher z-index ensures enlarged note covers the others. */
+}
+
+ul li textarea {
+    background: rgba(0, 0, 0, 0); /* transparent background */
+    resize: none; /* We don't want the user to resize the title! */
+    border-style: none; 
+}
+
+ul li textarea.vert {
+    resize: vertical;
+}
+
+ul li:hover #delete {
+    right:5px;
+    bottom:5px;
+    position:absolute;
+    height:25px;
+    width:25px;
+}
+
+.note-title {
+    font-size: 140%;
+    font-weight: bold;
+    height: 30px;
+    width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.note-content {
+    font-size:100%;
+    height: 100px;
+    width: 95%;
+}
+
+#controller {
+    display: inline-block;
+}
+
+#new-note {
+    -webkit-transform: scale(1);
+    -webkit-transition:-webkit-transform .15s ease;
+    display:block;
+    float:left;
+    margin-right:15px;
+    position: fixed;
+    z-index: 5;
+}
+
+div[id^="note-controller"] {
+    display:none;
+}
+
+ul li:hover div[id^="note-controller"] {
+    display:inline-block;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+img[id^="move"] {
+    left: 5px;
+    bottom: 5px;
+    width: 25px;
+    position: absolute;
+}
+
+#new-note:hover, #new-note:focus {
+    -webkit-transform: scale(1.2);
+    -webkit-transition:-webkit-transform .15s ease;
+    position: fixed;
+}
+
+/* NICE SCROLLBAR */
+
+textarea::-webkit-scrollbar {
+    width: 5px;  /* for vertical scrollbars */
+}
+
+textarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#new-note-icon {
+    padding-top: 15px;
+    height:50px;
+    width:50px;
+}
+

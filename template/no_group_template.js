@@ -3,13 +3,16 @@ function templateLoaded() {
     var userText = document.getElementById("navbar-self");
     var avatarImage = document.getElementById("avatar-self");
     userText.innerHTML = "<p>Welcome, " + userName + "!</p>";
-    avatarImage.innerHTML = "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" + userName + ".png'>"
+    avatarImage.style["background-image"] = "url(" + getAvatar(userName) + ")";
 
 	loaded();
 }
 
 /* Log out the current user, and clear the session cookie. */
 function logout() { 
-    document.cookie="seshCookie=;path=/";
+    var client = new HttpClient(true);
+    client.get("/login/logout", function() {
+        document.cookie="seshCookie=;path=/";
+    });
 }
 

@@ -4,9 +4,21 @@ this.respondPlain = function (response, text) {
     response.end(text);
 }
 
-this.respondError = function (err, response) {
+this.respondJSON = function(response, payload) {
+    response.writeHead(200, {'Content-Type': 'application/json'});
+    response.end(JSON.stringify(payload));
+}
+
+this.respondError = function(err, response, errorMsg) {
     console.log(err);
-    return utils.respondPlain(response);
+    if(!errorMsg) {
+        errorMsg = "Internal Server Error";
+    }
+    var payload = {
+        success: false,
+        error: errorMsg
+    };
+    return utils.respondJSON(response, payload);
 }
 
 this.getUser = function(request) {
@@ -26,7 +38,7 @@ this.getViewingGroup = function(request) {
     }
 }
 
-/* Store the group that the user is currently viewing in the cookie. */
+// Store the group that the user is currently viewing in the cookie.
 this.setViewingGroup = function(request, groupId) {
     var seshCookie = this.getSessionCookie(request);
     if(seshCookie && sessionKeys[seshCookie]) {
@@ -34,12 +46,20 @@ this.setViewingGroup = function(request, groupId) {
     }
 }
 
-this.getSessionCookie = function(request) {
-    var cookie = request.headers.cookie;
-    if(!cookie) return;
-    var cookies = this.splitParams(cookie, ';');
-    var seshCookie = cookies.seshCookie;
-    return seshCookie;
+// Return the id of the album that the viewer is currently viewing. 
+this.getViewingAlbum = function(request) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        return sessionKeys[seshCookie].albumViewing;
+    }
+}
+
+// Store album that the user is currently viewing in the cookie.
+this.setViewingAlbum = function(request, albumId) {
+    var seshCookie = this.getSessionCookie(request);
+    if(seshCookie && sessionKeys[seshCookie]) {
+        sessionKeys[seshCookie].albumViewing = albumId;
+    }
 }
 
 this.getSessionCookie = function(request) {

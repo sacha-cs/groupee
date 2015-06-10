@@ -1,0 +1,157 @@
+#content {
+	margin: 50px;
+}
+
+#side-menu {
+	text-align: center;
+	float: left;
+	width: 30%;
+	background-color: #F7F7F7;
+  	border-radius: 2px;
+  	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+#user-settings {
+	text-align: center;
+	float: right;
+	width:70%;
+}
+
+#avatar img {
+	width: 50%;
+	margin: 20px;
+	border-radius: 5px;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+#options {
+    text-align: center;
+	width: 100%;
+}
+
+#options {
+    display: inline-block;
+	padding: 0px;
+    list-style-type: none;
+    width: 85%;
+}
+
+
+button {
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  background: #6991AC;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  border-style: none;
+  margin-bottom: 10px;
+  width: 80%;
+
+}
+
+button:hover {
+  background: #55758C;
+  text-decoration: none;
+}
+
+
+#account, #password {
+  display: none;
+  padding: 30px;
+  width: 35%;
+  background-color: #F7F7F7;
+  margin: 0 auto;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+#account h1, #password h1 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 2.0em;
+}
+
+#account input[type=submit], #password input[type=submit] {
+  width: 70%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+#account input[type=file] {
+  height: 44px;
+  font-size: 16px;
+  width: 70%;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.upload, .password {
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  height: 36px;
+  padding: 0 8px;
+}
+
+.upload-submit, .password-submit{
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+}
+
+.upload-submit:hover, .password-submit:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
+
+#password input[type=password] {
+  height: 44px;
+  font-size: 16px;
+  width: 70%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+#password input[type=password]:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.feedback-text {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+
+#error {
+  margin-top: 10px;
+    color: #c33;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+#success {
+  margin-top: 10px;
+  color: blue;
+  font-weight: 400;
+  opacity: 0.7;
+}

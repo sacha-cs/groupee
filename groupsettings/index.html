@@ -1,0 +1,45 @@
+<?template?>
+/template/main_template.html
+<?title?>
+Group Settings
+<?headers?>
+<script src="js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<?content?> 
+<div id="side-menu">
+	<div id="group-name">
+	</div>
+
+	<div id="options">
+		<button onclick="toggleUsersSettings()">Add users</button>
+        <button onclick="toggleRenameSettings()">Rename group</button>
+		<button onclick="toggleQuitSettings()">Quit this group</button>
+	</div>
+</div>
+
+<div id="group-settings"> 	
+
+	<div id="add-users">
+    	<h1>Add users to this group</h1><br>
+        <input type="text" name="username" id="username" placeholder="Enter username">
+        <input type="submit" name="submit" class="add add-submit" value="Add user" onclick=addUser()>
+        <div class="add-text">
+            <p id="error"></p>
+        </div>
+        <div class="add-text">
+            <p id="success"></p>
+        </div>
+	</div>
+
+	<div id="quit-confirm">
+    	<h1>Are you sure you want to quit the group?</h1><br>
+        <input type="submit" name="submit" class="quit quit-submit" value="Confirm" onclick=quitGroup()>
+	</div>
+
+    <div id="rename-group">
+        <h1>Rename the group</h1><br>
+        <input type="text" name="group-new-name" id="group-new-name" placeholder="Enter new group name">
+        <input type="submit" name="submit" class="add add-submit" value="Rename" onclick=renameGroup()>
+    </div>
+</div>
+

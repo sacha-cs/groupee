@@ -2,9 +2,25 @@ var months = ['January', 'February', 'March', 'April', 'May', 'June',
 			  'July', 'August', 'September', 'October', 'November', 'December'];
 
 var currDate = new Date(); // today's date
-var currViewDate = currDate;
+var currViewDate = currDate; // to know the current month that is displayed
+
 
 function loaded() {
+	var table = document.getElementById("cal_table");
+	for(var i=0; i<7; i++) {
+		table.children[0].children[i].style.background = "#657383";
+		table.children[0].children[i].style.color = "white"
+	}
+
+
+	for(var i=0; i<7; i++) {
+		for(var j=1; j<=6; j++) {
+			table.children[j].children[i].onmouseup = 
+				addEvent(table.children[j].children[i].innerHTML);	
+			table.children[j].children[i].onmousedown = 
+				startDrag(table.children[j].children[i].innerHTML);
+		}
+	}
 	getPresentMonth();
 }
 
@@ -34,7 +50,7 @@ function loadTheDates(numOfDays, currRow, currCol) {
 		table.children[currRow].children[currCol].style.background = "#F5F5F5";
 		if ((i == currDate.getDate()) && (currDate.getMonth() == currViewDate.getMonth())
 			&& (currDate.getYear() == currViewDate.getYear())) {
-			table.children[currRow].children[currCol].style.background = "#C3D7DF";	
+			table.children[currRow].children[currCol].style.background = "#FFCC66";	
 		}
 		currCol++;
 		if (currCol == 7) {
@@ -81,4 +97,12 @@ function getPresentMonth() {
 
 	setMonthAndYear(currMonth, currYear);
 	loadTheDates(numOfDays, 1, firstDay);
+}
+
+function addEvent(date) {
+	date = date + "New event";
+}
+
+function startDrag(date) {
+
 }
