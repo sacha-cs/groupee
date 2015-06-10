@@ -43,7 +43,7 @@ function openPhoto(index) {
         deletePhoto(index);
         return;
     }
-    // TODO: Show photo in gallery view (and display comments).
+
     document.getElementById("opacity-layer").style.visibility = 'visible';
     var gallery = document.getElementById("gallery-view");
     var commentHtml = addCommentHtml(index, photoInformation.photoList[index]);
@@ -116,7 +116,6 @@ function deleteComment(id) {
 
 function resizeCommentBox(index) {
     var image = document.getElementById(index);
-    console.log(document.getElementById(index));
     image.onload = function() {
         document.getElementById("comment-card" + index).style.height = image.height;
     }
