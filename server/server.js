@@ -4,7 +4,6 @@ fs = require('fs');
 formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
-request = require('request');
 
 utils = require('./utils');
 
@@ -14,6 +13,7 @@ getHandler = require('./getHandlers.js');
 require('./userFunctions');
 chat = require('./chatServer');
 require('./todosServer');
+require('./noteServer');
 require('./whiteboardServer');
 require('./calendarServer');
 
@@ -24,7 +24,10 @@ filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
 sessionKeys = [];
 
 var disallowed = ["server"];
-var anonAvailable = ["login"];
+var anonAvailable = ["login", "favicon.ico"];
+
+getHandler.addHandler("favicon.ico", faviconResponse);
+getHandler.addHandler("", redirectToHome);
 
 var port = process.argv[2];
 if(!port)
@@ -50,15 +53,21 @@ function serverListener(request, response) {
         var requestURL = request.url.substring(1).split('?')[0];
         console.log(requestURL);
         var handler = postHandler.getHandler(requestURL);
-
         if(handler != null) {
             if(!postHandler.useOwn(requestURL)) {
                 var form = new formidable.IncomingForm();
-                form.uploadDir = '/vol/project/2014/271/g1427136/uploads';
+                form.uploadDir = '../tmp';
                 form.keepExtensions = true;
                 form.on("error", function(error) {
                     console.log(error);
                 });
+
+                if (requestURL == 'usersettings/change_avatar') {
+                    form.keepExtensions = false;
+                    form.on("fileBegin", function(name, file) {
+                        file.path = form.uploadDir + "/" + utils.getUser(request) + ".png";
+                    });
+                } 
                 form.parse(request, function(err, fields, files) {
                     handler(request, response, fields, files);
                 });
@@ -126,9 +135,15 @@ function returnFile(request, response) {
         case '.wav':
             contentType = 'audio/wav';
             break;
+        case '.mp3':
+            contentType = 'audio/mp3';
+            break;
     }
-
-    fs.readFile(filePath, 'utf-8', function(error, content) {
+    
+    var encoding = '';
+    if(contentType == 'text/html' || contentType == 'text/js')
+        encoding = 'utf-8';
+    fs.readFile(filePath, encoding, function(error, content) {
         if (error) {
             if(error.code == 'ENOENT') {
                 console.log("404ing! " + filePath);
@@ -231,4 +246,14 @@ function requestDisallowed(url) {
             return true;
     }
     return false;
+}
+
+function faviconResponse(request, response) {
+    response.writeHead("301", {"Location": "http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/favicon.ico"});
+    response.end();
+}
+
+function redirectToHome(request, response) {
+    response.writeHead("301", {"Location": "home"});
+    response.end();
 }

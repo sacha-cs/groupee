@@ -39,6 +39,10 @@ function getCookie(cname) {
     return "";
 }
 
+function setCookie(cname, value) {
+    document.cookie = cname + "=" + value + ";path=/";
+}
+
 function setErrorText(error) {
 
     document.getElementById("error").innerHTML = error;
@@ -62,4 +66,9 @@ function escapeHtml(text) {
     };
 
     return text.replace(/[&<>"'=]/g, function(m) { return map[m]; });
+}
+
+function getAvatar(user) {
+    return "http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" +
+           user + ".png";
 }

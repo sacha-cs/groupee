@@ -1,0 +1,134 @@
+#content {
+	margin: 50px;
+}
+
+#side-menu {
+	padding: 10px;
+	text-align: center;
+	float: left;
+	width: 400px;
+	background-color: #F7F7F7;
+  	border-radius: 2px;
+  	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  	margin-bottom: 30px;
+}
+
+#group-settings {
+	text-align: center;
+	float: left;
+}
+
+#options {
+    text-align: center;
+    display: inline-block;
+	padding: 0px;
+    list-style-type: none;
+    width: 300px;
+}
+
+
+button {
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  background: #6991AC;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  border-style: none;
+  margin-bottom: 10px;
+  width: 80%;
+
+}
+
+button:hover {
+  background: #55758C;
+  text-decoration: none;
+}
+
+
+#add-users, #quit-confirm, #rename-group {
+  display: none;
+  padding: 40px;
+  width: 274px;
+  background-color: #F7F7F7;
+  margin: 0px auto 10px;
+  margin-left: 100px;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+h1 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 2.3em;
+}
+
+#add-users input[type=submit], #quit-confirm input[type=submit], #rename-group input[type=submit] {
+  width: 100%;
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+#add-users input[type=text], #rename-group input[type=text] {
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+#add-users input[type=text]:hover, #rename-group input[type=text]:hover  {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.add, .quit {
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  font-weight: 700;
+  height: 36px;
+  padding: 0 8px;
+}
+
+.add-submit, .quit-submit {
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+}
+
+.add-submit:hover, .quit-submit:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
+
+.add-text {
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+}
+
+#error {
+    color: #c33;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+#success {
+  color: blue;
+  font-weight: 400;
+  opacity: 0.7;
+}

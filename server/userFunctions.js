@@ -1,39 +1,53 @@
 postHandler.addHandler("login/login", login);
 postHandler.addHandler("login/register", register);
-postHandler.addHandler("groups/create", handleGroupInsertion);
+getHandler.addHandler("login/logout", logout);
+postHandler.addHandler("groups/create", createNewGroup, true);
 postHandler.addHandler("groups/add", addUserToGroup);
-getHandler.addHandler("groups/add_users", setAddUsersGroup);
 getHandler.addHandler("groups/get_all_groups", getAllGroups);
 getHandler.addHandler("groups/set_viewing_group", setGroup);
+postHandler.addHandler("usersettings/change_avatar", changeAvatar);
+postHandler.addHandler("usersettings/change_password", changePassword);
+postHandler.addHandler("groupsettings/quit_group", quitGroup);
+postHandler.addHandler("groupsettings/rename_group", renameGroup);
+
+var FormData = require("form-data");
 
 function login(request, response, params) {
 
     //Check we have both a username and password
     if(!params.username || !params.password) {
-        return utils.respondPlain(response, "NEmptyFields");
+        payload.error = "Please fill out all fields";
+        return utils.respondJSON(response, payload);
     }
     
     //Usernames are all lowercase
     var username = params.username.toLowerCase();
     
     pg.connect(connectionString, function(err, client, done) {
+        payload = {
+            success : false
+        }
         if(err) {
             console.log(err);
-            return utils.respondPlain(response, "NServerError");
+            payload.error = "Internal Server Error";
+            return utils.respondJSON(response, payload);
         }
         
         var query = "SELECT * " +
                     "FROM users " +
                     "WHERE username='" + username + "'";
         client.query(query, function(err, result) {
+            done(client);
             if(err) {
                 console.log(err);
-                return utils.respondPlain(response, "NServerError");
+                payload.error = "Internal Server Error";
+                return utils.respondJSON(response, payload);
             }
             
             //If the user does not exit (i.e. no rows where username matches)
             if(result.rows.length == 0) {
-                return utils.respondPlain(response, "NNoUser");
+                payload.error = "No user with that username";
+                return utils.respondJSON(response, payload);
             }
     
             //Get the password hash from the database and compare it to
@@ -42,122 +56,59 @@ function login(request, response, params) {
             
             //If the password doesn't match
             if(!passwordHash.verify(params.password, expected)) {
-                return utils.respondPlain(response, "NIncorrectPassword");
+                payload.error = "Incorrect Password";
+                return utils.respondJSON(response, payload);
             }
             
-            //Check if the user is already in a group.
-            var inGroupQuery = "SELECT group_id FROM member_of WHERE username='" + username + "'";
-            var user_info = {};
-            client.query(inGroupQuery, function(err, result) {
-                done(client);
-                if(err) {
-                    console.log(err);
-                    return utils.respondPlain(response, "NServerError");
-                }
-
-                user_info = {"username" : username};
-                //Create a new session cookie for the user and send it to them
-                //seshCookie encodes the username and the groups that the user resides in.
-                var seshCookie = createSessionCookie(user_info);
-                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
-            });
+            user_info = {"username" : username};
+            //Create a new session cookie for the user and send it to them
+            var seshCookie = createSessionCookie(user_info);
+            payload.success = true;
+            payload.seshCookie = seshCookie;
+            payload.username = username;
+            return utils.respondJSON(response, payload);
         });
     });
 }
 
+function logout(request, response) {
+    var seshCookie = utils.getSessionCookie(request);
+    delete sessionKeys[seshCookie];
+    utils.respondJSON(response, { success: true });
+}
+
 function checkParams(response, params) {
+    var payload = {
+        success:false,
+    }
     if(!params.username || !params.password || !params.passwordconfirm) {
-            return utils.respondPlain(response, "NEmptyFields");
+        payload.error = "Please fill out all fields";
+        utils.respondJSON(response, payload);
+        return true;
     }
 
     if (!nameIsValid(params.username) || 
         !nameIsValid(params.group) ||
         !passwordIsValid(params.password)) {
-        return utils.respondPlain(response, "NInvalidCharacters");
+        payload.error = "Invalid characters in username/password";
+        utils.respondJSON(response, payload);
+        return true;
     }
 
     if (params.password != params.passwordconfirm) {
-        return utils.respondPlain(response, "NPasswordsDifferent");
+        payload.error = "Passwords different";
+        utils.respondJSON(response, payload);
+        return true;
     }
+
+    return false;
 }
-
-function handleGroupInsertion(request, response, params) {
-    var groupname = params.group_name;
-    var description = params.description;
-    var username = utils.getUser(request);
-    var privacy = params.privacy.toLowerCase();
-
-    pg.connect(connectionString, function(err, client, done) {
-        if(err) {
-            console.log(err);
-            return utils.respondPlain(response, "NServerError");
-        }
-        // Group does not already exist, so we create a new one.
-        var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
-                            "VALUES('" + groupname + "', '" + privacy + 
-                            "', '" + description + "') " +
-                            "RETURNING group_id";
-        client.query(newGroupQuery, function(err, result) {
-            if(err) { return utils.respondError(err, response); }
-            var group_id = result.rows[0].group_id;
-            insertUserIntoMemberOf(request, response, client, done, 
-                function() { 
-                    addGroupChat(request, response, client, done,
-                    function() {
-                        done(client);
-                        utils.respondPlain(response, "Y" + group_id)
-                    }, group_id);
-                },
-            group_id, username );
-        });
-    });
-}
-
-function extractGroupId(request, response, client, done, callback, group_name) {
-    var idExtractQuery = "SELECT group_id FROM groups WHERE group_name='" + group_name + "'";
-    client.query(idExtractQuery, function(err, result) {
-        if(err) {return utils.respondError(err, response); } 
-           
-        if (result.rows.length > 0) {
-            callback(request, response, client, done, result.rows[0].group_id);
-        }
-    });
-    
-}
-
-function insertUserIntoMemberOf(request, response, client, done, callback, groupId, username) {
-    // Given that the user does not already exist in the group, insert user into the group.
-    var getUserQuery = "SELECT username " + 
-                       "FROM member_of " +
-                       "WHERE username='" + username + "' " +
-                       "AND group_id='" + groupId + "'";
-    client.query(getUserQuery, function(err, result) {
-        if(err) { 
-            done(client);
-            return utils.respondError(err, response); 
-        }
-    
-        if(result.rows.length > 0) {
-            done(client);
-            return utils.respondPlain(response, "NUserExistsInGroup");
-        }
-        
-        var groupInsertQuery = "INSERT INTO member_of VALUES('" + groupId + "', '" + username + "')";
-        client.query(groupInsertQuery, function(err, result) {
-            if(err) { 
-                done(client);
-                return utils.respondError(err, response); 
-            }
-            // User has been inserted into appropriate group.
-            callback();
-        });
-    });
-}
-
 
 function register(request, response, params) {
 
-    checkParams(response, params);    
+    if(checkParams(response, params)) {
+        return;
+    }
 
     //Usernames are all lowercase
     var username = params.username.toLowerCase();
@@ -175,7 +126,11 @@ function register(request, response, params) {
             if(err) { return utils.respondError(err, response); }
             
             if(checkResult.rows.length > 0) {
-                return utils.respondPlain(response, "NUsernameTaken");
+                var payload = {
+                    success: false,
+                    error: "Username already taken"
+                };
+                return utils.respondJSON(response, payload);
             }
 
             //Generate the password hash
@@ -186,24 +141,112 @@ function register(request, response, params) {
                     "VALUES('" + username + "', '" + hashedPassword + "')";
             client.query(usernameQuery, function(err, checkResult) {
                 if(err) { return utils.respondError(err, response); }
+                done(client);
                 
                 // New user has just been created. 
                 createAvatar(username);
                 // login automatically after registration
                 var user_info = {"username" : username};
                 var seshCookie = createSessionCookie(user_info);
-                return utils.respondPlain(response, "Y" + seshCookie + "#" + username);
+                var payload = {
+                    success: true,
+                    seshCookie: seshCookie,
+                    username: username
+                };
+                return utils.respondJSON(response, payload);
             });
         });
     });
 }
 
+function createNewGroup(request, response, params) {
+    params = JSON.parse(params);
+    var groupname = params.group_name;
+    var description = params.description;
+    var username = utils.getUser(request);
+    var privacy = params.privacy.toLowerCase();
+
+    var payload = {};
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) {
+            console.log(err);
+            return utils.respondError(err, response);
+        }
+
+        description = description.replace(/'/g, "''");
+        groupname = groupname.replace(/'/g, "''");
+        var newGroupQuery = "INSERT INTO groups (group_name, privacy, description) " +
+                            "VALUES('" + groupname + "', '" + privacy + 
+                            "', '" + description + "') " +
+                            "RETURNING group_id";
+        client.query(newGroupQuery, function(err, result) {
+            if(err) { return utils.respondError(err, response); }
+            var groupId = result.rows[0].group_id;
+            insertUserIntoMemberOf(request, response, client, done, 
+                function() { 
+                    addGroupChat(request, response, client, done,
+                    function() {
+                        done(client);
+                        payload.success = true;
+                        utils.setViewingGroup(request, groupId);
+                        utils.respondJSON(response, payload)
+                    }, groupId);
+                },
+            groupId, username );
+        });
+    });
+}
+
+function extractGroupId(request, response, client, done, callback, group_name) {
+    var idExtractQuery = "SELECT group_id FROM groups WHERE group_name='" + group_name + "'";
+    client.query(idExtractQuery, function(err, result) {
+        if(err) {return utils.respondError(err, response); } 
+           
+        if (result.rows.length > 0) {
+            callback(request, response, client, done, result.rows[0].group_id);
+        }
+    });
+    
+}
+
+function insertUserIntoMemberOf(request, response, client, done, callback, groupId, username) {
+    var payload = {
+        success: false,
+        error: ""
+    }
+    // Given that the user does not already exist in the group, insert user into the group.
+    var getUserQuery = "SELECT username " + 
+                       "FROM member_of " +
+                       "WHERE username='" + username + "' " +
+                       "AND group_id='" + groupId + "'";
+    client.query(getUserQuery, function(err, result) {
+        if(err) { 
+            done(client);
+            return utils.respondError(err, response); 
+        }
+    
+        if(result.rows.length > 0) {
+            done(client);
+            payload.error = "User is already in group"
+            return utils.respondJSON(response, payload);
+        }
+        
+        var groupInsertQuery = "INSERT INTO member_of VALUES('" + groupId + "', '" + username + "')";
+        client.query(groupInsertQuery, function(err, result) {
+            if(err) { 
+                done(client);
+                return utils.respondError(err, response); 
+            }
+            // User has been inserted into appropriate group.
+            callback();
+        });
+    });
+}
+
 function createAvatar(user) {
-    request.post(
-    'http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php',
-    { form: { username: user } },
-            function (error, response, body) {}
-    );
+    var form = new FormData();
+    form.append("username", user);
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php', function (error, response) {});
 }
 
 function nameIsValid(name) {
@@ -219,7 +262,6 @@ function createSessionCookie(user_info) {
     var seshCookie = Math.round(Math.random() * 4294967295);
     var cookieString = user_info.username;
 
-    //TODO: have a not in group global const
     sessionKeys["" + seshCookie] = { username: user_info.username, groupViewing:-1 }
     return seshCookie;
 }
@@ -228,39 +270,22 @@ function addUserToGroup(request, response, params) {
     var username = params.username.toLowerCase();
     var groupID = utils.getViewingGroup(request);
 
-
     pg.connect(connectionString, function(err, client, done) {
         checkUserExists(request, response, client, done,
-            function(request, response, client, done) {
+            function() {
                 insertUserIntoMemberOf(request, response, client, done, 
                     function() {
                         done(client);
-                        utils.respondPlain(response, "YUserAddedSuccessfully");
+                        var payload = {
+                            success: true,
+                        }
+                        utils.respondJSON(response, payload);
                     },
                 groupID, username);
             }, 
         username);
     });
 
-}
-
-//TODO: Factor out - duplication with setGroup.
-function setAddUsersGroup(request, response, params) {
-    pg.connect(connectionString, function(err, client, done) {
-        doesUserExistInGroup(request, response, client, done,
-            function(request, response, client, done, userExists) {
-                done(client);
-                if(userExists) {
-                    // Safety check done
-                    // Remember that the user is viewing that group from session cookie before redirecting
-                    utils.setViewingGroup(request, params.group_id);
-                    response.writeHead("307", {'Location' : 'add_users.html' });
-                } else {
-                    response.writeHead("307", {'Location' : '/404.html' });
-                }
-                response.end();
-            }, params.group_id);
-        }); 
 }
 
 function doesUserExistInGroup(request, response, client, done, callback, groupID) {
@@ -275,41 +300,55 @@ function doesUserExistInGroup(request, response, client, done, callback, groupID
         if(err) { return utils.respondError(err, response); }
 
         if(checkUserMemberResult.rows.length == 1) {
-            // Safety check done
-            // Remember that the user is viewing that group from session cookie before redirecting
-            callback(request, response, client, done, true);
+            callback(true);
         } else {
-            callback(request, response, client, done, false);
+            callback(false);
         }
     });
 }
 
 function getAllGroups(request, response) {
     var currentUser = utils.getUser(request);
-    var getGroupInfoQuery = "SELECT group_name, description, group_id " + 
-                            "FROM groups NATURAL JOIN member_of " + 
-                            "WHERE username='" + currentUser + "'";
+    var getGroupInfoQuery = 
+        "SELECT group_name, description, groups.group_id, mo2.username " + 
+        "FROM groups " +
+        "JOIN member_of AS mo1 " +
+        "ON groups.group_id=mo1.group_id "+
+        "JOIN member_of AS mo2 " +
+        "ON groups.group_id=mo2.group_id "+
+        "WHERE mo1.username='" + currentUser + "'";
     pg.connect(connectionString, function(err, client, done) {
         client.query(getGroupInfoQuery, function(err, result) {
-            done(client);
-            if(err) { return utils.respondError(err, response); }
-            
-            var responseString = "";
-            if(result.rows.length > 0) {
-              /* Populate the groupInfo array with information about the groups associated with
-                 the current user. */
-                for(var i = 0; i < result.rows.length; i++) {
-                    var row = result.rows[i];
-                    var name = row.group_name;
-                    var desc = encodeURIComponent(row.description);
-                    var id = row.group_id;
-                    responseString += "name=" + name + "&description=" + desc + "&group_id=" + id + "#";
-                }
-            } else {
-                /* TODO: Handle case when user isn't associated with any groups. */
+            done(client); 
+            if(err) { 
+                return utils.respondError(err, response);
             }
-            response.write(responseString);
-            response.end();
+            
+            var payload = {
+                success: true,
+                groups: []
+            };
+            var addedIds = {};
+            if(result.rows.length > 0) {
+                for(var i = 0; i < result.rows.length; i++) {
+                    var row =  result.rows[i];
+                    var pos = addedIds[row.group_id];
+                    if(pos == undefined) {
+                        var members = [row.username];
+                        pos = payload.groups.push({
+                                name: row.group_name,
+                                desc: row.description,
+                                id: row.group_id,
+                                members: members
+                              });
+                        pos--;
+                        addedIds[row.group_id] = pos;
+                    } else {
+                        payload.groups[pos].members.push(row.username);
+                    }
+                }
+            }
+            utils.respondJSON(response, payload);
         });
     });
 }
@@ -322,36 +361,43 @@ function checkUserExists(request, response, client, done, callback, username) {
             return utils.respondError(err, response); 
         }
     
-        if(result.rows[0].length == 0) {
+        if(result.rows.length == 0) {
             done(client);
-            return utils.respondPlain(response, "NUserDoesNotExist");
+            var payload = {
+                success: false,
+                error: "User does not exist"
+            }
+            return utils.respondJSON(response, payload);
         }
 
-        callback(request, response, client, done);
+        callback();
     });
 }
 
 function setGroup(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         doesUserExistInGroup(request, response, client, done,
-            function(request, response, client, done, userExists) {
-                if(userExists) {
-                    // Safety check done
-                    // Remember that the user is viewing that group from session cookie before redirecting
-                    utils.setViewingGroup(request, params.group_id);
-                    var viewingGroupName = "";
-                    var getGroupNameQuery = "SELECT group_name FROM groups WHERE group_id='" + params.group_id + "'";
-                    client.query(getGroupNameQuery, function(err, result) {
-                        if(err) { return respondError(err, response); }
-                        done(client);
-                        if (result.rows.length > 0) {
-                            viewingGroupName = encodeURIComponent(result.rows[0].group_name);
-                        }
-                        utils.respondPlain(response, "Y" + viewingGroupName);   
-                    });
-                } else {
-                    utils.respondPlain(response, "N");
+            function(inGroup) {
+                var payload = {
+                    success: false
                 }
+
+                if(!inGroup) {
+                    return utils.respondJSON(response, payload);
+                }
+
+                utils.setViewingGroup(request, params.group_id);
+                var getGroupNameQuery = 
+                    "SELECT group_name " +
+                    "FROM groups " +
+                    "WHERE group_id='" + params.group_id + "'";
+                client.query(getGroupNameQuery, function(err, result) {
+                    done(client);
+                    if(err) { return respondError(err, response); }
+                    payload.success = true;
+                    payload.name = result.rows[0].group_name;
+                    utils.respondJSON(response, payload);   
+                });
             }, params.group_id);
         });
 }
@@ -364,9 +410,131 @@ function addGroupChat(request, response, client, done, callback, group_id) {
         var groupQuery = "INSERT INTO group_chats " +
                          "VALUES(" + chat_id + ", " + group_id + ");";
         client.query(groupQuery, function(err, result) {
-            if(err) { return utils.respondErr(response, err); }
+            if(err) { return utils.respondError(response, err); }
             callback(chat_id);
         });
     });
+}
 
+function changeAvatar(req, response, data) {
+    var user = utils.getUser(req);
+    var fileName = user + '.png';
+
+    var form = new FormData();
+    form.append('username', user);
+    form.append('avatar', fs.createReadStream('../tmp/' + fileName), {
+        filename : fileName
+    });
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
+        fs.unlink('../tmp/' + fileName);
+        response.writeHead("303", {'Location' : '/usersettings/' });
+        response.end();
+    });
+
+}   
+
+function changePassword(request, response, params) {
+    var user = utils.getUser(request);
+    var payload = {
+        success: false
+    }
+
+    pg.connect(connectionString, function(err, client, done) {
+        if(err) {
+            return utils.respondError(err, response);
+        }
+        
+        var checkCorrectPasswordQuery = "SELECT * " +
+                                        "FROM users " +
+                                        "WHERE username='" + user + "'";
+    
+        client.query(checkCorrectPasswordQuery, function(err, checkCorrectPasswordResult) {
+            if(err) {
+                done(client);
+                return utils.respondError(err, response);
+            }
+    
+            var expected = checkCorrectPasswordResult.rows[0].pwdhash;
+            
+            if(!passwordHash.verify(params.currentPassword, expected)) {
+                payload.error = "Incorrect Password";
+                return utils.respondJSON(response, payload);
+            }
+
+            var hashedNewPassword = passwordHash.generate(params.newPassword);
+            var changePasswordQuery = 
+                "UPDATE users " +
+                "SET pwdhash='" + hashedNewPassword + "' " +
+                "WHERE username='" + user + "'";
+            client.query(changePasswordQuery, function(err, result) {
+                done(client);
+                if(err) { return utils.respondError(err, response); }
+                payload.success = true;
+                return utils.respondJSON(response, payload);
+            });
+        });
+    });
+}
+
+function createGroupDirectory(group_id) {
+    var form = new FormData();
+    form.append('group_id', group_id);
+
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createGroupDirectory.php', function (err, res) {
+    });
+}
+
+function quitGroup(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    var username = params.username;
+
+    var checkHowManyMembersQuery = "SELECT * " + 
+                                   "FROM member_of " +
+                                   "WHERE group_id=" + groupId;
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(checkHowManyMembersQuery, function(err, howManyMembersResult) {
+            if (howManyMembersResult.rows.length == 1) {
+                // delete entire group from groups and row from member_of
+                var deleteFromGroupsQuery = "DELETE FROM groups " +
+                                            "WHERE group_id=" + groupId;
+
+                client.query(deleteFromGroupsQuery, function(err, deleteFromGroupsResult) {
+                    if(err) {
+                        console.log(err);
+                    }
+                        done(client);
+                    });  
+            } else {
+                // delete user from member_of table
+                var deleteUserFromMemberOfQuery = "DELETE FROM member_of " +
+                                                  "WHERE group_id=" + groupId + 
+                                                  " AND username='" + username + "'";
+                client.query(deleteUserFromMemberOfQuery, function(err, deleteUserFromMemberOfResult) {
+                    done(client);
+                });
+            }
+        });
+    });
+    
+    response.end();
+}
+
+
+function renameGroup(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    
+    var renameGroupQuery = "UPDATE groups " +
+                           "SET group_name='" + params.groupName + "' " +
+                           "WHERE group_id=" + groupId;
+
+    pg.connect(connectionString, function(err, client, done) {
+
+        client.query(renameGroupQuery, function(err, renameGroupResult) {
+            done(client);
+        });
+    });
+
+    response.end();
 }
