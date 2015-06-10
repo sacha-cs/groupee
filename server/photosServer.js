@@ -59,8 +59,7 @@ function getAllAlbums(request, response, params) {
                     responseObj.albums.push({albumId: row.album_id, albumName: row.name, description: row.description, thumb: row.thumb});
                 }
             }
-            response.write(JSON.stringify(responseObj));
-            response.end();
+            utils.respondJSON(response, responseObj);
         });
     });
 }
@@ -114,7 +113,7 @@ function getAllPhotos(request, response, params) {
             for (var i = 0; i < result.rows.length; i++) {
                 photoInfo.photoList.push(result.rows[i].photo_id);
             }
-            response.end(JSON.stringify(photoInfo));
+            utils.respondJSON(response, photoInfo);
         });
     });
 }

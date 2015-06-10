@@ -9,13 +9,13 @@ function loaded() {
 
 function getAllPhotos() {
     var content = document.getElementById("content");
-    content.innerHTML += "<div onclick=popupForm() class='photo' id='new-photo'>" + 
-                            "<img src='" + prefix + "/icons/new-album.png'>" +
-                         "</div>"
     var aClient = new HttpClient();
     aClient.get('get_photos', function(response) {
         var photoInfo = JSON.parse(response);
         photoInformation = photoInfo;
+        content.innerHTML += "<div onclick=popupForm() class='photo' id='new-photo'>" + 
+                                "<img src='" + prefix + "/icons/new-album.png'>" +
+                             "</div>"
         for (var i = 0; i < photoInfo.photoList.length; i++) {
             var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "' onclick='openPhoto(" + i + ")'>" +   
                                 "<img class='thumb' src='" + prefix + "/groups/group" +
