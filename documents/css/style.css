@@ -1,0 +1,47 @@
+#container {
+	margin-top: 30px;
+	position: fixed;
+	width: 100%;
+	height: calc(100% - 120px);
+}
+
+#documents-list {
+	margin-left: 20px;
+    float:left;
+    width:30%;
+    height:100%; 
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#documents-viewer {
+	margin-left: calc(30% + 20px);
+    width: 70%;
+    height:100%;
+    padding: 0px 20px 0px 20px;
+}
+
+.pdf, .doc, .excel, .ppt, .text, .upload {
+	cursor: pointer;
+	border-bottom: solid black 1px;
+	width: 100%;
+	padding: 5px;
+	overflow: hidden;
+}
+
+.pdf:hover, .doc:hover, .excel:hover, .ppt:hover, .text:hover, .upload:hover {
+	background-color: lightGray;
+}
+
+.pdf img, .doc img, .excel img, .ppt img, .text img, .upload img {
+	width: 40px;
+	height: 40px;
+	margin-right: 15px;
+	float: left;
+	padding: 5px;
+}
+
+.upload  {
+	border: solid black 1px;
+	font-weight: bold;
+}
