@@ -3,6 +3,8 @@ var months = ['January', 'February', 'March', 'April', 'May', 'June',
 
 var currDate = new Date(); // today's date
 var currViewDate = currDate; // to know the current month that is displayed
+var startEvent;
+var endEvent;
 
 
 function loaded() {
@@ -11,17 +13,27 @@ function loaded() {
 		table.children[0].children[i].style.background = "#657383";
 		table.children[0].children[i].style.color = "white"
 	}
-
-
 	for(var i=0; i<7; i++) {
 		for(var j=1; j<=6; j++) {
-			table.children[j].children[i].onmouseup = 
-				addEvent(table.children[j].children[i].innerHTML);	
-			table.children[j].children[i].onmousedown = 
-				startDrag(table.children[j].children[i].innerHTML);
+			table.children[j].children[i].onmouseup = addEvent;	
+			table.children[j].children[i].onmousedown = startDrag;
 		}
 	}
 	getPresentMonth();
+
+	var client = new HttpClient();
+	client.get("/calendar/calendar_update", function(response) {
+		console.log("get event received");
+		response = JSON.parse(response);
+		console.log(response);
+		for (var i=0; i<response.length; i++) {
+			var start_date = new Date(response[i].start_date);
+			var end_date = new Date(response[i].end_date);
+			console.log(start_date.getMonth());
+		}
+	});
+
+
 }
 
 function daysInMonth(anyDateInMonth) {
@@ -99,10 +111,42 @@ function getPresentMonth() {
 	loadTheDates(numOfDays, 1, firstDay);
 }
 
-function addEvent(date) {
-	date = date + "New event";
+function addEvent(event) {
+	endEvent = event.target.innerHTML;
+	console.log(endEvent);
+	document.getElementById("new-event").style.visibility = "visible";
+	document.getElementById("opacity-layer").style.visibility = "visible";
 }
 
-function startDrag(date) {
+function startDrag(event) {
+	console.log(event);
+	startEvent = event.target.innerHTML;
+}
 
+function hideNewEvent() {
+	document.getElementById("new-event").style.visibility = "hidden";
+	document.getElementById("opacity-layer").style.visibility = "hidden";
+}
+
+function submitEvent() {
+	var text = document.getElementById("event-item").value;
+	var startDate = "" + startEvent + "/" + (currViewDate.getMonth()+1) + "/" + 
+					currViewDate.getFullYear() + " 00:00:00";  
+	var endDate = "" + endEvent + "/" + (currViewDate.getMonth()+1) + "/" + 
+					currViewDate.getFullYear() + " 00:00:00";
+	var color = "#FF0000";
+
+	var payload = {
+		text: text,
+		start_date: startDate,
+		end_date: endDate,
+		color: color
+	}
+
+	var client = new HttpClient();
+
+	client.post("/calendar/post_event", JSON.stringify(payload), function() {
+		console.log("post event received");
+	});
+	hideNewEvent();
 }
