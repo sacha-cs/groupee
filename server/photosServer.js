@@ -281,7 +281,7 @@ function getAllComments(request, response, params) {
     var id = params.photo_id;
     var viewingGroup = utils.getViewingGroup(request);
     var success = false;
-    var getCommentsQuery = "SELECT comment_id, text, photos_comments.username, " +
+    var getCommentsQuery = "SELECT photo_id, comment_id, text, photos_comments.username, " +
                            "photo_id, albums.group_id " +
                            "FROM (photos_comments " +
                            "LEFT JOIN photos USING (photo_id)) " +
@@ -303,7 +303,8 @@ function getAllComments(request, response, params) {
                     commentList.push({
                         id: row.comment_id, 
                         username: row.username,
-                        text: row.text
+                        text: row.text,
+                        photoId: row.photo_id
                     });
                     success = true;
                 }
@@ -315,7 +316,7 @@ function getAllComments(request, response, params) {
                 response.writeHead("307", {'Location' : '/404.html' });
                 response.end();
             } else {
-                utils.respondJSON(response, payload);
+                utils.respondJSON(response, payload); 
             }
         });
     }); 
