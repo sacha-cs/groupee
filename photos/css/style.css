@@ -227,3 +227,7 @@
 #loading div {
     display:inline-block;
 }
+
+#add-album {
+    visibility: hidden;
+}

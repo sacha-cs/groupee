@@ -73,6 +73,7 @@ function getAllAlbums() {
     
            	content.innerHTML += albumHtml;
 		}
+		document.getElementById("add-album").style.visibility = 'visible';
 		document.getElementById("loading").style.display = "none";
 	});
 }
