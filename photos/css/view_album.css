@@ -1,0 +1,188 @@
+#content {
+    margin-top: 30px;
+    min-height: calc(100% - 80px);
+}
+
+#buttons {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.album-settings {
+    margin-right: 15px;
+    border: 0px;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1); 
+    background-color: #FF8300;
+    width: 125px;
+    height: 36px;
+    font-size: 14px;
+}
+
+.album-settings:hover {
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #FF9A30;
+}
+
+#delete {
+    background-color: #CC0000;
+}
+
+#delete:hover {
+    background-color: #DA4747;
+}
+
+.rename-popover {
+  position: relative;
+  margin-top: 10px;
+}
+
+#rename-input {
+  visibility: hidden;
+  position: absolute;
+  width:180px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 45px;
+  line-height: 45px;
+  text-align: center;
+  border-radius: 6px;
+  z-index: 10;
+  opacity: 0.8;
+}
+
+#rename-input:after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 45%;
+  margin-left: -8px;
+  width: 0; height: 0;
+  border-bottom: 8px solid #000000;
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+}
+
+#rename-input input[type="text"] { 
+    margin-top: 12px;
+}
+
+#gallery-view:focus {
+    outline:0;
+}
+
+#gallery-view {
+    visibility: hidden;
+    position: fixed;
+    z-index: 20;
+    width: 900px;
+    left:0;
+    right:0;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#gallery-view img {
+    background-color: #f5f5f5;
+    -o-object-fit: contain;
+    object-fit: contain;
+    max-height: 500px;
+    width: 600px;
+    -webkit-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
+    box-shadow: 0px 7px 39px -6px rgba(0,0,0,0.75);
+}
+
+#opacity-layer {
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #c3d7df;
+    z-index: 2;
+    opacity: 0.8;
+}
+
+.photo:hover .delete {
+    visibility: visible;
+    z-index:15;
+    transform: none !important;
+    top:0px !important;
+    right: 0px;
+    position:absolute !important;
+    height:25px;
+    width:25px;
+}
+
+.delete {
+    visibility: hidden;
+}
+
+.comment.card {  
+    float: right;
+    position: relative ;
+    width: 260px;
+    padding: 0px 20px 0px 20px;
+    box-shadow: none;
+}
+
+#back {
+  height: 36px;
+  position: absolute;
+  cursor: pointer;
+}
+
+#rename {
+  margin-left: 50px;
+}
+
+#comment-field {
+    margin: 0;
+}
+
+#comment-box {
+    height: calc(100% - 80px);
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#photo-wrapper {
+    position: fixed;
+}
+
+#comment-box p {
+    color: black;
+    padding: 0px;
+}
+
+#comment-box li {
+    padding: 0px;
+    position: relative;
+}
+
+.comment-item {
+    text-align: left;
+}
+
+li:hover .delete-comment {
+    visibility: visible;
+    position: absolute;
+    right: 15px;
+    margin-top: 10px;
+}
+
+.delete-comment {
+    visibility: hidden;
+}
+
+.delete-comment #delete-comment-img {
+    height: 25px;
+    width: 25px;
+    box-shadow: none;
+}
+
+.message {
+    text-align: left;
+    word-wrap: break-word;
+}
