@@ -20,7 +20,7 @@ function getAllPhotos() {
             var photoHtml = "<div class='photo' id='" + photoInfo.photoList[i] + "' onclick='openPhoto(" + i + ")'>" +   
                                 "<img class='thumb' src='" + prefix + "/groups/group" +
                                     photoInfo.groupId + "/photos/album" + photoInfo.albumId + "/thumbnail" + 
-                                    photoInfo.photoList[i] + ".jpg'/>" +  
+                                    photoInfo.photoList[i] + ".jpg'>" +  
                                 "<img class='delete' src='" + deleteIcon + "'>" +
                             "</div>";
             content.innerHTML += photoHtml;
@@ -31,14 +31,13 @@ function getAllPhotos() {
 
 function addCommentHtml(htmlId, id) {
     return "<div class='comment card' id='comment-card" + htmlId + "'>" +
-                "<div id=comment-box>" +
+                "<div id='comment-box'>" +
                 "</div>" + 
-                "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'/>" +
+                "<input type='text' id='comment-field' placeholder='Add a comment' onkeypress='addComment(" + id + ")'>" +
             "</div>";
 }
 
 function openPhoto(index) {
-
     if (event.target.className == "delete") {
         deletePhoto(index);
         return;
@@ -50,9 +49,10 @@ function openPhoto(index) {
     var photoHtml = "<div id=photo-wrapper>" + 
                         "<img id='" + index + "' class='gallery-img' src='" + prefix + "/groups/group" +
                         photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                        photoInformation.photoList[index] + ".jpg'/>" + commentHtml + 
+                        photoInformation.photoList[index] + ".jpg'>" + commentHtml + 
                     "</div>";
 
+    // Display the large vesrion of the photo.
     gallery.innerHTML = photoHtml;
 
     getComments(photoInformation.photoList[index]);
@@ -79,9 +79,14 @@ function addCommentToBox(text, id, username) {
                       "</span>" + 
                       (currentUser == username ? addDeleteCommentButton(id) : "") +
                       "</li>";
-    document.getElementById("comment-box").innerHTML += commentHtml;
+
+    // If comment already exists, do not re-add it!
+    if (!document.getElementById('comment' + id)) {
+        document.getElementById("comment-box").innerHTML += commentHtml;
+    }
 }
 
+// Adds a comment which has been typed in by the user.
 function addComment(id) {
     var commentText = document.getElementById("comment-field").value;
 
@@ -116,7 +121,6 @@ function deleteComment(id) {
 
 function resizeCommentBox(index) {
     var image = document.getElementById(index);
-    console.log(document.getElementById(index));
     image.onload = function() {
         document.getElementById("comment-card" + index).style.height = image.height;
     }
@@ -140,11 +144,11 @@ function changePhoto() {
         } else if (event.keyCode == keyBindings.esc) {
             hideGallery();
         }
-
+        
         if (nextPhotoToShowIndex >= 0 && nextPhotoToShowIndex < photoInformation.photoList.length && change) {
             var photoHtml = "<img id='" + nextPhotoToShowIndex + "' src='" + prefix + "/groups/group" +
                                 photoInformation.groupId + "/photos/album" + photoInformation.albumId + "/photo" + 
-                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'/>" +
+                                photoInformation.photoList[nextPhotoToShowIndex] + ".jpg'>" +
                                 addCommentHtml(nextPhotoToShowIndex, photoInformation.photoList[nextPhotoToShowIndex]);
             gallery.innerHTML = photoHtml;
 
@@ -160,7 +164,13 @@ function getComments(photoId) {
         var commentInfo = JSON.parse(response);
         for (var i = 0; i < commentInfo.comments.length; i++) {
             var currentComment = commentInfo.comments[i];
-            addCommentToBox(currentComment.text, currentComment.id, currentComment.username);
+            // In the case of slow response times, double check that the comment corresponds
+            // to the particular photo.
+            var viewingPhoto = document.getElementById("gallery-view").getElementsByTagName("img")[0].id;
+            var viewingPhotoId = photoInformation.photoList[viewingPhoto];
+            if (viewingPhotoId == photoId) {
+                addCommentToBox(currentComment.text, currentComment.id, currentComment.username);
+            }
         }
     });
 }
