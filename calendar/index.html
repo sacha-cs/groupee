@@ -7,9 +7,14 @@ Calendar
 <script src = "calJS.js"></script> 
 <?content?>
 
+<div id="opacity-layer" onclick="hideNewEvent()"> 
+</div>
+
 <div id="new-event" >
-	<input type="text" id="event-item" placeholder="Enter a new event">
-	<input type="submit" name="submit" id="add-event" value="Add" onclick="addEvent()">
+	<form onsubmit="submitEvent(); return false;">
+		<input type="text" id="event-item" placeholder="Enter a new event">
+		<input type="submit" name="submit" id="add-event" value="Add">
+	</form>
 	<div class="event-text">
         <p id="error"></p>
         <p id="success"></p>
