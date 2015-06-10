@@ -284,7 +284,7 @@ function getAllComments(request, response, params) {
     var getCommentsQuery = "SELECT comment_id, text, photos_comments.username, " +
                            "photo_id, albums.group_id " +
                            "FROM (photos_comments " +
-                           "LEFT JOIN photos USING (photo_id)) " +
+                           "RIGHT JOIN photos USING (photo_id)) " +
                            "JOIN albums USING (album_id) " + 
                            "WHERE photo_id=" + id;
 
@@ -299,12 +299,14 @@ function getAllComments(request, response, params) {
             }
             for (var i = 0; i < data.length; i++) {
                 var row = data[i];
-                if (row.group_id == viewingGroup) { 
-                    commentList.push({
-                        id: row.comment_id, 
-                        username: row.username,
-                        text: row.text
-                    });
+                if (row.group_id == viewingGroup) {
+                    if (row.comment_id) {
+                        commentList.push({
+                            id: row.comment_id, 
+                            username: row.username,
+                            text: row.text
+                        });
+                    } 
                     success = true;
                 }
             } 
