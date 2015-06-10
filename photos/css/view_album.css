@@ -159,6 +159,8 @@
 #comment-box li {
     padding: 0px;
     position: relative;
+    display: flex;
+    overflow: hidden;
 }
 
 .comment-item {
