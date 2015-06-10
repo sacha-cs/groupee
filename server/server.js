@@ -4,6 +4,7 @@ fs = require('fs');
 formidable = require('formidable');
 passwordHash = require('password-hash');
 pg = require('pg');
+FormData = require("form-data");
 
 utils = require('./utils');
 
@@ -16,6 +17,7 @@ require('./todosServer');
 require('./noteServer');
 require('./whiteboardServer');
 require('./calendarServer');
+require('./photosServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';
 uploadPath = "/vol/project/2014/271/g1427136/"
@@ -62,12 +64,15 @@ function serverListener(request, response) {
                     console.log(error);
                 });
 
-                if (requestURL == 'usersettings/change_avatar') {
-                    form.keepExtensions = false;
-                    form.on("fileBegin", function(name, file) {
-                        file.path = form.uploadDir + "/" + utils.getUser(request) + ".png";
-                    });
-                } 
+                var options = postHandler.getOptions(requestURL);
+                if(options) {
+                    for(var i in options) {
+                        if(options.hasOwnProperty(i)) {
+                            form[i] = options[i];
+                        }
+                    }
+                }
+
                 form.parse(request, function(err, fields, files) {
                     handler(request, response, fields, files);
                 });

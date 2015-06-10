@@ -1,0 +1,37 @@
+<?template?>
+/template/main_template.html
+<?title?>
+Photos
+<?headers?>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/create.css">
+<script src="js.js"></script>
+<?content?>
+<div class="view">
+    <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/new-album.png"/>
+    <div class="mask">
+    <h2>Create an album</h2>
+    <p></p>
+    <a onclick="popupForm()" class="info">Go</a>
+    </div>
+</div>
+
+
+<div id="form-wrapper">
+    <div class="card">
+    <h1>Create an Album</h1><br>
+
+        <input type="text" name="group_name" id="album_name" placeholder="Your Album Name">
+        <input type="text" name="description" id="description" placeholder="Enter a short description...">
+
+        <input type="submit" name="submit" class="card-submit" value="Create!" onclick="createAlbum()">
+        <div class="create-text">
+            <p id="error"></p>
+        </div>
+    </div>
+</div>
+
+<div id="loading">
+    <span>Loading albums</span>
+    <div class="loading"></div>
+</div>
