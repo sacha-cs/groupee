@@ -132,3 +132,9 @@ h1 {
   font-weight: 400;
   opacity: 0.7;
 }
+
+#space-used {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 11pt;
+}
