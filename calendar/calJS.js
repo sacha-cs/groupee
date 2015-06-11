@@ -1,14 +1,17 @@
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 
 			  'July', 'August', 'September', 'October', 'November', 'December'];
+var colors = ["#FF6600","#FF66CC","#6699FF", "#66CC00", "#CC0000", "#006600", "#330066"];
+var colorIndex = 0;
 
 var currDate = new Date(); // today's date
 var currViewDate = currDate; // to know the current month that is displayed
 var startEvent;
 var endEvent;
-
+var table;
+var events;
 
 function loaded() {
-	var table = document.getElementById("cal_table");
+	table = document.getElementById("cal_table");
 	for(var i=0; i<7; i++) {
 		table.children[0].children[i].style.background = "#657383";
 		table.children[0].children[i].style.color = "white"
@@ -19,22 +22,13 @@ function loaded() {
 			table.children[j].children[i].onmousedown = startDrag;
 		}
 	}
-	getPresentMonth();
-
 	var client = new HttpClient();
 	client.get("/calendar/calendar_update", function(response) {
-		console.log("get event received");
-		response = JSON.parse(response);
-		console.log(response);
-		for (var i=0; i<response.length; i++) {
-			var start_date = new Date(response[i].start_date);
-			var end_date = new Date(response[i].end_date);
-			console.log(start_date.getMonth());
-		}
+		events = JSON.parse(response);
+		getPresentMonth();	
 	});
-
-
 }
+
 
 function daysInMonth(anyDateInMonth) {
     return new Date(anyDateInMonth.getYear(), 
@@ -49,8 +43,6 @@ function setMonthAndYear(currMonth, currYear) {
 }
 
 function loadTheDates(numOfDays, currRow, currCol) {
-	var table = document.getElementById("cal_table");
-
 	for(var i=0; i<7; i++) {
 		for(var j=1; j<=6; j++) {
 			table.children[j].children[i].innerHTML = "";			
@@ -63,6 +55,16 @@ function loadTheDates(numOfDays, currRow, currCol) {
 		if ((i == currDate.getDate()) && (currDate.getMonth() == currViewDate.getMonth())
 			&& (currDate.getYear() == currViewDate.getYear())) {
 			table.children[currRow].children[currCol].style.background = "#FFCC66";	
+		}
+		for(var j=0; j<events.length; j++) {
+			var start_date = new Date(events[j].start_date);
+			var end_date = new Date(events[j].end_date);
+			if (start_date.getMonth() == currViewDate.getMonth()) {
+				if (start_date.getDate()<=i && end_date.getDate()>=i) {
+					table.children[currRow].children[currCol].innerHTML += "<br>" + 
+						"<span style='color:" + events[j].color +"'>" + events[j].text + "</span>";
+				}
+			}
 		}
 		currCol++;
 		if (currCol == 7) {
@@ -134,7 +136,8 @@ function submitEvent() {
 					currViewDate.getFullYear() + " 00:00:00";  
 	var endDate = "" + endEvent + "/" + (currViewDate.getMonth()+1) + "/" + 
 					currViewDate.getFullYear() + " 00:00:00";
-	var color = "#FF0000";
+	var color = colors[colorIndex];
+	colorIndex = (colorIndex + 1) % colors.length;
 
 	var payload = {
 		text: text,

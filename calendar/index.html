@@ -14,6 +14,7 @@ Calendar
 	<form onsubmit="submitEvent(); return false;">
 		<input type="text" id="event-item" placeholder="Enter a new event">
 		<input type="submit" name="submit" id="add-event" value="Add">
+		<input type="button" id="cancel-event" value="Cancel" onclick="hideNewEvent()" >
 	</form>
 	<div class="event-text">
         <p id="error"></p>
