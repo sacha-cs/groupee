@@ -1,25 +1,31 @@
+#content {
+	height: calc(100% - 50px);
+}
+
 #container {
-	margin-top: 30px;
-	position: fixed;
+	top: 5%;
+	bottom: 5%;
+	position: relative;
 	width: 100%;
-	height: calc(100% - 120px);
+	height: 90%;
 }
 
 #documents-list {
 	background-color: white;
-	margin-left: 20px;
-    float:left;
+	margin-left: 5%;
     width:30%;
-    height:100%; 
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
 }
 
 #documents-viewer {
-	margin-left: calc(30% + 20px);
-    width: 70%;
-    height:100%;
-    padding: 0px 20px 0px 20px;
+	left: 35%;
+    width: 60%;
+    height: 100%;
+    position: absolute;
+    top:0%;
+    left: 37%;
 }
 
 .pdf, .doc, .excel, .ppt, .text, .upload {
@@ -43,12 +49,89 @@
 }
 
 .upload  {
-	border: solid black 1px;
 	font-weight: bold;
 }
 
 #documents-viewer iframe {
-	width: 80%;
+	width: 100%;
 	height: 100%;
 }
 
+#opacity-layer {
+    visibility: hidden;
+    position: fixed;
+    width: 130%;
+    height: 100%;
+    background-color: #c3d7df;
+    z-index: 2;
+    opacity: 0.8;
+}
+
+#form-wrapper {
+	display: none;
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    right: 0px;
+    margin-left:auto;
+    margin-right:auto;
+    opacity: 1;
+    width: 350px;
+    z-index: 20;
+}
+
+.card {
+    padding: 40px;
+    width: 274px;
+    background-color: #f5f5f5;
+    margin: 0px auto 10px;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    text-align: center;
+}
+
+.card h1 {
+    font-weight: 100;
+    text-align: center;
+    font-size: 2.3em;
+}
+
+.card input[type=submit] {
+    width: 80%;
+    display: block;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.card input[type=file] {
+    height: 44px;
+    font-size: 16px;
+    width: 200px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.card-submit {
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+    border: 0px;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1); 
+    background-color: #FF8300;
+}
+
+.card-submit:hover {
+    border: 0px;
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #FF9A30;
+}

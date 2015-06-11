@@ -3,11 +3,15 @@
 <?title?>
 Documents
 <?headers?>
+<script src="js.js"></script>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <?content?> 
+<div id="opacity-layer" onclick="hideForm()"> 
+</div>
+
 <div id="container">
     <div id="documents-list">
-        <div class="upload">
+        <div class="upload" onclick="popupForm()">
             <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/upload-document.png">
             <p>Upload a document</p>
         </div>
@@ -37,6 +41,17 @@ Documents
             <p>Plain text document</p>
         </div>
 
+
+        <div class="pdf">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pdf-doc.png">
+            <p>PDF document</p>
+        </div>
+
+        <div class="doc">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/word-doc.png">
+            <p>Word document</p>
+        </div>
+
         <div class="excel">
             <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/excel-doc.png">
             <p>Excel document</p>
@@ -52,45 +67,74 @@ Documents
             <p>Plain text document</p>
         </div>
 
-        <div class="ppt">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
-            <p>Powerpoint document</p>
-        </div>
 
-        <div class="text">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/plain-text-doc.png">
-            <p>Plain text document</p>
-        </div>
-
-        <div class="ppt">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
-            <p>Powerpoint document</p>
-        </div>
-
-        <div class="ppt">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
-            <p>Powerpoint document</p>
-        </div>
-
-        <div class="text">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/plain-text-doc.png">
-            <p>Plain text document</p>
-        </div>
-
-        <div class="ppt">
-            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
-            <p>Powerpoint document</p>
-        </div>
 
         <div class="pdf">
             <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pdf-doc.png">
             <p>PDF document</p>
+        </div>
+
+        <div class="doc">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/word-doc.png">
+            <p>Word document</p>
+        </div>
+
+        <div class="excel">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/excel-doc.png">
+            <p>Excel document</p>
+        </div>
+
+        <div class="ppt">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
+            <p>Powerpoint document</p>
+        </div>
+
+        <div class="text">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/plain-text-doc.png">
+            <p>Plain text document</p>
+        </div>
+
+
+        <div class="pdf">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pdf-doc.png">
+            <p>PDF document</p>
+        </div>
+
+        <div class="doc">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/word-doc.png">
+            <p>Word document</p>
+        </div>
+
+        <div class="excel">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/excel-doc.png">
+            <p>Excel document</p>
+        </div>
+
+        <div class="ppt">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png">
+            <p>Powerpoint document</p>
+        </div>
+
+        <div class="text">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/plain-text-doc.png">
+            <p>Plain text document</p>
         </div>
     </div>
 
     <div id="documents-viewer">
         <iframe src="http://docs.google.com/gview?url=http://infolab.stanford.edu/pub/papers/google.pdf&embedded=true" frameborder="0"></iframe>
     </div>
+
+    <div id="form-wrapper">
+        <form action="/documents/upload_documents" method="post" enctype="multipart/form-data">
+            <div class="card">
+                <h1>Upload documents</h1><br>
+                <input name="upload[]" type="file" multiple="multiple"> 
+                <input type="submit" name="submit" class="card-submit" value="Upload!">
+            </div>
+        </form>
+    </div>
+
 
 </div>
 
