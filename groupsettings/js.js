@@ -38,7 +38,7 @@ function addUser() {
         function (response) {
             response = JSON.parse(response);
             if (!response.success) {
-                setErrorText(response.error);
+                setErrorText("Sorry, you aren't able to join this group.");
             } else {
                 document.getElementById("username").value = "";
                 setSuccessText("User added successfully");

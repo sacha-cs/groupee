@@ -113,6 +113,33 @@ function setGroup(groupId) {
     });
 }
 
+// Occurs after the user types a group name in the "Join a group" page and clicks "Join!".
+function joinGroup() {
+    var groupname = document.getElementById("group_name").value;
+    
+    setErrorText("");
+    setSuccessText("");
+
+    if (groupname == "") {
+        setErrorText("Please enter a group name");
+        return;
+    }
+
+    var aClient = new HttpClient();
+    aClient.post('/groups/join', 'groupname=' + groupname, function(response) {
+        response = JSON.parse(response);
+        if (response.success) {
+            // All is well. 
+            document.getElementById("group_name").value = "";
+            console.log(getCookie("username"));
+            setSuccessText("Welcome to " + groupname + ", " + getCookie("username") + "!");
+        } else {
+            // Something went wrong.
+            setErrorText("Sorry, we weren't able to add you to " + groupname + ".");
+        }
+    });
+}
+
 function loaded() {
     addGroupsToPage();
 }

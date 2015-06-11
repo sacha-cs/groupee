@@ -1,0 +1,24 @@
+<?template?>
+/template/no_group_template.html
+<?title?>
+Join a group
+<?headers?>
+<link rel="stylesheet" href="css/create.css">
+<script src="js.js"></script>
+<?content?>
+<div class="create-card">
+
+<h1>Join a Group</h1><br>
+
+    <div class="privacy">
+    </div>
+
+    <input type="text" name="group_name" id="group_name" placeholder="Search for a group">
+    <input type="submit" name="submit" class="create create-submit" value="Join!" onclick=joinGroup()>
+    <div class="add-text">
+        <p id="error"></p>
+    </div>
+    <div class="add-text">
+        <p id="success"></p>
+    </div>
+</div>

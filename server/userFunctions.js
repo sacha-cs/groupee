@@ -10,6 +10,7 @@ postHandler.addHandler("usersettings/change_password", changePassword);
 postHandler.addHandler("groupsettings/quit_group", quitGroup);
 postHandler.addHandler("groupsettings/rename_group", renameGroup);
 getHandler.addHandler("groupsettings/get_space_used", getSpaceUsed);
+postHandler.addHandler("groups/join", joinGroup);
 
 function login(request, response, params) {
 
@@ -532,6 +533,42 @@ function getSpaceUsed(request, response, params) {
         res.on('end', function() {
             response.write(spaceUsed);
             response.end();
+        });
+    });
+}
+
+function joinGroup(request, response, params) {
+    var groupname = params.groupname;
+    var username = utils.getUser(request);
+    var groupExistenceQuery =
+            "SELECT group_id " + 
+            "FROM groups " + 
+            "WHERE group_name='" + groupname + "' AND privacy='public'";
+
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(groupExistenceQuery, function(err, result) {
+            if(err) {
+                return utils.respondError(err, response);
+            }
+            
+            var payload = {
+                success: false,
+            }
+            
+            if (result.rows.length == 0) {
+                utils.respondJSON(response, payload);
+            } else if (result.rows.length > 0) {
+                // The group must exist.
+                payload.success = true;
+                insertUserIntoMemberOf(request, response, client, done, 
+                    function() {
+                        done(client);
+                        utils.respondJSON(response, payload);                        
+                    },
+                result.rows[0].group_id, username);
+            } else {
+                utils.respondJSON(response, payload);
+            }
         });
     });
 }
