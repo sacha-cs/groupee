@@ -19,6 +19,10 @@
     overflow-x: hidden;
 }
 
+#documents-list p {
+    word-wrap: break-word;
+}
+
 #documents-viewer {
 	left: 35%;
     width: 60%;
@@ -95,6 +99,11 @@
     font-weight: 100;
     text-align: center;
     font-size: 2.3em;
+}
+
+.card p {
+    padding-top: 10px;
+    font-size: 0.8em;
 }
 
 .card input[type=submit] {
