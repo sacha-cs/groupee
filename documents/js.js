@@ -16,8 +16,8 @@ function hideForm() {
 function getAllDocuments() {
 	var aClient = new HttpClient();
     aClient.get('get_documents', function(response) {
-    	var tmp = JSON.parse(response);
-    	var documents = JSON.parse(tmp);
+    	var documents = JSON.parse(response);
+
     	for (var key in documents) {
     		var documentName = documents[key];
     		var documentType = documentName.slice(-3);
