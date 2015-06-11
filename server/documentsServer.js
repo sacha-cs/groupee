@@ -1,4 +1,5 @@
 postHandler.addHandler("documents/upload_documents", uploadDocuments, false, {"multiples":true});
+getHandler.addHandler("documents/get_documents", getDocuments);
 
 function uploadDocuments(request, response, data, files) {
 	var numFiles = files["upload[]"].length;
@@ -28,7 +29,6 @@ function uploadDocuments(request, response, data, files) {
     		}
     		if (i == numFiles-1) {
 			    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadDocuments.php', function (err, res) {
-			    	res.pipe(process.stdout);
 			    	for (var i = 0 ; i < numFiles ; i++) {
 			    		if (numFiles == 1) {
 			        		fs.unlink(files["upload[]"].path);
@@ -52,3 +52,18 @@ function removeExtension(filename){
     else return filename.substr(0, lastDotPosition);
 }
 
+function getDocuments(request, response, params) {
+    var groupId = utils.getViewingGroup(request);
+    var documents = '';
+
+    var form = new FormData();
+    form.append('group_id', groupId);
+    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/getDocuments.php', function (err, res) {
+        res.on('data', function(chunk) {
+            documents += chunk;
+        });
+        res.on('end', function() {
+            response.end(JSON.stringify(documents));
+        });
+    });
+}
