@@ -1,5 +1,6 @@
 postHandler.addHandler("documents/upload_documents", uploadDocuments, false, {"multiples":true});
 getHandler.addHandler("documents/get_documents", getDocuments);
+postHandler.addHandler("documents/delete_document", deleteDocument);
 
 function uploadDocuments(request, response, data, files) {
 	var numFiles = files["upload[]"].length;
@@ -67,4 +68,16 @@ function getDocuments(request, response, params) {
             response.end(documents);
         });
     });
+}
+
+function deleteDocument(request, response, params) {
+	var documentToDelete = params.documentName;
+	var groupId = utils.getViewingGroup(request);
+
+	var form = new FormData();
+	form.append('group_id', groupId);
+	form.append('document_name', documentToDelete);
+	form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deleteDocument.php', function (err, res) {
+		response.end();
+	});
 }
