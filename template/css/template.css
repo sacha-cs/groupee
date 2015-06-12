@@ -73,6 +73,17 @@ body {
   line-height: 50px;
 }
 
+#navbar-shortcuts {
+  float: left;
+}
+
+#navbar-shortcuts img {
+  width:40px;
+  margin-top: 12.5px;
+  margin-left: 12.5px;
+  margin-bottom: 12.5px;
+}
+
 /* CHAT STYLING */
 
 #chat-left {
