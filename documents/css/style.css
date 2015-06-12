@@ -38,6 +38,7 @@
 	width: 100%;
 	padding: 5px;
 	overflow: hidden;
+	position: relative;
 }
 
 .pdf:hover, .doc:hover, .excel:hover, .ppt:hover, .text:hover, .upload:hover {
@@ -143,4 +144,19 @@
     border: 0px;
     text-shadow: 0 1px rgba(0,0,0,0.3);
     background-color: #FF9A30;
+}
+
+.delete {
+	visibility: hidden;
+	position: absolute;
+	right: 0px;
+	width: 30px !important;
+	height: 30px !important;
+	padding-top: 10px !important;
+	padding-top: 10px !important;
+}
+
+.pdf:hover .delete, .doc:hover .delete, .excel:hover .delete, .ppt:hover .delete, .text:hover .delete, .upload:hover .delete {
+	background-color: lightGray;
+	visibility: visible;
 }
