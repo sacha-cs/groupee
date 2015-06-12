@@ -14,7 +14,9 @@ Join a group
     </div>
 
     <input type="text" name="group_name" id="group_name" placeholder="Search for a group">
-    <input type="submit" name="submit" class="create create-submit" value="Join!" onclick=joinGroup()>
+    <div id='autocompleter'></div>
+    <input type="submit" name="search" class="create create-submit" value="Search" onclick='autoComplete()'>
+    <input type="submit" name="submit" class="create create-submit" value="Join!" onclick='joinGroup()'>
     <div class="add-text">
         <p id="error"></p>
     </div>

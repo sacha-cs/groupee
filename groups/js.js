@@ -113,6 +113,23 @@ function setGroup(groupId) {
     });
 }
 
+function joinSpecificGroup(groupname) {
+    console.log(groupname);
+    var aClient = new HttpClient();
+    aClient.post('/groups/join', 'groupname=' + groupname, function(response) {
+        response = JSON.parse(response);
+        if (response.success) {
+            // All is well. 
+            document.getElementById("group_name").value = "";
+            setSuccessText("Welcome to " + groupname + ", " + getCookie("username") + "!");
+            setGroup(response.groupId);
+        } else {
+            // Something went wrong.
+            setErrorText("Sorry, we weren't able to add you to " + groupname + ".");
+        }
+    });
+}
+
 // Occurs after the user types a group name in the "Join a group" page and clicks "Join!".
 function joinGroup() {
     var groupname = document.getElementById("group_name").value;
@@ -124,20 +141,36 @@ function joinGroup() {
         setErrorText("Please enter a group name");
         return;
     }
+    
+    joinSpecificGroup(groupname);
+}
 
-    var aClient = new HttpClient();
-    aClient.post('/groups/join', 'groupname=' + groupname, function(response) {
-        response = JSON.parse(response);
-        if (response.success) {
-            // All is well. 
-            document.getElementById("group_name").value = "";
-            console.log(getCookie("username"));
-            setSuccessText("Welcome to " + groupname + ", " + getCookie("username") + "!");
-        } else {
-            // Something went wrong.
-            setErrorText("Sorry, we weren't able to add you to " + groupname + ".");
-        }
-    });
+// Populate autocomplete div with suggestions.
+function populateAutocompleter(suggestions) {
+    var suggestionsHtml = "";
+    for (var i = 0; i < suggestions.length; i++) {
+        var suggestion = String(suggestions[i]);
+        // WHY DOES THIS NOT WORK?
+        suggestionsHtml += "<div onclick=joinSpecificGroup('" + suggestion + "')><a href='#' class='suggestion'>" + suggestion + "</a></div><br>";
+    }
+    document.getElementById("autocompleter").innerHTML = suggestionsHtml;
+}
+
+function autoComplete() {
+    var text = document.getElementById("group_name").value;
+    
+    if (text.replace(/\s/g, '').length) {
+        var aClient = new HttpClient();
+        aClient.get('/groups/autocomplete?text=' + text, function(response) {
+            response = JSON.parse(response);
+            if (response.success) {
+                populateAutocompleter(response.suggestions);
+            } else {
+                // I'd rather not show anything.
+                document.getElementById("autocompleter").value = "";        
+            }     
+        });
+    }
 }
 
 function loaded() {
