@@ -11,6 +11,7 @@ postHandler.addHandler("groupsettings/quit_group", quitGroup);
 postHandler.addHandler("groupsettings/rename_group", renameGroup);
 getHandler.addHandler("groupsettings/get_space_used", getSpaceUsed);
 postHandler.addHandler("groups/join", joinGroup);
+getHandler.addHandler("groups/autocomplete", autoComplete);
 
 function login(request, response, params) {
 
@@ -537,6 +538,7 @@ function getSpaceUsed(request, response, params) {
     });
 }
 
+// TODO: Clean up.
 function joinGroup(request, response, params) {
     var groupname = params.groupname;
     var username = utils.getUser(request);
@@ -553,6 +555,7 @@ function joinGroup(request, response, params) {
             
             var payload = {
                 success: false,
+                groupId: -1
             }
             
             if (result.rows.length == 0) {
@@ -560,6 +563,7 @@ function joinGroup(request, response, params) {
             } else if (result.rows.length > 0) {
                 // The group must exist.
                 payload.success = true;
+                payload.groupId = result.rows[0].group_id;
                 insertUserIntoMemberOf(request, response, client, done, 
                     function() {
                         done(client);
@@ -572,3 +576,34 @@ function joinGroup(request, response, params) {
         });
     });
 }
+
+// Responds with list of groups which contain the given string. Case insensitive.
+function autoComplete(request, response, params) {
+    var text = params.text.toUpperCase();
+    var suggestionsQuery = 
+            "SELECT group_name " +
+            "FROM groups " +
+            "WHERE group_name ILIKE '%" + text + "%'";
+    
+    pg.connect(connectionString, function(err, client, done) {
+        client.query(suggestionsQuery, function(err, result) {
+            if(err) {
+                return utils.respondError(err, response);
+            }
+            
+            var payload = {
+                success: false,
+                suggestions: []
+            }
+            
+            if (result.rows.length > 0) {
+                payload.success = true;
+                for (var i = 0; i < result.rows.length; i++) {
+                    payload.suggestions.push(result.rows[i].group_name);
+                }
+            }
+            utils.respondJSON(response, payload);    
+        });
+    });
+}
+
