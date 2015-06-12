@@ -20,7 +20,7 @@ function getAllDocuments() {
 
     	for (var key in documents) {
     		var documentName = documents[key];
-    		var documentType = documentName.slice(-3);
+    		var documentType = documentName.substr(documentName.lastIndexOf('.') + 1);
     		var documentsList = document.getElementById("documents-list");
     		var documentHtml = addDocument(documentName, documentType);
     		documentsList.innerHTML += documentHtml;
@@ -40,6 +40,7 @@ function addDocument(documentName, documentType) {
         	break;
 
         case "ppt" :
+        case "pptx" :
 			documentHtml = "<div class='ppt' onclick=\"renderDocument('" + documentName + "')\">" + 
             			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png'>" +
             			   "<p>" + documentName + "</p>" +
@@ -47,6 +48,7 @@ function addDocument(documentName, documentType) {
         	break;
         	
         case "doc" :
+        case "docx" :
 			documentHtml = "<div class='doc' onclick=\"renderDocument('" + documentName + "')\">" + 
             			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/word-doc.png'>" +
             			   "<p>" + documentName + "</p>" +
@@ -54,6 +56,7 @@ function addDocument(documentName, documentType) {
         	break;
 
         case "xls" :
+        case "xlsx" :
 			documentHtml = "<div class='excel' onclick=\"renderDocument('" + documentName + "')\">" + 
             			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/excel-doc.png'>" +
             			   "<p>" + documentName + "</p>" +

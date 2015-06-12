@@ -29,7 +29,6 @@ function uploadDocuments(request, response, data, files) {
     		}
     		if (i == numFiles-1) {
 			    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadDocuments.php', function (err, res) {
-                    res.pipe(process.stdout);
 			    	for (var i = 0 ; i < numFiles ; i++) {
 			    		if (numFiles == 1) {
 			        		fs.unlink(files["upload[]"].path);
