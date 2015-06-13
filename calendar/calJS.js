@@ -20,6 +20,8 @@ function loaded() {
 		for(var j=1; j<=6; j++) {
 			table.children[j].children[i].onmouseup = addEvent;	
 			table.children[j].children[i].onmousedown = startDrag;
+			table.children[j].children[i].onMouseOver = highlight;
+			table.children[j].children[i].onMouseOut = normal;
 		}
 	}
 	var client = new HttpClient();
@@ -108,13 +110,15 @@ function getPresentMonth() {
 	var currMonth = currDate.getMonth();	
 	var firstDay = (new Date(currYear, currMonth, 1)).getDay();
 	var numOfDays = daysInMonth(currDate);
-
 	setMonthAndYear(currMonth, currYear);
 	loadTheDates(numOfDays, 1, firstDay);
 }
 
 function addEvent(event) {
-	endEvent = event.target.innerHTML;
+	event.target.style.background = "#FFCC66";
+	var content = event.target.innerHTML;
+	var lines = content.split("<br>");
+	endEvent = lines[0];
 	console.log(endEvent);
 	document.getElementById("new-event").style.visibility = "visible";
 	document.getElementById("opacity-layer").style.visibility = "visible";
@@ -122,7 +126,10 @@ function addEvent(event) {
 
 function startDrag(event) {
 	console.log(event);
-	startEvent = event.target.innerHTML;
+	event.target.style.background = "#FFCC66";
+	var content = event.target.innerHTML;
+	var lines = content.split("<br>");
+	startEvent = lines[0];
 }
 
 function hideNewEvent() {
@@ -152,4 +159,12 @@ function submitEvent() {
 		console.log("post event received");
 	});
 	hideNewEvent();
+}
+
+function highlight(event) {
+	event.target.style.background = "#FFCC66";
+}
+
+function normal(event) {
+	event.target.style.background = "white";
 }
