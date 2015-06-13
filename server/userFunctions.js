@@ -538,7 +538,7 @@ function getSpaceUsed(request, response, params) {
     });
 }
 
-// TODO: Clean up.
+// Allows user to join an existing public group.
 function joinGroup(request, response, params) {
     var groupname = params.groupname;
     var username = utils.getUser(request);
@@ -558,21 +558,17 @@ function joinGroup(request, response, params) {
                 groupId: -1
             }
             
-            if (result.rows.length == 0) {
-                utils.respondJSON(response, payload);
-            } else if (result.rows.length > 0) {
-                // The group must exist.
+            if (result.rows.length > 0) {
+                // Insert the user in the existing group.
                 payload.success = true;
                 payload.groupId = result.rows[0].group_id;
                 insertUserIntoMemberOf(request, response, client, done, 
                     function() {
                         done(client);
-                        utils.respondJSON(response, payload);                        
                     },
                 result.rows[0].group_id, username);
-            } else {
-                utils.respondJSON(response, payload);
             }
+            utils.respondJSON(response, payload);
         });
     });
 }
