@@ -583,10 +583,11 @@ function autoComplete(request, response, params) {
     var suggestionsQuery = 
             "SELECT group_name " +
             "FROM groups " +
-            "WHERE group_name ILIKE '%" + text + "%'";
+            "WHERE group_name ILIKE '%" + text + "%' AND privacy='public'";
     
     pg.connect(connectionString, function(err, client, done) {
         client.query(suggestionsQuery, function(err, result) {
+            done(client);
             if(err) {
                 return utils.respondError(err, response);
             }
