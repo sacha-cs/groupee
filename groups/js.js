@@ -125,11 +125,10 @@ function joinSpecificGroup(groupname) {
         var decodedName = "<a class='redir-group' href='#' onclick='setGroup(" + response.groupId + ")'>" + decodeURIComponent(groupname) + "</a>";
         if (response.success) {
             // All is well. 
-            document.getElementById("group_name").value = "";
             if (response.userAlreadyInGroup) {
                 setErrorText("You are already a member of " + decodedName);
             } else {
-                setSuccessText("Welcome to " + decodedName + ", " + getCookie("username") + "!");
+                setSuccessText("Welcome to " + decodedName); 
             }
         } else {
             // Something went wrong.

@@ -138,7 +138,6 @@ body {
 
 .redir-group {
     width: 250px;
-    word-wrap:break-word;
 }
 
 div ::-webkit-scrollbar {
