@@ -114,8 +114,12 @@ function setGroup(groupId) {
 }
 
 function joinSpecificGroup(groupname) {
-    console.log(groupname);
     var aClient = new HttpClient();
+    var safeGroupName = decodeURIComponent(groupname);
+
+    setErrorText("");
+    setSuccessText("");
+
     aClient.post('/groups/join', 'groupname=' + groupname, function(response) {
         response = JSON.parse(response);
         if (response.success) {
@@ -123,6 +127,7 @@ function joinSpecificGroup(groupname) {
             document.getElementById("group_name").value = "";
             setSuccessText("Welcome to " + groupname + ", " + getCookie("username") + "!");
             setGroup(response.groupId);
+            // TODO: Display button to allow the user to go to the home page of the new group.
         } else {
             // Something went wrong.
             setErrorText("Sorry, we weren't able to add you to " + groupname + ".");
@@ -148,10 +153,15 @@ function joinGroup() {
 // Populate autocomplete div with suggestions.
 function populateAutocompleter(suggestions) {
     var suggestionsHtml = "";
+    var groupsFound = document.getElementById('autocompleter');
+    groupsFound.style.height = '300px';
+    groupsFound.style.overflowY = 'auto';
+    groupsFound.style.overflowX = 'hidden';
+     
     for (var i = 0; i < suggestions.length; i++) {
-        var suggestion = String(suggestions[i]);
+        var suggestion = encodeURIComponent(suggestions[i]);
         // WHY DOES THIS NOT WORK?
-        suggestionsHtml += "<div onclick=joinSpecificGroup('" + suggestion + "')><a href='#' class='suggestion'>" + suggestion + "</a></div><br>";
+        suggestionsHtml += "<div onclick=joinSpecificGroup(\"" + suggestion + "\")><a href='#' class='suggestion'>" + decodeURIComponent(suggestion) + "</a></div><br>";
     }
     document.getElementById("autocompleter").innerHTML = suggestionsHtml;
 }

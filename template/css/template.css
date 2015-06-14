@@ -73,6 +73,19 @@ body {
   line-height: 50px;
 }
 
+#navbar-shortcuts {
+  float: left;
+}
+
+#shortcuts-icon {
+  cursor: pointer;
+  display: none;
+  width:40px;
+  margin-top: 12.5px;
+  margin-left: 12.5px;
+  margin-bottom: 12.5px;
+}
+
 /* CHAT STYLING */
 
 #chat-left {
@@ -435,3 +448,32 @@ div ::-webkit-scrollbar-thumb {
     background-size:contain;
 }
 
+#popover-shortcuts {
+  visibility: hidden;
+  position: absolute;
+  background-color: #EFEFEF;
+  border-radius: 4px;
+  top: 65px;
+  left: 40px;
+  z-index: 20;
+  box-shadow: 0 0 20px gray;
+}
+
+.popover-arrow {
+  position: absolute;
+  top: -18px;
+  left: 20px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid #EFEFEF;
+  width: 0;
+  height: 0;
+}
+
+#popover-shortcuts img {
+  z-index: 20;
+  width: 60px;
+  height: 60px;
+  margin: 10px;
+  border-radius: 10px;
+}

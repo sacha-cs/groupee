@@ -12,6 +12,7 @@ postHandler.addHandler("groupsettings/rename_group", renameGroup);
 getHandler.addHandler("groupsettings/get_space_used", getSpaceUsed);
 postHandler.addHandler("groups/join", joinGroup);
 getHandler.addHandler("groups/autocomplete", autoComplete);
+getHandler.addHandler("documents/get_group_id", getGroupId);
 
 function login(request, response, params) {
 
@@ -604,3 +605,7 @@ function autoComplete(request, response, params) {
     });
 }
 
+function getGroupId(request, response, params) {
+    response.write(utils.getViewingGroup(request));
+    response.end();
+}

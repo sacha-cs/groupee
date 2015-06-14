@@ -176,6 +176,7 @@ body {
 }
 
 .task:hover #delete {
+  background-color: #F7F7F7;
   display: initial;
   right:5px;
   position: absolute;

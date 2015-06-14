@@ -1,0 +1,37 @@
+<?template?>
+/template/main_template.html
+<?title?>
+Documents
+<?headers?>
+<script src="js.js"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<?content?> 
+<div id="opacity-layer" onclick="hideForm()"> 
+</div>
+
+<div id="container">
+    <div id="documents-list">
+        <div class="upload" onclick="popupForm()">
+            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/upload-document.png">
+            <p>Upload a document</p>
+        </div>
+    </div>
+
+    <div id="documents-viewer">
+    </div>
+
+    <div id="form-wrapper">
+        <form action="/documents/upload_documents" method="post" enctype="multipart/form-data">
+            <div class="card">
+                <h1>Upload documents</h1><br>
+                <input name="upload[]" type="file" multiple="multiple"> 
+                <input type="submit" name="submit" class="card-submit" value="Upload!">
+                <p>Supported file formats </br> .pdf .doc .docx .ppt .pptx .xls .xlsx .txt .rtf</p>
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+

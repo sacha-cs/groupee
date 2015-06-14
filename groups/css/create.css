@@ -99,10 +99,14 @@ body {
   font-size: 14px;
 }
 
-.create-card p {
+.create-card #error {
     color: #c33;
     font-weight: 400;
     opacity: 0.7;
+}
+
+.create-card #success {
+    color: blue;
 }
 
 .create-card select {
@@ -114,5 +118,28 @@ body {
   font-size: 14px;
   height: 36px;
   padding: 0 8px;
+}
+
+#autocompleter {
+    width: 274px;
+    margin-bottom: 10px;
+}
+
+.suggestion  {
+    word-wrap:break-word;
+    width:257px;
+    text-align: left !important;
+}
+
+div ::-webkit-scrollbar {
+  width: 5px;  /* for vertical scrollbars */
+}
+
+div ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+div ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5);
 }
 

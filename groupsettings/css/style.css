@@ -138,3 +138,7 @@ h1 {
   margin-bottom: 15px;
   font-size: 11pt;
 }
+
+#group-name {
+    word-wrap: break-word;
+}
