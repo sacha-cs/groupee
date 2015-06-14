@@ -85,8 +85,8 @@ body {
   font-weight: 400;
   text-align: center;
   display: inline-block;
-  opacity: 0.6;
-  transition: opacity ease 0.5s;
+  opacity: 0.5;
+  transition: opacity ease 0.15s;
 }
 
 .create-card a:hover {
@@ -103,10 +103,15 @@ body {
     color: #c33;
     font-weight: 400;
     opacity: 0.7;
+    word-wrap: break-word;
+    text-align: center;
+    width: 250px;
 }
 
 .create-card #success {
     color: blue;
+    word-wrap: break-word;
+    text-align: center;
 }
 
 .create-card select {
@@ -129,6 +134,11 @@ body {
     word-wrap:break-word;
     width:257px;
     text-align: left !important;
+}
+
+.redir-group {
+    width: 250px;
+    word-wrap:break-word;
 }
 
 div ::-webkit-scrollbar {
