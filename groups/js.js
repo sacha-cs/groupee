@@ -116,22 +116,24 @@ function setGroup(groupId) {
 // Joins the current user to the group with name "groupname".
 function joinSpecificGroup(groupname) {
     var aClient = new HttpClient();
-    var safeGroupName = decodeURIComponent(groupname);
 
     setErrorText("");
     setSuccessText("");
 
     aClient.post('/groups/join', 'groupname=' + groupname, function(response) {
         response = JSON.parse(response);
+        var decodedName = "<a class='redir-group' href='#' onclick='setGroup(" + response.groupId + ")'>" + decodeURIComponent(groupname) + "</a>";
         if (response.success) {
             // All is well. 
             document.getElementById("group_name").value = "";
-            setSuccessText("Welcome to " + safeGroupName + ", " + getCookie("username") + "!");
-            setGroup(response.groupId);
-            // TODO: Display button to allow the user to go to the home page of the new group.
+            if (response.userAlreadyInGroup) {
+                setErrorText("You are already a member of " + decodedName);
+            } else {
+                setSuccessText("Welcome to " + decodedName + ", " + getCookie("username") + "!");
+            }
         } else {
             // Something went wrong.
-            setErrorText("Sorry, we weren't able to add you to " + groupname + ".");
+            setErrorText("Sorry, we weren't able to add you to " + decodeURIComponent(groupname));
         }
     });
 }
@@ -151,6 +153,12 @@ function joinGroup() {
     joinSpecificGroup(groupname);
 }
 
+function setTextField(text) {
+    var decodedText = decodeURIComponent(text);
+    document.getElementById("group_name").value = decodedText;
+    joinSpecificGroup(text);
+}
+
 // Populate autocomplete div with suggestions.
 function populateAutocompleter(suggestions) {
     var suggestionsHtml = "";
@@ -161,8 +169,7 @@ function populateAutocompleter(suggestions) {
      
     for (var i = 0; i < suggestions.length; i++) {
         var suggestion = encodeURIComponent(suggestions[i]);
-        // WHY DOES THIS NOT WORK?
-        suggestionsHtml += "<div onclick=joinSpecificGroup(\"" + suggestion + "\")><a href='#' class='suggestion'>" + decodeURIComponent(suggestion) + "</a></div><br>";
+        suggestionsHtml += "<div onclick=setTextField('" + suggestion + "')><a href='#' class='suggestion'>" + decodeURIComponent(suggestion) + "</a></div><br>";
     }
     document.getElementById("autocompleter").innerHTML = suggestionsHtml;
 }

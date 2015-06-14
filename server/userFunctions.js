@@ -215,7 +215,8 @@ function extractGroupId(request, response, client, done, callback, group_name) {
 function insertUserIntoMemberOf(request, response, client, done, callback, groupId, username) {
     var payload = {
         success: false,
-        error: ""
+        error: "",
+        userAlreadyInGroup: false
     }
     // Given that the user does not already exist in the group, insert user into the group.
     var getUserQuery = "SELECT username " + 
@@ -230,19 +231,20 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
     
         if(result.rows.length > 0) {
             done(client);
-            payload.error = "User is already in group"
-            return utils.respondJSON(response, payload);
-        }
+            payload.userAlreadyInGroup = true;
+            callback(payload.userAlreadyInGroup);
+        } else {
         
-        var groupInsertQuery = "INSERT INTO member_of VALUES('" + groupId + "', '" + username + "')";
-        client.query(groupInsertQuery, function(err, result) {
-            if(err) { 
-                done(client);
-                return utils.respondError(err, response); 
-            }
-            // User has been inserted into appropriate group.
-            callback();
-        });
+            var groupInsertQuery = "INSERT INTO member_of VALUES('" + groupId + "', '" + username + "')";
+            client.query(groupInsertQuery, function(err, result) {
+                if(err) { 
+                    done(client);
+                    return utils.respondError(err, response); 
+                }
+                // User has been inserted into appropriate group.
+                callback(payload.userAlreadyInGroup);
+            });
+        }
     });
 }
 
@@ -556,7 +558,8 @@ function joinGroup(request, response, params) {
             
             var payload = {
                 success: false,
-                groupId: -1
+                groupId: -1,
+                userAlreadyInGroup : false
             }
             
             if (result.rows.length > 0) {
@@ -564,12 +567,15 @@ function joinGroup(request, response, params) {
                 payload.success = true;
                 payload.groupId = result.rows[0].group_id;
                 insertUserIntoMemberOf(request, response, client, done, 
-                    function() {
+                    function(inGroup) {
                         done(client);
+                        payload.userAlreadyInGroup = inGroup;
+                        utils.respondJSON(response, payload);
                     },
                 result.rows[0].group_id, username);
+            } else {
+                utils.respondJSON(response, payload);
             }
-            utils.respondJSON(response, payload);
         });
     });
 }
