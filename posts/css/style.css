@@ -187,7 +187,6 @@ ul li:hover #delete {
     float:left;
     margin-right:15px;
     position: fixed;
-    z-index: 5;
 }
 
 div[id^="note-controller"] {
