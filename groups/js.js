@@ -95,6 +95,7 @@ function addGroupsToPage() {
             }
             groups.innerHTML = allGroupHTML;
             document.getElementById("create-group").style.display = "block";
+            document.getElementById("join-group").style.display = "block";
             document.getElementById("loading").style.display = "none";
         }
     );
