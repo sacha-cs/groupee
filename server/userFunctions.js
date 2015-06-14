@@ -10,6 +10,7 @@ postHandler.addHandler("usersettings/change_password", changePassword);
 postHandler.addHandler("groupsettings/quit_group", quitGroup);
 postHandler.addHandler("groupsettings/rename_group", renameGroup);
 getHandler.addHandler("groupsettings/get_space_used", getSpaceUsed);
+getHandler.addHandler("documents/get_group_id", getGroupId);
 
 function login(request, response, params) {
 
@@ -534,4 +535,9 @@ function getSpaceUsed(request, response, params) {
             response.end();
         });
     });
+}
+
+function getGroupId(request, response, params) {
+    response.write(utils.getViewingGroup(request));
+    response.end();
 }

@@ -81,7 +81,10 @@ function addDocument(documentName, documentType) {
 
 function renderDocument(documentName) {
 	var documentViewer = document.getElementById("documents-viewer");
-	documentViewer.innerHTML = "<iframe src='http://docs.google.com/gview?url=http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group120/documents/" + documentName + "&embedded=true' frameborder='0'></iframe>";
+    var aClient = new HttpClient();
+    aClient.get('get_group_id', function(groupId) {
+	    documentViewer.innerHTML = "<iframe src='http://docs.google.com/gview?url=http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" + groupId + "/documents/" + documentName + "&embedded=true' frameborder='0'></iframe>";
+    });
 }
 
 function deleteDocument(documentName) {
