@@ -13,6 +13,20 @@
         <span onclick="window.location='/home/'" id="navbar-home">
            <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-icon-white.png">
         </span>
+        <span id="navbar-shortcuts" onclick="showShortcuts()">
+            <img id="shortcuts-icon" src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/shortcuts.png">
+            <div id="popover-shortcuts">
+                <div class="popover-arrow"></div>
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/todo.png" onclick="goTo('todos')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/whiteboard.png" onclick="goTo('whiteboard')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/timetable.png" onclick="goTo('calendar')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/posts.png" onclick="goTo('posts')"> </br>
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/documents.png" onclick="goTo('documents')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/photos.png" onclick="goTo('photos')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/code.png" onclick="goTo('code-editor')">
+                <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/settings.png" onclick="goTo('groupsettings')">
+            </div>
+        </span>
         <span id="navbar-group">
         </span>
         <span id="navbar-right">
@@ -55,7 +69,7 @@
         </div> 
     </div>
 
-    <div id="content">
+    <div id="content" onclick="hideShortcuts()">
         <?content?>
     </div>  
     </body>
