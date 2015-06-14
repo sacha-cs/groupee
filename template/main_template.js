@@ -1,4 +1,8 @@
 function templateLoaded() {
+	if (window.location.pathname != '/home/') {
+		document.getElementById('shortcuts-icon').style.display = 'initial';
+	}
+
     var groupName = decodeURIComponent(getCookie("group-name"));
     var userName = getCookie("username");
     var groupText = document.getElementById("navbar-group");
@@ -34,4 +38,12 @@ function logout() {
 
 function goTo(page) {
 	window.location = "/" + page;
+}
+
+function showShortcuts() {
+	document.getElementById('popover-shortcuts').style.visibility = 'visible';
+}
+
+function hideShortcuts() {
+	document.getElementById('popover-shortcuts').style.visibility = 'hidden';
 }
