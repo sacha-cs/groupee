@@ -113,6 +113,7 @@ function setGroup(groupId) {
     });
 }
 
+// Joins the current user to the group with name "groupname".
 function joinSpecificGroup(groupname) {
     var aClient = new HttpClient();
     var safeGroupName = decodeURIComponent(groupname);
@@ -125,7 +126,7 @@ function joinSpecificGroup(groupname) {
         if (response.success) {
             // All is well. 
             document.getElementById("group_name").value = "";
-            setSuccessText("Welcome to " + groupname + ", " + getCookie("username") + "!");
+            setSuccessText("Welcome to " + safeGroupName + ", " + getCookie("username") + "!");
             setGroup(response.groupId);
             // TODO: Display button to allow the user to go to the home page of the new group.
         } else {
@@ -154,7 +155,7 @@ function joinGroup() {
 function populateAutocompleter(suggestions) {
     var suggestionsHtml = "";
     var groupsFound = document.getElementById('autocompleter');
-    groupsFound.style.height = '300px';
+    groupsFound.style.height = '250px';
     groupsFound.style.overflowY = 'auto';
     groupsFound.style.overflowX = 'hidden';
      
