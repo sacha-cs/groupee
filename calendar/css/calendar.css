@@ -121,3 +121,16 @@ td:hover {
 	word-break: break-word;
 	position:relative; 
 }
+
+#delete {
+  display:none;
+}
+
+.events:hover #delete {
+  display: initial;
+  right:5px;
+  position: absolute;
+  width:20px;
+  height:20px;
+}
+
