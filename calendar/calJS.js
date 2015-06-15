@@ -9,19 +9,20 @@ var startEvent;
 var endEvent;
 var table;
 var events;
+var dragging;
 
 function loaded() {
 	table = document.getElementById("cal_table");
 	for(var i=0; i<7; i++) {
 		table.children[0].children[i].style.background = "#657383";
-		table.children[0].children[i].style.color = "white"
+		table.children[0].children[i].style.color = "#F5F5F5";
 	}
 	for(var i=0; i<7; i++) {
 		for(var j=1; j<=6; j++) {
-			table.children[j].children[i].onmouseup = addEvent;	
+			table.children[j].children[i].onmouseup = addNewEvent;	
 			table.children[j].children[i].onmousedown = startDrag;
-			table.children[j].children[i].onMouseOver = highlight;
-			table.children[j].children[i].onMouseOut = normal;
+			table.children[j].children[i].onmouseover = mouseOver;
+			table.children[j].children[i].onmouseout = mouseOut;
 		}
 	}
 	var client = new HttpClient();
@@ -29,6 +30,7 @@ function loaded() {
 		events = JSON.parse(response);
 		getPresentMonth();	
 	});
+	dragging = false;
 }
 
 
@@ -47,31 +49,43 @@ function setMonthAndYear(currMonth, currYear) {
 function loadTheDates(numOfDays, currRow, currCol) {
 	for(var i=0; i<7; i++) {
 		for(var j=1; j<=6; j++) {
-			table.children[j].children[i].innerHTML = "";			
+			table.children[j].children[i].innerHTML = "";
+			table.children[j].children[i].id = "";
+			table.children[j].children[i].className = "date-box";			
 		}
 	}
 
 	for(var i=1; i<=numOfDays; i++) {
-		table.children[currRow].children[currCol].innerHTML = i;
 		table.children[currRow].children[currCol].style.background = "#F5F5F5";
+		table.children[currRow].children[currCol].innerHTML = "<div class='day-dates'>" + i + "</div>";
+		table.children[currRow].children[currCol].id = i;
+
 		if ((i == currDate.getDate()) && (currDate.getMonth() == currViewDate.getMonth())
 			&& (currDate.getYear() == currViewDate.getYear())) {
 			table.children[currRow].children[currCol].style.background = "#FFCC66";	
 		}
-		for(var j=0; j<events.length; j++) {
-			var start_date = new Date(events[j].start_date);
-			var end_date = new Date(events[j].end_date);
-			if (start_date.getMonth() == currViewDate.getMonth()) {
-				if (start_date.getDate()<=i && end_date.getDate()>=i) {
-					table.children[currRow].children[currCol].innerHTML += "<br>" + 
-						"<span style='color:" + events[j].color +"'>" + events[j].text + "</span>";
-				}
-			}
-		}
+		
 		currCol++;
 		if (currCol == 7) {
 			currRow++;
 			currCol = 0;
+		}
+	}
+	for(var j=0; j<events.length; j++) {
+		addEventToCalendar(events[j]);
+	}
+}
+
+function addEventToCalendar(event) {
+	console.log("hello!");
+	var start_date = new Date(event.start_date);
+	var end_date = new Date(event.end_date);
+	console.log(event.start_date);
+	console.log(event.end_date);
+	if (start_date.getMonth() == currViewDate.getMonth()) {
+		for(var i = start_date.getDate(); i <= end_date.getDate(); i++) {
+			document.getElementById(i).innerHTML += 
+				"<div class='events' style='color:" + event.color +"'>" + event.text + "</div>";
 		}
 	}
 }
@@ -114,22 +128,67 @@ function getPresentMonth() {
 	loadTheDates(numOfDays, 1, firstDay);
 }
 
-function addEvent(event) {
-	event.target.style.background = "#FFCC66";
-	var content = event.target.innerHTML;
-	var lines = content.split("<br>");
-	endEvent = lines[0];
-	console.log(endEvent);
-	document.getElementById("new-event").style.visibility = "visible";
-	document.getElementById("opacity-layer").style.visibility = "visible";
+function startDrag(event) {
+	dragging = true;
+	var clickedDateBox = event.target;
+	if(clickedDateBox.className != 'date-box') 
+		clickedDateBox = clickedDateBox.parentNode;
+	startEvent = parseInt(clickedDateBox.children[0].innerHTML);
 }
 
-function startDrag(event) {
-	console.log(event);
-	event.target.style.background = "#FFCC66";
-	var content = event.target.innerHTML;
-	var lines = content.split("<br>");
-	startEvent = lines[0];
+function addNewEvent(event) {
+	dragging = false;
+	var clickedDateBox = event.target;
+	if(clickedDateBox.className != 'date-box')
+		clickedDateBox = clickedDateBox.parentNode;
+	endEvent = parseInt(clickedDateBox.children[0].innerHTML);
+	document.getElementById("new-event").style.visibility = "visible";
+	document.getElementById("opacity-layer").style.visibility = "visible";
+	resetBackgrounds();
+}
+
+function mouseOver(event) {
+	if(!dragging)
+		return;
+	var dateBox = event.target;
+	if(dateBox.className != 'date-box')
+		dateBox = dateBox.parentNode;
+	var date = parseInt(dateBox.children[0].innerHTML);
+	if(!date)
+		return;
+	var startDate;
+	var endDate;
+	if(date > startEvent) {
+		startDate = startEvent;
+		endDate = date;
+	} else {
+		startDate = date;
+		endDate = startEvent;
+	}
+	for(var i = startDate; i <= endDate; i++) {
+		document.getElementById("" + i).style.background = "#98AFC7";
+	}
+}
+
+function mouseOut(event) { 
+	//this is the original element the event handler was assigned to
+    var e = event.toElement || event.relatedTarget;
+    if (e.parentNode == this || e == this) {
+       return;
+    }
+	if(!dragging)
+		return;
+	resetBackgrounds();
+}
+
+function resetBackgrounds() {
+	for(var i = 1; i <= 31; i++) {
+		if(i == currDate.getDate() && currViewDate.getMonth() == currDate.getMonth() &&
+		   currViewDate.getFullYear() == currDate.getFullYear())
+			document.getElementById("" + i).style.background = "#FFCC66";
+		else
+			document.getElementById("" + i).style.background = "#F5F5F5";
+	}
 }
 
 function hideNewEvent() {
@@ -139,10 +198,35 @@ function hideNewEvent() {
 
 function submitEvent() {
 	var text = document.getElementById("event-item").value;
-	var startDate = "" + startEvent + "/" + (currViewDate.getMonth()+1) + "/" + 
-					currViewDate.getFullYear() + " 00:00:00";  
-	var endDate = "" + endEvent + "/" + (currViewDate.getMonth()+1) + "/" + 
-					currViewDate.getFullYear() + " 00:00:00";
+	var startTime = document.getElementById("start-time").value;
+	var endTime = document.getElementById("end-time").value;
+
+
+
+	var startHour = startTime.substring(0,startTime.indexOf(":"));
+	var startMinute = startTime.substring(startTime.lastIndexOf(":")+1);
+
+	var endHour = endTime.substring(0,endTime.indexOf(":"));
+	var endMinute = endTime.substring(endTime.lastIndexOf(":")+1);
+
+
+	if (startEvent > endEvent) {
+		var temp = startEvent;
+		startEvent = endEvent;
+		endEvent = temp;
+	}
+	
+	var month = (currViewDate.getMonth()+1);
+	month = (month < 10 ? ("0") : "") + month;
+
+	var startString = (startEvent < 10? "0" : "") + startEvent;
+	var endString = (endEvent < 10? "0" : "") + endEvent;
+
+	var startDate = "" + currViewDate.getFullYear() + "-" + month + "-" + 
+				 startString + "T" + startHour + ":" + startMinute + ":00";  
+	var endDate = "" + currViewDate.getFullYear() + "-" + month + "-" + 
+				endString + "T" + endHour + ":" + endMinute + ":00";
+
 	var color = colors[colorIndex];
 	colorIndex = (colorIndex + 1) % colors.length;
 
@@ -156,15 +240,8 @@ function submitEvent() {
 	var client = new HttpClient();
 
 	client.post("/calendar/post_event", JSON.stringify(payload), function() {
-		console.log("post event received");
 	});
+	addEventToCalendar(payload);
 	hideNewEvent();
 }
 
-function highlight(event) {
-	event.target.style.background = "#FFCC66";
-}
-
-function normal(event) {
-	event.target.style.background = "white";
-}

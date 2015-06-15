@@ -14,7 +14,6 @@ function createGroupData(group) {
 
 function calendarPostEvent(req, res, params) {
 	params = JSON.parse(params);
-	console.log(params);
 	var username = utils.getUser(req);
 	var group = utils.getViewingGroup(req);
 
