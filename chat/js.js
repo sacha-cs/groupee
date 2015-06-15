@@ -68,8 +68,7 @@ function toggleChat() {
 function updateChat() {
     var chat = document.getElementById("chat");
     aClient = new HttpClient();
-    var d = new Date();
-    aClient.get('/chat/chat_update?last='+lastMessageID + "&time=" + d.getMinutes() + ":" + d.getSeconds(),
+    aClient.get('/chat/chat_update?last='+lastMessageID,
     function(response) {
         response = JSON.parse(response);
         var newID = response.newID;
@@ -108,8 +107,7 @@ function sendMessage() {
     aClient = new HttpClient();
     var d = new Date();
     var data = {
-        chatmessage: message,
-        time: d.getMinutes() + ":" + d.getSeconds()
+        chatmessage: message
     };
     aClient.post('/chat/send_message', JSON.stringify(data),
     function (response) {
@@ -126,7 +124,18 @@ function addMessagesToChat(messages) {
     var message;
     for(var i = 0; i < messages.length; i++) {
         user = messages[i].user;
-        message = messages[i].chatmessage;
+        message = messages[i].message;
+        var time = messages[i].time;
+        var d = new Date(time);
+        var utc = d.getTime() + (d.getTimezoneOffset());
+        var nd = new Date(utc);
+        var hours = nd.getHours();
+        var minutes = nd.getMinutes();
+        var day = nd.getDate();
+        var year = nd.getFullYear();
+        var month = nd.getMonth() + 1;
+        var formattedMinutes = (minutes < 10) ? ("0" + minutes) : minutes;
+        var tooltipDate = day + "/" + month + "/" + year + " " + hours + ":" + minutes;
         if (getCookie("username") == user) {
             messenger = "self";
         } else {
@@ -136,11 +145,11 @@ function addMessagesToChat(messages) {
                             "<span class=\"avatar\" style='background-image:url(\"" + getAvatar(user) + "\")'>" +
                             "</span>" +
                             "<span class=\"messages\">" +
-                                "<p><u>" + user + ":</u> " + message + "</p>" +
+                                "<p title=\"" + tooltipDate + "\"><b>" + user + ":</b> " + message + "</p>" +
                             "</span>" +
                         "</li>";
 
-        allHTML += htmlMsg;    
+        allHTML += htmlMsg; 
     }
 
     chat.innerHTML += allHTML;
