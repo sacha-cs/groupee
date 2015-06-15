@@ -11,17 +11,17 @@ Calendar
 </div>
 
 <div id="new-event" >
+	<h1>Add an event</h1>
 	<form onsubmit="submitEvent(); return false;">
-		<input type="text" id="event-item" placeholder="Enter a new event">
-		<br>
+		<input type="text" id="event-item" placeholder="Event name">
+		</br>
 		Start time:
 		<input type="time" id="start-time" placeholder="HH:MM">
-		<br>
+		</br>
 		End time:
 		<input type="time" id="end-time" placeholder="HH:MM">
-		<br>
+		</br>
 		<input type="submit" name="submit" id="add-event" value="Add">
-		<input type="button" id="cancel-event" value="Cancel" onclick="hideNewEvent()" >
 	</form>
 	<div class="event-text">
         <p id="error"></p>
