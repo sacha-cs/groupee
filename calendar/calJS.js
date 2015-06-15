@@ -14,6 +14,8 @@ var dragging;
 function loaded() {
 	table = document.getElementById("cal_table");
 	for(var i=0; i<7; i++) {
+		table.getElementsByTagName("TH")[i].style.verticalAlign = 'middle';
+		table.getElementsByTagName("TH")[i].style.fontWeight = 'normal';
 		table.children[0].children[i].style.background = "#657383";
 		table.children[0].children[i].style.color = "#F5F5F5";
 	}
@@ -77,18 +79,16 @@ function loadTheDates(numOfDays, currRow, currCol) {
 }
 
 function addEventToCalendar(event) {
-	console.log("hello!");
+	//TODO: display correct time in tooltip
 	var start_date = new Date(event.start_date);
 	var end_date = new Date(event.end_date);
-	console.log(event.start_date);
-	console.log(event.end_date);
 	if (start_date.getMonth() == currViewDate.getMonth()) {
 		for(var i = start_date.getDate(); i <= end_date.getDate(); i++) {
 			document.getElementById(i).innerHTML += 
-				"<div class='events' style='color:" + event.color +"'>" + event.text + 
-
-                  "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/128x128/Close_Box_Red.png'>" +
-                  "</div>";
+				"<div class='events' style='background-color:" + event.color +"'>" + event.text + 
+				  "<span id='popover-time'>" + "Time goes here" + "</span>" +
+                  "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" +
+                "</div>";
 		}
 	}
 }
@@ -250,16 +250,15 @@ function submitEvent() {
 
 
 function deleteEvent(clickEvent, eventId) {
-	console.log("HEre!");
-	console.log(clickEvent);	
 	clickEvent.stopPropagation();
 	var aClient = new HttpClient();
 	aClient.post('delete_event', 'id=' + eventId,
 	  function(response){
 	    if (response[0] == "Y") {
 	      var deletedEvent = document.getElementById(eventId);
-	      deletedEvent.parentNode.removeChild(deletedEvent);
-	      console.log("deleted successfully");
+	      // This line doesn't work... so commented out
+	      // deletedEvent.parentNode.removeChild(deletedEvent);
+	      location.reload(true);
 	    }
 	  });
 	addEventToCalendar(payload);
