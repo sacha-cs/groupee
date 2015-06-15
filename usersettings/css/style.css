@@ -2,21 +2,28 @@
 	margin: 50px;
 }
 
+#inner-content {
+  margin-top: 100px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 785px;
+}
+
 #side-menu {
-  margin-top: 50px;
 	text-align: center;
-	float: left;
-	width: 30%;
+	width: 350px;
 	background-color: #F7F7F7;
   border-radius: 2px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
 #user-settings {
-  margin-top: 50px;
 	text-align: center;
-	float: right;
-	width:70%;
+	width:350px;
+  position: absolute;
+  top: 0;
+  left: 375px;
 }
 
 #avatar img {
@@ -26,10 +33,6 @@
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
-#options {
-    text-align: center;
-	width: 100%;
-}
 
 #options {
     display: inline-block;
@@ -61,9 +64,8 @@ button:hover {
 #account, #password {
   display: none;
   padding: 30px;
-  width: 35%;
+  width: 100%;
   background-color: #F7F7F7;
-  margin: 0 auto;
   border-radius: 2px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
   overflow: hidden;
