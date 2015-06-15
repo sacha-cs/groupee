@@ -239,3 +239,23 @@ td:hover {
     margin-left: 0px;
     position: absolute;
 }
+
+.button input, .today_button input {
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+  text-align: center;
+  font-size: 14px;
+  height: 30px;
+}
+
+
+.button input:hover, .today_button input:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
