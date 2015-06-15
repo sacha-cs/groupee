@@ -115,6 +115,10 @@ function sendMessage() {
     chatBox.value = "";
 }
 
+function prefixWithZero(num) {
+    return (num < 10) ? ("0" + num) : num;
+}
+
 function addMessagesToChat(messages) {
     var chat = document.getElementById("chat");
     var isScrolledToBottom = chat.scrollHeight - chat.clientHeight <= chat.scrollTop + 1;
@@ -130,12 +134,14 @@ function addMessagesToChat(messages) {
         var utc = d.getTime() + (d.getTimezoneOffset());
         var nd = new Date(utc);
         var hours = nd.getHours();
-        var minutes = nd.getMinutes();
-        var day = nd.getDate();
-        var year = nd.getFullYear();
-        var month = nd.getMonth() + 1;
-        var formattedMinutes = (minutes < 10) ? ("0" + minutes) : minutes;
-        var tooltipDate = day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+        var minutes = prefixWithZero(nd.getMinutes());
+        var day = prefixWithZero(nd.getDate());
+        var month = prefixWithZero(nd.getMonth() + 1);
+        if (day == (new Date().getDate())) {
+            
+        }
+        var tooltipDate = ((day != (new Date().getDate())) ? (day + "/" + month) : "") + " " + hours + ":" + minutes;
+        
         if (getCookie("username") == user) {
             messenger = "self";
         } else {
@@ -143,9 +149,10 @@ function addMessagesToChat(messages) {
         }
         var htmlMsg = "<li class=\"" + messenger + "\">" + 
                             "<span class=\"avatar\" style='background-image:url(\"" + getAvatar(user) + "\")'>" +
+                                "<span id=\"popover-avatar\">" + tooltipDate + "</span>" +
                             "</span>" +
                             "<span class=\"messages\">" +
-                                "<p title=\"" + tooltipDate + "\"><b>" + user + ":</b> " + message + "</p>" +
+                                "<p><b>" + user + ":</b> " + message + "</p>" +
                             "</span>" +
                         "</li>";
 
