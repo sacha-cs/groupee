@@ -117,7 +117,6 @@ label {
     height: 50px;
     display:inline-block;
     padding: 0 0 0 0px;
-    margin-bottom: 60px;
 }
 
 #line:checked + label{
@@ -128,7 +127,6 @@ label {
     height: 50px;
     display:inline-block;
     padding: 0 0 0 0px;
-    margin-bottom: 60px;
 }
 
 #circle + label {
@@ -148,6 +146,27 @@ label {
     height: 50px;
     display:inline-block;
     padding: 0 0 0 0px;
+}
+
+#eraser + label {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/eraser.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+    margin-bottom: 60px;
+}
+
+#eraser:checked + label{
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #ADADAD;
+    background-image: url(http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/eraser.png);
+    height: 50px;
+    display:inline-block;
+    padding: 0 0 0 0px;
+    margin-bottom: 60px;
 }
 
 #currTool {
