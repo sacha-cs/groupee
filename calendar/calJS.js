@@ -79,18 +79,28 @@ function loadTheDates(numOfDays, currRow, currCol) {
 }
 
 function addEventToCalendar(event) {
-	//TODO: display correct time in tooltip
 	var start_date = new Date(event.start_date);
 	var end_date = new Date(event.end_date);
+	var tooltipTime = formatTime(start_date, end_date);
 	if (start_date.getMonth() == currViewDate.getMonth()) {
 		for(var i = start_date.getDate(); i <= end_date.getDate(); i++) {
 			document.getElementById(i).innerHTML += 
 				"<div class='events' style='background-color:" + event.color +"'>" + event.text + 
-				  "<span id='popover-time'>" + "Time goes here" + "</span>" +
+				  "<span id='popover-time'>" + tooltipTime + "</span>" +
                   "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" +
                 "</div>";
 		}
 	}
+}
+
+function formatTime(start_date, end_date) {
+	var startTime = prefixTime(start_date.getHours()) + ':' + prefixTime(start_date.getMinutes());
+	var endTime = prefixTime(end_date.getHours()) + ':' + prefixTime(end_date.getMinutes());
+	return startTime + ' - ' + endTime;
+}
+
+function prefixTime(time) {
+	return (time < 10 ? ("0" + time) : time);
 }
 
 function getNextMonth() {
