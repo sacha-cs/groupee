@@ -101,7 +101,7 @@
 
 #cal_date {
   -webkit-font-smoothing: antialiased;
-  font-weight: 300;
+  font-weight: bold;
   font-size: 21px;
   color: rgb(255, 255, 255);
   text-align: center;

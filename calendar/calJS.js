@@ -1,6 +1,6 @@
 var months = ['January', 'February', 'March', 'April', 'May', 'June', 
 			  'July', 'August', 'September', 'October', 'November', 'December'];
-var colors = ["#FF6600","#FF66CC","#6699FF", "#66CC00", "#CC0000", "#006600", "#330066"];
+var colors = ["#FF9D5C","#FF66CC","#6699FF", "#66CC00", "#CC0000", "#006600", "#330066"];
 var colorIndex = 0;
 
 var currDate = new Date(); // today's date
@@ -85,7 +85,7 @@ function addEventToCalendar(event) {
 	if (start_date.getMonth() == currViewDate.getMonth()) {
 		for(var i = start_date.getDate(); i <= end_date.getDate(); i++) {
 			document.getElementById(i).innerHTML += 
-				"<div class='events' style='background-color:" + event.color +"'>" + event.text + 
+				"<div class='events' style='background-color:" + event.color +"'>" + escapeHtml(event.text) + 
 				  "<span id='popover-time'>" + tooltipTime + "</span>" +
                   "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" +
                 "</div>";
