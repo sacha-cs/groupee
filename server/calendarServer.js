@@ -2,8 +2,7 @@ var groups = {};
 
 postHandler.addHandler("calendar/post_event", calendarPostEvent, true);
 getHandler.addHandler("calendar/calendar_update", calendarUpdate);
-//postHandler.addHandler("calendar/change_date", changeDate);
-//postHandler.addHandler("calendar/delete_event", deleteEvent);
+postHandler.addHandler("calendar/delete_event", deleteEvent);
 
 
 function createGroupData(group) {
@@ -60,6 +59,19 @@ function calendarUpdate(req, res, params) {
 			done(client);
 		})
 	}); 
+}
 
+function deleteEvent(req, res, params) {
+	var event_id = params.id;
+	var deleteTodoQuery = "DELETE FROM events " +
+						  "WHERE event_id=" + event_id;
+
+	pg.connect(connectionString, function(err, client, done) {
+		client.query(deleteTodoQuery, function(err, result) {
+			done(client);
+			if (err) { return utils.respondError(err, res); }
+			return utils.respondPlain(res, "Y");			
+		});
+	});
 
 }

@@ -85,7 +85,10 @@ function addEventToCalendar(event) {
 	if (start_date.getMonth() == currViewDate.getMonth()) {
 		for(var i = start_date.getDate(); i <= end_date.getDate(); i++) {
 			document.getElementById(i).innerHTML += 
-				"<div class='events' style='color:" + event.color +"'>" + event.text + "</div>";
+				"<div class='events' style='color:" + event.color +"'>" + event.text + 
+
+                  "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='https://cdn3.iconfinder.com/data/icons/softwaredemo/PNG/128x128/Close_Box_Red.png'>" +
+                  "</div>";
 		}
 	}
 }
@@ -245,3 +248,23 @@ function submitEvent() {
 	hideNewEvent();
 }
 
+
+function deleteEvent(clickEvent, eventId) {
+	console.log("HEre!");
+	console.log(clickEvent);	
+	clickEvent.stopPropagation();
+	var aClient = new HttpClient();
+	aClient.post('delete_event', 'id=' + eventId,
+	  function(response){
+	    if (response[0] == "Y") {
+	      var deletedEvent = document.getElementById(eventId);
+	      deletedEvent.parentNode.removeChild(deletedEvent);
+	      console.log("deleted successfully");
+	    }
+	  });
+	addEventToCalendar(payload);
+}
+
+function doNothing(e) {
+	e.stopPropagation();
+}
