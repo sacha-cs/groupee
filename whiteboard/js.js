@@ -1,4 +1,4 @@
-var TOOL_INTERVAL = 1000;
+var TOOL_INTERVAL = 500;
 
 //The canvases - the permenant and temporary
 var canvas;
@@ -53,7 +53,7 @@ function startWhiteboard() {
 
     textHidden = document.getElementById("textHidden");
 
-    userPen = {colour: "rgb(255, 0, 0)", 
+    userPen = {colour: "rgb(0, 0, 0)", 
                thickness:3, 
                fillColour: "rgb(0, 0, 0)",
                textSize: 20};
@@ -75,15 +75,17 @@ function startWhiteboard() {
     /* TODO: factor these out into their own function */
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
-        if(tool == "Pen") {
+        if(tool == "Pen" || tool == "Eraser") {
+            var colour = (tool == "Pen" ? userPen.colour : "#ffffff");
             clearCtx(tempCtx);
-            tempCtx.fillStyle = userPen.colour;
+            tempCtx.fillStyle = colour;
             tempCtx.strokeStyle = "black";
             tempCtx.lineWidth = 1;
             drawCircle(tempCtx, mousePos, userPen.thickness/2);
             drawCircleOutline(tempCtx, mousePos, userPen.thickness/2);
             if(mouseDown) {
                 setUserPreferences(ctx);
+                ctx.strokeStyle = colour;
                 ctx.beginPath();
                 ctx.moveTo(lastMousePos.x, lastMousePos.y);
                 ctx.lineTo(mousePos.x, mousePos.y);
@@ -141,7 +143,7 @@ function startWhiteboard() {
                 drawTextPermenent();
             setTimeout(function () { textHidden.focus() }, 100);
             textHidden.value = "";
-        } else if(tool == "Pen") {
+        } else if(tool == "Pen" || tool == "Eraser") {
             started = true;
             lastMousePos = mousePos;
         } else if(tool == "Rectangle") {
@@ -240,6 +242,12 @@ function setUserPreferences(ctx) {
 
 function selectPen() {
     tool = "Pen";
+    document.getElementById("currTool").innerHTML = tool;
+    document.getElementById("wrapper").style.cursor= "none";
+}
+
+function selectEraser() {
+    tool = "Eraser";
     document.getElementById("currTool").innerHTML = tool;
     document.getElementById("wrapper").style.cursor= "none";
 }
@@ -361,7 +369,7 @@ function toolSendTime() {
 
 function addDataToSend() {
     var data = {};
-    if(tool == "Pen") {
+    if(tool == "Pen" || tool == "Eraser") {
         data.x = mousePos.x
         data.y =  mousePos.y;
     } else if(tool == "Text") {
@@ -445,7 +453,7 @@ function updateWhiteboard(allUpdates) {
                 update = prev;
             }
 
-            if (!appending && update.tool == "Pen") {
+            if (!appending && (update.tool == "Pen" || update.tool == "Eraser")) {
                 update.last = update.data[0]
             }
 
@@ -480,7 +488,10 @@ function drawUpdates() {
             var data = updatesToDraw[i].data;
             setPen(ctx, updatesToDraw[i].pen);
             while(data.length > 0 && data[0].time < timePassed) {
-                if(updatesToDraw[i].tool == "Pen") {
+                if(updatesToDraw[i].tool == "Pen" || 
+                   updatesToDraw[i].tool == "Eraser") {
+                    var colour = (updatesToDraw[i].tool == "Pen" ? userPen.colour : "#ffffff");
+                    ctx.strokeStyle = colour;
                     ctx.beginPath();
                     ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
                     ctx.lineTo(data[0].x, data[0].y);
