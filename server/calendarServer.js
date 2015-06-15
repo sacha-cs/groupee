@@ -15,6 +15,7 @@ function calendarPostEvent(req, res, params) {
 	params = JSON.parse(params);
 	var username = utils.getUser(req);
 	var group = utils.getViewingGroup(req);
+	var text = params.text.replace(/'/g, "''");
 
     if(!groups[group])
         createGroupData(group);
@@ -25,7 +26,7 @@ function calendarPostEvent(req, res, params) {
 						"event_start, event_end, colour, event_name)" +
 						"VALUES(" + group + ", '" + username + "', '" +
 						params.start_date + "', '" + params.end_date + "', '" +
-						params.color + "', '" + params.text + "');" ;
+						params.color + "', '" + text + "');" ;
 		client.query(insertQuery, function(err, insertEvent) {
 			if (err) { return utils.respondError(err, res); }
 			done(client);
