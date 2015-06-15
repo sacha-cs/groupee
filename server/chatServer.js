@@ -15,10 +15,11 @@ function createGroupData(group) {
 function chatSendMessage(request, response, params) {
     params = JSON.parse(params);
     var username = utils.getUser(request);
-    var group = utils.getViewingGroup(request);
+    var group = utils.getViewingGroup(request); 
+    var d = new Date();
     if(!groups[group])
         createGroupData(group);
-    groups[group].messages.push({user:username, message:params.chatmessage});
+    groups[group].messages.push({user:username, message:params.chatmessage, time:d});
     groups[group].messageNo++;
     utils.respondPlain(response, "MessageRecieved");
 
@@ -51,7 +52,6 @@ function chatSendMessage(request, response, params) {
 
 function chatUpdate(request, response, params, checkForNew) {
     var last = parseInt(params.last);
-    
     var group = utils.getViewingGroup(request);
 
     if(!groups[group]) 
@@ -81,10 +81,7 @@ function chatUpdate(request, response, params, checkForNew) {
     while(last < groups[group].messageNo)
     {
         var message = groups[group].messages[last];
-        payload.messages.push({
-            user: message.user,
-            chatmessage: message.message
-        });
+        payload.messages.push(message);
         last++;
     }
     response.end(JSON.stringify(payload));
@@ -122,7 +119,8 @@ this.getAllChatHistory = function() {
                 if(!groups[group]) 
                     createGroupData(group);
                 groups[group].messages.push({user:result.rows[i].username,
-                                             message:result.rows[i].message});
+                                             message:result.rows[i].message,
+                                             time:result.rows[i].message_time});
                 groups[group].messageNo++;
             }
         });
