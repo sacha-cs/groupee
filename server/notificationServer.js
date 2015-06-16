@@ -26,6 +26,8 @@ function createConnectionData(user, callback) {
 }
 
 this.checkForNotification = function(message, fromUser, group, feature) {
+    if(!message)
+        return;
     var users=message.match(/@[^\s]+/g);
     if(!users)
         return;
