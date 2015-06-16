@@ -1,0 +1,261 @@
+#content {
+	width: calc(100% - 400px);
+}
+
+#new-event{
+  visibility: hidden;
+  position: absolute;
+  padding: 40px;
+  width: 275px;
+  height: 300px;
+  background-color: #F7F7F7;
+  left: 0;
+  right: 0;
+  top:0;
+  bottom:0;
+  margin: auto;
+  border-radius: 2px;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index:3;
+}
+
+#new-event h1 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 2.3em;
+}
+
+#new-event input[type=text] {
+  height: 44px;
+  font-size: 16px;
+  width: 100%;
+  margin-bottom: 10px;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-top: 1px solid #c0c0c0;
+  padding: 0 8px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+#start-time, #end-time {
+    height: 30px;
+}
+
+#new-event input[type=text]:hover, #start-time:hover, #end-time:hover {
+  border: 1px solid #b9b9b9;
+  border-top: 1px solid #a0a0a0;
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+#new-event input[type=submit] {
+  width: 100%;
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+  text-align: center;
+  font-size: 14px;
+  height: 36px;
+  padding: 0 8px;
+}
+
+#new-event input[type=submit]:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
+
+#new-event input[type=button] {
+  width: 40%;
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.add-submit:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
+
+#end-time {
+    margin-top: 10px; 
+    margin-bottom: 25px;
+}
+
+#scheduler {
+	width:100%;
+	height:100%;
+	padding:15px;
+	margin:10px;
+	overflow:hidden;
+}  
+
+#cal_date {
+  -webkit-font-smoothing: antialiased;
+  font-weight: bold;
+  font-size: 21px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-shadow: rgba(0, 0, 0, 0.247059) 0px 7px 15px;
+}
+
+#cal_navline div {
+	display: inline-block;
+	white-space: nowrap;
+}
+
+
+#prev_button {
+	float: right;
+	margin-right: 10px;
+}
+
+#next_button {
+	float: right;
+	margin-right: 10px;
+}
+
+.today_button {
+	float: right;
+	margin-right: 10px;
+}
+
+
+#cal_header {
+	width: 100%;
+}
+
+#cal_header div {
+	display: inline-block;
+	width: 14.28%;
+	margin:0;
+}
+
+#cal_data table {
+    border-collapse: collapse;
+    width:100%;
+    height: 100%;
+    background-color: #F5F5F5;
+}
+
+#cal_data th,#cal_data td {
+    border: 1px solid black;
+    width:14%;
+    height:40px;
+    vertical-align: top;
+}
+
+#opacity-layer {
+    visibility: hidden;
+    position: absolute;
+    width: 200%;
+    height: 100%;
+    background-color: #c3d7df;
+    z-index: 2;
+    opacity: 0.8;
+    overflow: hidden;
+}
+
+td {
+	background-color: #F5F5F5;
+}
+
+td:hover {
+	background-color: #98AFC7 !important;
+}
+
+.events, .day-dates {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.events {
+	margin-bottom: 5px;
+	padding: 2px;
+	background-color: #F7F7F7;
+	border-radius: 2px;
+	margin-top: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	word-break: break-word;
+	position:relative; 
+}
+
+#delete {
+  display:none;
+}
+
+.events:hover #delete {
+  display: initial;
+  right:5px;
+  position: absolute;
+  width:20px;
+  height:20px;
+}
+
+.events #popover-time {
+    position: absolute;
+    width:120px;
+    color: #FFFFFF;
+    background: #000000;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    display: none;
+    border-radius: 6px;
+}
+
+.events #popover-time:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+    width: 0; height: 0;
+    border-top: 8px solid #000000;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+}
+
+.events:hover #popover-time {
+    display: block;
+    opacity: 0.8;
+    bottom: 130%;
+    left: 0;
+    margin-left: 0px;
+    position: absolute;
+}
+
+.button input, .today_button input {
+  display: block;
+  margin-bottom: 10px;
+  position: relative;
+  border: 0px;
+  color: #fff;
+  text-shadow: 0 1px rgba(0,0,0,0.1); 
+  background-color: #FF8300;
+  text-align: center;
+  font-size: 14px;
+  height: 30px;
+}
+
+
+.button input:hover, .today_button input:hover {
+  border: 0px;
+  text-shadow: 0 1px rgba(0,0,0,0.3);
+  background-color: #FF9A30;
+}
