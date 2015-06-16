@@ -569,7 +569,7 @@ div ::-webkit-scrollbar-thumb {
 }
 
 .notification:hover {
-    background-color:blue;
+    background-color:lightGray;
 }
 .notif-avatar {
   height: 50px;
