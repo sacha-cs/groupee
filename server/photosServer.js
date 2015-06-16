@@ -259,6 +259,9 @@ function addComment(request, response, params) {
             utils.respondJSON(response, payload);
         });         
     });
+
+    var group=utils.getViewingGroup(request);
+    notificationServer.checkForNotification(comment, username, group, "photos"); 
 }
 
 function deleteComment(request, response, params) {

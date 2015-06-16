@@ -25,6 +25,9 @@ function addNote(request, response, data) {
             return utils.respondPlain(response, "Y" + noteId);
 		});
 	});
+    
+    notificationServer.checkForNotification(noteTitle, username, groupId, "posts"); 
+    notificationServer.checkForNotification(noteContent, username, groupId, "posts"); 
 }
 
 function queryCreator() {
@@ -57,6 +60,10 @@ function updateNote(request, response, data) {
             return utils.respondPlain(response, "Y");
 		});
 	});
+    var username = utils.getUser(request);
+    var groupId = utils.getViewingGroup(request);
+    notificationServer.checkForNotification(title, username, groupId, "posts"); 
+    notificationServer.checkForNotification(content, username, groupId, "posts"); 
 }
 
 function deleteNote(request, response, data) {
