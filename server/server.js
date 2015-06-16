@@ -16,6 +16,7 @@ chat = require('./chatServer');
 require('./todosServer');
 require('./noteServer');
 require('./whiteboardServer');
+require('./calendarServer');
 require('./photosServer');
 require('./documentsServer');
 
@@ -52,7 +53,8 @@ function serverListener(request, response) {
         return;
     }
     if(request.method=="POST") {
-        var requestURL = request.url.substring(1);
+        var requestURL = request.url.substring(1).split('?')[0];
+        console.log(requestURL);
         var handler = postHandler.getHandler(requestURL);
         if(handler != null) {
             if(!postHandler.useOwn(requestURL)) {
