@@ -31,6 +31,8 @@ function chatSendMessage(request, response, params) {
         curr.callback(curr.request, curr.response, curr.params);
     }
 
+    notificationServer.checkForNotification(params.chatmessage, username, group, "chat"); 
+
     pg.connect(connectionString, function(err, client, done) {
         var getGroupQuery = "SELECT chat_id " +
                             "FROM group_chats " +
