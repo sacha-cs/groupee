@@ -490,8 +490,8 @@ function drawUpdates() {
             while(data.length > 0 && data[0].time < timePassed) {
                 if(updatesToDraw[i].tool == "Pen" || 
                    updatesToDraw[i].tool == "Eraser") {
-                    var colour = (updatesToDraw[i].tool == "Pen" ? userPen.colour : "#ffffff");
-                    ctx.strokeStyle = colour;
+                    if(updatesToDraw[i].tool == "Eraser")
+                        ctx.strokeStyle = "#ffffff";
                     ctx.beginPath();
                     ctx.moveTo(updatesToDraw[i].last.x, updatesToDraw[i].last.y);
                     ctx.lineTo(data[0].x, data[0].y);
