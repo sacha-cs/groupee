@@ -403,7 +403,7 @@ function addGroupChat(request, response, client, done, callback, group_id) {
 }
 
 
-function changeAvatar(req, response, data) {
+function changeAvatar(req, response, data, files) {
     var user = utils.getUser(req);
     var filePath = files.avatar.path;
 
