@@ -63,7 +63,8 @@ function notify(fromUser, toUser, group, feature) {
                     fromUser: fromUser,
                     group: groupName,
                     feature: feature,
-                    success: true
+                    success: true,
+                    groupId: group
                 });
                 done(client);
             });
@@ -96,18 +97,22 @@ function getSome(request, response, params) {
         notifications: []
     }
     pg.connect(connectionString, function(err, client, done) {
-        var query = "SELECT * FROM notifications " +
+        var query = "SELECT * " +
+                    "FROM notifications JOIN groups " +
+                    "ON notifications.group_id=groups.group_id " +
                     "WHERE to_user='" + user + "' " +
                     "ORDER BY notification_id " +
                     "LIMIT " + number;
         client.query(query, function(err, res) {
+            console.log(err);
             if(err) { return utils.respondJSON(response, {success:false}); }
             for(var i = 0; i < res.rows.length; i++) {
                 var row = res.rows[i];
                 payload.notifications.push({
                     fromUser: row.from_user,
-                    group: row.group_id,
-                    feature: row.feature
+                    groupId: row.group_id,
+                    feature: row.feature,
+                    group: row.group_name
                 });
             }
             utils.respondJSON(response, payload);
