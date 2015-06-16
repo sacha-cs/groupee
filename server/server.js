@@ -18,6 +18,7 @@ require('./noteServer');
 require('./whiteboardServer');
 require('./photosServer');
 require('./documentsServer');
+notificationServer = require('./notificationServer');
 
 connectionString = 'postgres://g1427136_u:5tTcpsouh0@db.doc.ic.ac.uk/g1427136_u?ssl=true';
 uploadPath = "/vol/project/2014/271/g1427136/"
