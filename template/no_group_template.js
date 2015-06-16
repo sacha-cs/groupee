@@ -6,6 +6,7 @@ function templateLoaded() {
     avatarImage.style["background-image"] = "url(" + getAvatar(userName) + ")";
 
 	loaded();
+    startNotifications();
 }
 
 /* Log out the current user, and clear the session cookie. */

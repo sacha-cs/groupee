@@ -2,6 +2,7 @@
     <head>
         <script type="text/javascript" src="/template/no_group_template.js"></script>
         <link rel="stylesheet" type="text/css" href="/template/css/no_group_template.css">
+        <script type="text/javascript" src="/notifications/js.js"></script>
         <?headers?>
         <title><?title?></title>
     </head>
@@ -14,6 +15,12 @@
         </span>
 
         <span id="navbar-right">
+            <span onclick="showNotifications(event)" id="navbar-notifications">
+                <img src="/bell.png">
+                <div id="new-notification"></div>
+                <div id="notifications">
+                </div>
+            </span>
             <span onclick="window.location='/groups/'" id="navbar-groups">
                 <img src="http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groups.png">
                 <span id="popover-groups">Groups</span>
