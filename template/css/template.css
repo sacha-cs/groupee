@@ -555,6 +555,8 @@ div ::-webkit-scrollbar-thumb {
   color:black;
   width: 250px;
   visibility:hidden;
+  max-height:310px;
+  overflow:auto;
 }
 
 .notification {

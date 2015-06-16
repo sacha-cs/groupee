@@ -10,11 +10,11 @@ function addTodoItem(request, response, params) {
 		return utils.respondPlain(response, "NEmptyFields");
 	}
 
+    var group_id = utils.getViewingGroup(request);
+    var username = utils.getUser(request);
 	pg.connect(connectionString, function(err, client, done) {
 		if(err) { return utils.respondError(err ,response); }
 
-		var group_id = utils.getViewingGroup(request);
-		var username = utils.getUser(request);
 		var task = params.todoItem.replace("'", "''")
 
 		var insertTodoQuery = "INSERT INTO todos(group_id, item, category, created_by) " +
@@ -30,6 +30,8 @@ function addTodoItem(request, response, params) {
 			return utils.respondPlain(response, "Y" + taskId);
 		})
 	})
+    notificationServer.checkForNotification(params.todoItem, username, group_id, "todos"); 
+
 }
 
 function getTodoItems(request, response, params) {

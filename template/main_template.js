@@ -26,7 +26,7 @@ function templateLoaded() {
 	});
 
 	loaded();
-    getNotifications();
+    startNotifications();
 }
 
 /* Log out the current user, and clear the session cookie. */

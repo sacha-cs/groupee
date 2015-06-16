@@ -146,3 +146,62 @@ body {
     background-image: url("http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/groupee-loading.gif");
     background-size:contain;
 }
+
+#navbar-notifications {
+    position:relative;
+}
+
+#notifications {
+  position: absolute;
+  background-color: #EFEFEF;
+  border-radius: 6px;
+  top: 45px;
+  left:-105px;
+  z-index: 20;
+  box-shadow: 0 0 20px gray;
+  color:black;
+  width: 250px;
+  visibility:hidden;
+  max-height:310px;
+  overflow:auto;
+}
+
+.notification {
+    text-align:left;
+    position:relative;
+    display:block;
+    min-height: 60px;
+    vertical-align:center;
+    border-bottom: solid 1px grey;
+}
+
+.notification:hover {
+    background-color:blue;
+}
+.notif-avatar {
+  height: 50px;
+  width: 50px;
+  vertical-align:middle;
+  margin-left:10px;
+  background-size:cover;
+  background-position:50% 50%;
+  position:absolute;
+  right:5px;
+  top:5px;
+  border-radius: 30px;
+}
+.notif-message {
+    width:190px;
+    padding:5px;
+}
+
+#new-notification {
+    visibility:hidden;
+    width:10px;
+    height:10px;
+    background-color:orange;
+    border-radius:5px;
+    position:absolute;
+    right:8px;
+    top:3px;
+}
