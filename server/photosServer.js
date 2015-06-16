@@ -244,7 +244,7 @@ function deletePhoto(request, response, params) {
 function addComment(request, response, params) {
     var parsedObj = JSON.parse(Object.keys(params)[0]); 
     var id = parsedObj.photoId;
-    var comment = parsedObj.comment;
+    var comment = parsedObj.comment.replace(/'/g, "''");
     var username = parsedObj.username;
     
     var addCommentQuery = "INSERT INTO photos_comments(text, photo_id, username) " + 
