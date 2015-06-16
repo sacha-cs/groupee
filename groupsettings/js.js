@@ -62,6 +62,8 @@ function renameGroup() {
 
     var aClient = new HttpClient();
     aClient.post('rename_group', "groupName=" + groupName, function(response) {});
+    groupName = encodeURIComponent(escapeHtml(groupName));
+    document.cookie = "group-name=" + groupName + ";path=/";
     location.reload(true);
 }
 
