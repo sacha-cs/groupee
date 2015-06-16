@@ -48,12 +48,3 @@ function showShortcuts() {
 function hideShortcuts() {
 	document.getElementById('popover-shortcuts').style.visibility = 'hidden';
 }
-
-function getNotifications() {
-    var client = new HttpClient();
-    client.get("/notifications/get_new", function(response) {
-        response = JSON.parse(response);
-        console.log(response);
-        getNotifications();
-    });
-}

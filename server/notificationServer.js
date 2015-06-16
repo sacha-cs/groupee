@@ -20,6 +20,7 @@ function createConnectionData(user, callback) {
                 timeOut: null
             }
             callback();
+            done(client);
         });
     });
 }
@@ -64,6 +65,7 @@ function notify(fromUser, toUser, group, feature) {
                     feature: feature,
                     success: true
                 });
+                done(client);
             });
         });
     }
@@ -109,6 +111,7 @@ function getSome(request, response, params) {
                 });
             }
             utils.respondJSON(response, payload);
+            done(client);
         });
     });
 }
