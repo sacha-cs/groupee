@@ -106,7 +106,6 @@ function getSome(request, response, params) {
                     "ORDER BY notification_id " +
                     "LIMIT " + number;
         client.query(query, function(err, res) {
-            console.log(err);
             if(err) { return utils.respondJSON(response, {success:false}); }
             for(var i = 0; i < res.rows.length; i++) {
                 var row = res.rows[i];
