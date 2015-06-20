@@ -5,6 +5,11 @@ var lastId = 0;
 var ensureSent = false;
 var offsetData;
 var lastMoved = -1;
+var cols = [
+    "rgb(204,255,204)",
+    "rgb(204,204,255)",
+    "rgb(255,255,204)"
+];
 
 // BUG:  Colours change on refresh.
 
@@ -21,22 +26,21 @@ function getNoteHtml(id, title, content) {
 }
 
 function getColour() {
-    var cols = ["#cfc", "#ccf", "#ffc"];
-    var index = Math.floor(Math.random() * 3);
-    return cols[index];
+    return Math.floor(Math.random() * 3);
 }
 
 // Adds a new note.
 function addNote() {
     var notes = document.getElementById("notes"); 
-    var newColour = getColour();
+    var colIndex = getColour();
+    var newColour = cols[colIndex];
 
     // Create an empty note.
     notes.innerHTML += getNoteHtml(lastId, null, null);
-    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false, colour: newColour};
+    noteInfo[lastId] = {noteId: -1, title: "", content: "", saved: false, colour: newColour, colIndex: colIndex};
     lastId++;
 
-    // Iterate through all notes, set their values and re-add the 'lost' event listeners. 
+    // Iterate through all notes and reset their values.
     var noteLength = notes.children.length;
     for (var i = 0; i < noteLength; i++) {
         var currentId = parseInt(notes.children[i].id.slice(4));
@@ -58,8 +62,9 @@ function sendUpdate(id) {
     var actualContent = document.getElementById("content" + id).value;
     var xCoord = document.getElementById("note" + id).style.left;
     var yCoord = document.getElementById("note" + id).style.top;
+    var colour = document.getElementById("note" + id).style.background;
 
-    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1, x:xCoord, y:yCoord};
+    var data = {noteTitle: actualTitle, noteContent: actualContent, noteId: -1, x:xCoord, y:yCoord, colour:colour};
 
     // We don't want to do anything if there are no changed that have been made to the note. 
     if (expectedTitle == actualTitle && expectedContent == actualContent) {
@@ -77,10 +82,7 @@ function sendUpdate(id) {
         data.noteId = noteInfo[id].noteId;
         aClient.post('update_note', JSON.stringify(data),
             function(response) {
-                var correct = response[0];
-                if (correct == "N") {
-                    // TODO: Handle errors.
-                }
+                // Nothing to do.
             }
         );
     } else {
@@ -92,9 +94,7 @@ function sendUpdate(id) {
                     var newId = response.slice(1); // Id of note that we have saved to.
                     noteInfo[id].saved = true;
                     noteInfo[id].noteId = newId;
-                } else {
-                    // TODO: Handle errors. 
-                }
+                } 
             }
         );
     }
@@ -145,16 +145,17 @@ function getAllNotes() {
 		var noteList = JSON.parse(response);
 		for (var i = 0; i < noteList.length ; i++) {
             var currentNote = noteList[i];
-            var colour = getColour();
-            noteInfo[lastId] = {noteId: currentNote.noteId,
-                                title: currentNote.noteTitle,
-                                content: currentNote.noteContent,
-                                saved: true,   
-                                colour: colour}; 
+            noteInfo[lastId] = {
+                noteId: currentNote.noteId,
+                title: currentNote.noteTitle,
+                content: currentNote.noteContent,
+                colour: currentNote.colour,
+                saved: true
+            }; 
             notes.innerHTML += getNoteHtml(lastId, currentNote.noteTitle, currentNote.noteContent);
             document.getElementById('note' + lastId).style.left = currentNote.xCoord;
             document.getElementById('note' + lastId).style.top = currentNote.yCoord;
-            document.getElementById('note' + lastId).style.background = colour;
+            document.getElementById('note' + lastId).style.background = currentNote.colour;
             lastId++;
     	}
 	});
