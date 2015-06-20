@@ -10,7 +10,6 @@ function startNotifications() {
     var client = new HttpClient();
     client.get("/notifications/get_some?number=5", function(response) {
         response = JSON.parse(response);
-        console.log(response);
         for(var i = 0; i < response.notifications.length; i++) {
             addNotification(response.notifications[i]);
         }
@@ -31,7 +30,6 @@ function getNotifications() {
 }
 
 function addNotification(notif) {
-    console.log(notif);
     var notifications = document.getElementById("notifications");
     var newNotif = "<div class='notification' onclick='notifGoTo(" +
                     notif.groupId + ", \"" + notif.feature + "\")'>" +
