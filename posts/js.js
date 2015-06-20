@@ -6,32 +6,18 @@ var ensureSent = false;
 var offsetData;
 var lastMoved = -1;
 
-// BUG:  New notes moved and then data entered end up in corner on refresh.
 // BUG:  Colours change on refresh.
 
 // Gets note html
 function getNoteHtml(id, title, content) {
-    var html = "";
-    if (!(title || content)) {
-        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
-                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'></textarea>" +
-                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'></textarea>" +
-                   "<div id='note-controller" + id + "'>" + 
-                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
-                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
-                   "</div>" +
-               "</li>";
-    } else {
-        html = "<li id='note" + id + "' ondrop='drop(event)'>" + 
-                   "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title + "</textarea>" +
-                   "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
-                   "<div id='note-controller" + id + "'>" + 
-                       "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
-                       "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
-                   "</div>" +
-               "</li>";
-    }
-    return html;
+    return "<li id='note" + id + "' ondrop='drop(event)'>" + 
+               "<textarea class='note-title' onblur='sendUpdate(" + id + ")' id='title" + id + "' placeholder='Untitled'>" + title  + "</textarea>" +
+               "<textarea class='note-content' onblur='sendUpdate(" + id + ")' id='content" + id + "' placeholder='Your content here'>" + content + "</textarea>" +
+               "<div id='note-controller" + id + "'>" + 
+                   "<img onclick='deleteNote(" + id + ")' id='delete' src='" + delImgStr + "'>" + 
+                   "<img id='move" + id + "' ondragstart=drag(event) src='" + movImgStr + "'>" +
+               "</div>" +
+           "</li>";
 }
 
 function getColour() {
