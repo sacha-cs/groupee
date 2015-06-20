@@ -49,21 +49,24 @@ function updateNote(request, response, data) {
     if (x) toUpdate.push("x=" + x + " ");
     if (y) toUpdate.push("y=" + y + " ");
 
-    var updateNoteQuery = 
-        "UPDATE note " +
-        "SET " + toUpdate.join(',') +
-        "WHERE note_id=" + id;
-	pg.connect(connectionString, function(err, client, done) {
-	 	client.query(updateNoteQuery, function(err, result) {
-            done(client);
-			if (err) { return utils.respondError(err, response); }
-            return utils.respondPlain(response, "Y");
-		});
-	});
-    var username = utils.getUser(request);
-    var groupId = utils.getViewingGroup(request);
-    notificationServer.checkForNotification(title, username, groupId, "posts"); 
-    notificationServer.checkForNotification(content, username, groupId, "posts"); 
+    if (toUpdate.length > 0) {
+        var updateNoteQuery = 
+            "UPDATE note " +
+            "SET " + toUpdate.join(',') +
+            "WHERE note_id=" + id;
+        console.log(updateNoteQuery);
+        pg.connect(connectionString, function(err, client, done) {
+            client.query(updateNoteQuery, function(err, result) {
+                done(client);
+                if (err) { return utils.respondError(err, response); }
+                return utils.respondPlain(response, "Y");
+            });
+        });
+        var username = utils.getUser(request);
+        var groupId = utils.getViewingGroup(request);
+        notificationServer.checkForNotification(title, username, groupId, "posts"); 
+        notificationServer.checkForNotification(content, username, groupId, "posts"); 
+    }
 }
 
 function deleteNote(request, response, data) {
