@@ -12,6 +12,24 @@ function toggleAccountSettings() {
 function togglePasswordSettings() {
 	document.getElementById('password').style.display = 'block';
 	document.getElementById('account').style.display = 'none';
+
+	document.getElementById("current-password").addEventListener('keypress', function (e) {
+		if (e.keyCode == 13) {
+			changePassword();
+		}
+	});
+
+	document.getElementById("new-password").addEventListener('keypress', function (e) {
+		if (e.keyCode == 13) {
+			changePassword();
+		}
+	});
+
+	document.getElementById("new-password-confirm").addEventListener('keypress', function (e) {
+		if (e.keyCode == 13) {
+			changePassword();
+		}
+	});
 }
 
 function changePassword() {
