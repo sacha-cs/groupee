@@ -7,6 +7,18 @@ function popupForm() {
 		albums[i].style.opacity = 0.4;
 	}
 	document.getElementById("content").addEventListener('click', hideForm);
+	
+	document.getElementById("album_name").addEventListener('keypress', function (e) {
+		if (e.keyCode == 13) {
+			createAlbum();
+		}
+	});
+
+	document.getElementById("description").addEventListener('keypress', function (e) {
+		if (e.keyCode == 13) {
+			createAlbum();
+		}
+	});
 }
 
 function hideForm(event) {

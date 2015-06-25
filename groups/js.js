@@ -193,4 +193,29 @@ function autoComplete() {
 
 function loaded() {
     addGroupsToPage();
+
+    if (document.getElementById("group_name")) {
+        document.getElementById("group_name").addEventListener('keypress', function (e) {
+            if (e.keyCode == 13) {
+                createGroup();
+            }
+        });
+    }
+
+    if (document.getElementById("description")) {
+        document.getElementById("description").addEventListener('keypress', function (e) {
+            if (e.keyCode == 13) {
+                createGroup();
+            }
+        });
+    }
+
+    if (document.getElementById("username")) {
+        document.getElementById("username").addEventListener('keypress', function (e) {
+            console.log("You")
+            if (e.keyCode == 13) {
+                addUser();
+            }
+        });
+    }
 }

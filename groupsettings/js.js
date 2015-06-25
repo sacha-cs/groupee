@@ -8,6 +8,12 @@ function toggleUsersSettings() {
 	document.getElementById("add-users").style.display = 'block';
 	document.getElementById("quit-confirm").style.display = 'none';
     document.getElementById("rename-group").style.display = 'none';
+
+    document.getElementById("username").addEventListener('keypress', function (e) {
+        if (e.keyCode == 13) {
+            addUser();
+        }
+    });
 }
 
 function toggleQuitSettings() {
@@ -20,6 +26,12 @@ function toggleRenameSettings() {
     document.getElementById("rename-group").style.display = 'block';
     document.getElementById("add-users").style.display = 'none';
     document.getElementById("quit-confirm").style.display = 'none';
+
+    document.getElementById("group-new-name").addEventListener('keypress', function (e) {
+        if (e.keyCode == 13) {
+            renameGroup();
+        }
+    });
 }
 
 function addUser() {
@@ -38,7 +50,7 @@ function addUser() {
         function (response) {
             response = JSON.parse(response);
             if (!response.success) {
-                setErrorText("Sorry, you aren't able to join this group.");
+                setErrorText("Sorry, this user does not exist");
             } else {
                 document.getElementById("username").value = "";
                 setSuccessText("User added successfully");
@@ -59,6 +71,10 @@ function quitGroup() {
 
 function renameGroup() {
     var groupName = document.getElementById("group-new-name").value;
+
+    if (groupName == "") {
+        return;
+    }
 
     var aClient = new HttpClient();
     aClient.post('rename_group', "groupName=" + groupName, function(response) {});

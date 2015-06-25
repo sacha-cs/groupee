@@ -146,6 +146,11 @@ function deleteTask(taskId) {
 function loaded() {
   getAllTodoItems();
 
+  document.getElementById("todo-item").addEventListener("keypress", function (e) {
+    if (e.keyCode == 13) {
+      addTodo();
+    }
+  });
 
   document.getElementById("todos").addEventListener("mousewheel", function (e) {
       var delta = e.wheelDelta || -e.detail;
