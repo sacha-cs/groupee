@@ -69,6 +69,6 @@ function escapeHtml(text) {
 }
 
 function getAvatar(user) {
-    return "http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/" +
+    return "http://natpat.net/groupee/avatars/" +
            user + ".png";
 }

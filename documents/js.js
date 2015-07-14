@@ -34,8 +34,8 @@ function addDocument(documentName, documentType) {
 	switch (documentType) {
 		case "pdf" :
 			documentHtml = "<div class='pdf' onclick=\"renderDocument('" + documentName + "')\">" + 
-            			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/pdf-doc.png'>" +
-            			   "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
+            			   "<img src='http://natpat.net/groupee/icons/pdf-doc.png'>" +
+            			   "<img class='delete' src='http://natpat.net/groupee/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
             			   "<p>" + documentName + "</p>" +
         				   "</div>";
         	break;
@@ -43,8 +43,8 @@ function addDocument(documentName, documentType) {
         case "ppt" :
         case "pptx" :
 			documentHtml = "<div class='ppt' onclick=\"renderDocument('" + documentName + "')\">" + 
-            			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/powerpoint-doc.png'>" +
-            			   "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
+            			   "<img src='http://natpat.net/groupee/icons/powerpoint-doc.png'>" +
+            			   "<img class='delete' src='http://natpat.net/groupee/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
             			   "<p>" + documentName + "</p>" +
         				   "</div>";
         	break;
@@ -52,8 +52,8 @@ function addDocument(documentName, documentType) {
         case "doc" :
         case "docx" :
 			documentHtml = "<div class='doc' onclick=\"renderDocument('" + documentName + "')\">" + 
-            			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/word-doc.png'>" +
-            			   "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
+            			   "<img src='http://natpat.net/groupee/icons/word-doc.png'>" +
+            			   "<img class='delete' src='http://natpat.net/groupee/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
             			   "<p>" + documentName + "</p>" +
         				   "</div>";
         	break;
@@ -61,16 +61,16 @@ function addDocument(documentName, documentType) {
         case "xls" :
         case "xlsx" :
 			documentHtml = "<div class='excel' onclick=\"renderDocument('" + documentName + "')\">" + 
-            			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/excel-doc.png'>" +
-            			   "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
+            			   "<img src='http://natpat.net/groupee/icons/excel-doc.png'>" +
+            			   "<img class='delete' src='http://natpat.net/groupee/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
             			   "<p>" + documentName + "</p>" +
         				   "</div>";
         	break;	
 
         case "txt" :
 			documentHtml = "<div class='text' onclick=\"renderDocument('" + documentName + "')\">" + 
-            			   "<img src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/plain-text-doc.png'>" +
-            			   "<img class='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
+            			   "<img src='http://natpat.net/groupee/icons/plain-text-doc.png'>" +
+            			   "<img class='delete' src='http://natpat.net/groupee/icons/delete.png' onclick=\"deleteDocument('" + documentName + "')\">" +
             			   "<p>" + documentName + "</p>" +
         				   "</div>";
         	break;
@@ -83,7 +83,7 @@ function renderDocument(documentName) {
 	var documentViewer = document.getElementById("documents-viewer");
     var aClient = new HttpClient();
     aClient.get('get_group_id', function(groupId) {
-	    documentViewer.innerHTML = "<iframe src='http://docs.google.com/gview?url=http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" + groupId + "/documents/" + documentName + "&embedded=true' frameborder='0'></iframe>";
+	    documentViewer.innerHTML = "<iframe src='http://docs.google.com/gview?url=http://natpat.net/groupee/groups/group" + groupId + "/documents/" + documentName + "&embedded=true' frameborder='0'></iframe>";
     });
 }
 

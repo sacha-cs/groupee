@@ -73,9 +73,9 @@ function getAllAlbums() {
             var thumb = albumsInfo.albums[i].thumb;
 
             var albumHtml = "<div class='view' id='" + albumId + "'>" + 
-                            "<img src=" + (thumb ? ("'http://www.doc.ic.ac.uk/project/2014/271/g1427136/groups/group" +
+                            "<img src=" + (thumb ? ("'http://natpat.net/groupee/groups/group" +
                                 albumsInfo.groupId + "/photos/album" + albumId + "/thumbnail" + thumb + ".jpg'>")
-                            : "'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/default-album.png'>") +  
+                            : "'http://natpat.net/groupee/icons/default-album.png'>") +  
      					    "<div class='mask'>" +  
      						"<h2>" + albumName + "</h2>" +  
      						"<p>" + albumDescription + "</p>" + 

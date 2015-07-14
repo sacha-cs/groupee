@@ -69,7 +69,7 @@ function createAlbumDirectory(group_id, album_id) {
     form.append('group_id', group_id);
     form.append('album_id', album_id);
 
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createAlbumDirectory.php', function (err, res) {
+    form.submit('http://natpat.net/groupee/php/createAlbumDirectory.php', function (err, res) {
     });
 }
 
@@ -153,7 +153,7 @@ function uploadPhotos(request, response, data, files) {
 	    		}
 	    		if (i == numFiles-1) {
 	    			done(client);
-    			    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadPhotos.php', function (err, res) {
+    			    form.submit('http://natpat.net/groupee/php/uploadPhotos.php', function (err, res) {
     			    	res.pipe(process.stdout);
 				    	for (var i = 0 ; i < numFiles ; i++) {
 				    		if (numFiles == 1) {
@@ -195,7 +195,7 @@ function deleteAlbum(request, response, params) {
         client.query(removeFromPhotosQuery, function(err, removeFromAlbumsResult) {
             client.query(removeFromAlbumsQuery, function(err, removeFromPhotosResult) {
                 done(client);
-                form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deleteAlbum.php');
+                form.submit('http://natpat.net/groupee/php/deleteAlbum.php');
                 response.end();
             });
         });
@@ -234,7 +234,7 @@ function deletePhoto(request, response, params) {
     pg.connect(connectionString, function(err, client, done) {
         client.query(deletePhotoQuery, function(err, deletePhotoResult) {
             done(client);
-            form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deletePhoto.php');
+            form.submit('http://natpat.net/groupee/php/deletePhoto.php');
             response.pipe(process.stdout)
             response.end();
         });
