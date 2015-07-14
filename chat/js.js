@@ -1,12 +1,12 @@
 var chatRefreshRate = 1000;
-var filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
+var filePath = "http://natpat.net/groupee/";
 
 var lastMessageID;
 var oldTitle;
 var tabOpen;
 var lastSeenMessage;
 
-var chatSound = new Audio('http://www.doc.ic.ac.uk/project/2014/271/g1427136/avatars/chat_sound.mp3');
+var chatSound = new Audio('http://natpat.net/groupee/avatars/chat_sound.mp3');
 var input;
 var chatOpen = true;
 var firstUpdate = true;

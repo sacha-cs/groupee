@@ -22,8 +22,7 @@ require('./documentsServer');
 notificationServer = require('./notificationServer');
 
 connectionString = 'postgres://zhiqcqrrpvrhin:kyDKPUF4T1iKHEt_uG6h85YEYX@ec2-54-204-20-209.compute-1.amazonaws.com/d6s1veg7u54ta5?ssl=true';
-uploadPath = "/vol/project/2014/271/g1427136/"
-filePath = "http://www.doc.ic.ac.uk/project/2014/271/g1427136/";
+filePath = "http://natpat.net/groupee/";
 
 sessionKeys = [];
 
@@ -256,7 +255,7 @@ function requestDisallowed(url) {
 }
 
 function faviconResponse(request, response) {
-    response.writeHead("301", {"Location": "http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/favicon.ico"});
+    response.writeHead("301", {"Location": "http://natpat.net/groupee/icons/favicon.ico"});
     response.end();
 }
 

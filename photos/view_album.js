@@ -1,7 +1,7 @@
 var photoInformation;
 var keyBindings = {left: 37, right: 39, esc: 27, enter: 13};
-var deleteIcon = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/close.png';
-var prefix = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136';
+var deleteIcon = 'http://natpat.net/groupee/icons/close.png';
+var prefix = 'http://natpat.net/groupee';
 
 function loaded() {
     getAllPhotos();

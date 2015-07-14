@@ -87,7 +87,7 @@ function addEventToCalendar(event) {
 			document.getElementById(i).innerHTML += 
 				"<div class='events' style='background-color:" + event.color +"'>" + escapeHtml(event.text) + 
 				  "<span id='popover-time'>" + tooltipTime + "</span>" +
-                  "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" +
+                  "<img onclick='deleteEvent(event, " + event.id + ")' onmouseup='doNothing(event)' id='delete' src='http://natpat.net/groupee/icons/delete.png'>" +
                 "</div>";
 		}
 	}

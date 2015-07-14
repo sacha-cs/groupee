@@ -19,7 +19,7 @@ function addTodo() {
 				document.getElementById("todos").innerHTML += 
 							"<div draggable='true' ondragstart='drag(event)' class='task' id='" + response.slice(1) + "'>" +
             				 todoItem +
-                  "<img onclick='deleteTask(" + response.slice(1) + ")' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" + 
+                  "<img onclick='deleteTask(" + response.slice(1) + ")' id='delete' src='http://natpat.net/groupee/icons/delete.png'>" + 
               "</div>";
 				return;
 			} else {
@@ -112,7 +112,7 @@ function getAllTodoItems() {
 
             var taskHtml = "<div draggable='true' ondragstart='drag(event)' ondrop='bubbleDrop(event)' class='task' id='" + info.taskId + "'>" +
             				info.task +
-                    "<img onclick='deleteTask(" + info.taskId + ")' id='delete' src='http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png'>" + 
+                    "<img onclick='deleteTask(" + info.taskId + ")' id='delete' src='http://natpat.net/groupee/icons/delete.png'>" + 
             			   "</div>";
 
            	switch(info.category) {

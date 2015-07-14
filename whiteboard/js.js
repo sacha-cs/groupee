@@ -564,5 +564,3 @@ window.onbeforeunload = function() {
         var i = 0;
     }
 }
-
-

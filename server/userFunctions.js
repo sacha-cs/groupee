@@ -251,7 +251,7 @@ function insertUserIntoMemberOf(request, response, client, done, callback, group
 function createAvatar(user) {
     var form = new FormData();
     form.append("username", user);
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/setDefaultAvatar.php', function (error, response) {});
+    form.submit('http://natpat.net/groupee/php/setDefaultAvatar.php', function (error, response) {});
 }
 
 function nameIsValid(name) {
@@ -411,7 +411,7 @@ function changeAvatar(req, response, data, files) {
     form.append('username', user);
     form.append('avatar', fs.createReadStream(filePath));
 
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadAvatar.php', function (err, res) {
+    form.submit('http://natpat.net/groupee/php/uploadAvatar.php', function (err, res) {
         fs.unlink(filePath);
         response.writeHead("303", {'Location' : '/usersettings/' });
         response.end();
@@ -466,7 +466,7 @@ function createGroupDirectory(group_id) {
     var form = new FormData();
     form.append('group_id', group_id);
 
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/createGroupDirectory.php', function (err, res) {
+    form.submit('http://natpat.net/groupee/php/createGroupDirectory.php', function (err, res) {
     });
 }
 
@@ -530,7 +530,7 @@ function getSpaceUsed(request, response, params) {
     var spaceUsed = '';
     var form = new FormData();
     form.append('group_id', groupId);
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/getSpaceUsed.php', function (err, res) {
+    form.submit('http://natpat.net/groupee/php/getSpaceUsed.php', function (err, res) {
         res.on('data', function(chunk) {
             spaceUsed += chunk;
         });

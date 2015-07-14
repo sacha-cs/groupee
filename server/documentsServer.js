@@ -29,7 +29,7 @@ function uploadDocuments(request, response, data, files) {
     			form.append(removeExtension(files["upload[]"][i].name), fs.createReadStream(files["upload[]"][i].path));
     		}
     		if (i == numFiles-1) {
-			    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/uploadDocuments.php', function (err, res) {
+			    form.submit('http://natpat.net/groupee/php/uploadDocuments.php', function (err, res) {
 			    	for (var i = 0 ; i < numFiles ; i++) {
 			    		if (numFiles == 1) {
 			        		fs.unlink(files["upload[]"].path);
@@ -59,7 +59,7 @@ function getDocuments(request, response, params) {
 
     var form = new FormData();
     form.append('group_id', groupId);
-    form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/getDocuments.php', function (err, res) {
+    form.submit('http://natpat.net/groupee/php/getDocuments.php', function (err, res) {
         res.on('data', function(chunk) {
             documents += chunk;
         });
@@ -77,7 +77,7 @@ function deleteDocument(request, response, params) {
 	var form = new FormData();
 	form.append('group_id', groupId);
 	form.append('document_name', documentToDelete);
-	form.submit('http://www.doc.ic.ac.uk/project/2014/271/g1427136/php/deleteDocument.php', function (err, res) {
+	form.submit('http://natpat.net/groupee/php/deleteDocument.php', function (err, res) {
 		response.end();
 	});
 }

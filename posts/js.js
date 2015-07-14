@@ -1,6 +1,6 @@
 var noteInfo = [];
-var delImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/delete.png';
-var movImgStr = 'http://www.doc.ic.ac.uk/project/2014/271/g1427136/icons/move.png';
+var delImgStr = 'http://natpat.net/groupee/icons/delete.png';
+var movImgStr = 'http://natpat.net/groupee/icons/move.png';
 var lastId = 0;
 var ensureSent = false;
 var offsetData;
