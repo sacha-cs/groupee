@@ -88,16 +88,18 @@ function startWhiteboard() {
     tempCanvas.addEventListener("touchmove", function(evt) {
         mousePos = getMousePos(canvas, evt.touches[0]);
         mouseMove(evt);
-        
+        evt.preventDefault();
     });
 
     tempCanvas.addEventListener("touchstart", function() {
         mousePos = getMousePos(canvas, evt.touches[0]);
         mouseDown(evt);
+        evt.preventDefault();
     });
 
     tempCanvas.addEventListener("touchend", function(evt) {
         mouseUp(evt);
+        evt.preventDefault();
     });
 
     textHidden.addEventListener("input", drawTextTemp);
