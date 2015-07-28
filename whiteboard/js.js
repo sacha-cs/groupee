@@ -78,7 +78,7 @@ function startWhiteboard() {
     });
 
     tempCanvas.addEventListener("mousedown", function(evt) {
-        mouseDown(evt);
+        mouseDownEvt(evt);
     });
 
     tempCanvas.addEventListener("mouseup", function(evt) {
@@ -93,7 +93,7 @@ function startWhiteboard() {
 
     tempCanvas.addEventListener("touchstart", function(evt) {
         mousePos = getMousePos(canvas, evt.touches[0]);
-        mouseDown(evt);
+        mouseDownEvt(evt);
         evt.preventDefault();
     });
 
@@ -109,7 +109,7 @@ function startWhiteboard() {
 
 } 
 
-function mouseDown(evt) {
+function mouseDownEvt(evt) {
     mouseDown = true;
     clickPos = mousePos;
     if(tool == "Text") {
