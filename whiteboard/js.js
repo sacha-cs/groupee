@@ -72,136 +72,162 @@ function startWhiteboard() {
     updateWhiteboard(true);
 
 
-    /* TODO: factor these out into their own function */
     tempCanvas.addEventListener('mousemove', function(evt) {
         mousePos = getMousePos(canvas, evt);
-        if(tool == "Pen" || tool == "Eraser") {
-            var colour = (tool == "Pen" ? userPen.colour : "#ffffff");
-            clearCtx(tempCtx);
-            tempCtx.fillStyle = colour;
-            tempCtx.strokeStyle = "black";
-            tempCtx.lineWidth = 1;
-            drawCircle(tempCtx, mousePos, userPen.thickness/2);
-            drawCircleOutline(tempCtx, mousePos, userPen.thickness/2);
-            if(mouseDown) {
-                setUserPreferences(ctx);
-                ctx.strokeStyle = colour;
-                ctx.beginPath();
-                ctx.moveTo(lastMousePos.x, lastMousePos.y);
-                ctx.lineTo(mousePos.x, mousePos.y);
-                ctx.stroke();
-                lastMousePos = mousePos;
-                addDataToSend();
-            }
-        }
-        if (tool == "Rectangle") {
-            if(mouseDown) {
-                clearCtx(tempCtx);
-                setUserPreferences(tempCtx);
-                var width = mousePos.x - clickPos.x;
-                var height = mousePos.y - clickPos.y;
-                tempCtx.beginPath();
-                tempCtx.rect(clickPos.x, clickPos.y, width, height);
-                tempCtx.fill();
-                tempCtx.stroke();
-                addDataToSend();
-            }
-        }
-        if (tool == "Line") {
-            if(mouseDown) {
-                clearCtx(tempCtx);
-                setUserPreferences(tempCtx);
-                tempCtx.beginPath();
-                tempCtx.moveTo(clickPos.x, clickPos.y);
-                tempCtx.lineTo(mousePos.x, mousePos.y);
-                tempCtx.stroke();
-                addDataToSend();
-            }
-        }
-        if (tool == "Circle") {
-            if(mouseDown) {
-                clearCtx(tempCtx);
-                setUserPreferences(tempCtx);
-                var centre = {};
-                centre.x = (clickPos.x + mousePos.x) / 2;
-                centre.y = (clickPos.y + mousePos.y) / 2;
-                var xDiff = mousePos.x - clickPos.x;
-                var yDiff = mousePos.y - clickPos.y;
-                var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
-                drawCircle(tempCtx, centre, radius);
-                drawCircleOutline(tempCtx, centre, radius);
-                addDataToSend();
-            }
-        }
+        mouseMove(evt);
     });
 
     tempCanvas.addEventListener("mousedown", function() {
-        mouseDown = true;
-        clickPos = mousePos;
-        if(tool == "Text") {
-            if(started)
-                drawTextPermenent();
-            setTimeout(function () { textHidden.focus() }, 100);
-            textHidden.value = "";
-        } else if(tool == "Pen" || tool == "Eraser") {
-            started = true;
-            lastMousePos = mousePos;
-        } else if(tool == "Rectangle") {
-            started = true;
-        } else if(tool == "Line") {
-            started = true;
-        } else if(tool ==  "Circle") {
-            started = true;
-        }
-        startedUsingTool();
-        addDataToSend();
-
+        mouseDown(evt);
     });
 
     tempCanvas.addEventListener("mouseup", function(evt) {
-        mouseDown = false;
-        if(tool == "Rectangle") {
-            setUserPreferences(ctx);
-            clearCtx(tempCtx);
-            var width = mousePos.x - clickPos.x;
-            var height = mousePos.y - clickPos.y;
-            ctx.beginPath();
-            ctx.rect(clickPos.x, clickPos.y, width, height);
-            ctx.fill();
-            ctx.stroke();
-        }
-        if(tool == "Line") {
-            clearCtx(tempCtx);
-            setUserPreferences(ctx);
-            ctx.beginPath();
-            ctx.moveTo(clickPos.x, clickPos.y);
-            ctx.lineTo(mousePos.x, mousePos.y);
-            ctx.stroke();
-            addDataToSend();
-        }
-        if(tool != "Text") {
-            finishedUsingTool();
-        }
-        if(tool == "Circle") {
-            clearCtx(tempCtx);
-            setUserPreferences(ctx);
-            var centre = {};
-            centre.x = (clickPos.x + mousePos.x) / 2;
-            centre.y = (clickPos.y + mousePos.y) / 2;
-            var xDiff = mousePos.x - clickPos.x;
-            var yDiff = mousePos.y - clickPos.y;
-            var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
-            drawCircle(ctx, centre, radius);
-            drawCircleOutline(ctx, centre, radius);
-            addDataToSend();
-        }
+        mouseUp(evt);
     });
+
+    tempCanvas.addEventListener("touchmove", function(evt) {
+        mousePos = getMousePos(canvas, evt.touches[0]);
+        mouseMove(evt);
+        
+    });
+
+    tempCanvas.addEventListener("touchstart", function() {
+        mousePos = getMousePos(canvas, evt.touches[0]);
+        mouseDown(evt);
+    });
+
+    tempCanvas.addEventListener("touchend", function(evt) {
+        mouseUp(evt);
+    });
+
     textHidden.addEventListener("input", drawTextTemp);
     textHidden.addEventListener("blur", drawTextPermenent);
     textHidden.addEventListener("keydown", function() {
         setTimeout(drawTextTemp, 10)});
 
 } 
+
+function mouseDown(evt) {
+    mouseDown = true;
+    clickPos = mousePos;
+    if(tool == "Text") {
+        if(started)
+            drawTextPermenent();
+        setTimeout(function () { textHidden.focus() }, 100);
+        textHidden.value = "";
+    } else if(tool == "Pen" || tool == "Eraser") {
+        started = true;
+        lastMousePos = mousePos;
+    } else if(tool == "Rectangle") {
+        started = true;
+    } else if(tool == "Line") {
+        started = true;
+    } else if(tool ==  "Circle") {
+        started = true;
+    }
+    startedUsingTool();
+    addDataToSend();
+}
+
+function mouseUp(evt) {
+    mouseDown = false;
+    if(tool == "Rectangle") {
+        setUserPreferences(ctx);
+        clearCtx(tempCtx);
+        var width = mousePos.x - clickPos.x;
+        var height = mousePos.y - clickPos.y;
+        ctx.beginPath();
+        ctx.rect(clickPos.x, clickPos.y, width, height);
+        ctx.fill();
+        ctx.stroke();
+    }
+    if(tool == "Line") {
+        clearCtx(tempCtx);
+        setUserPreferences(ctx);
+        ctx.beginPath();
+        ctx.moveTo(clickPos.x, clickPos.y);
+        ctx.lineTo(mousePos.x, mousePos.y);
+        ctx.stroke();
+        addDataToSend();
+    }
+    if(tool != "Text") {
+        finishedUsingTool();
+    }
+    if(tool == "Circle") {
+        clearCtx(tempCtx);
+        setUserPreferences(ctx);
+        var centre = {};
+        centre.x = (clickPos.x + mousePos.x) / 2;
+        centre.y = (clickPos.y + mousePos.y) / 2;
+        var xDiff = mousePos.x - clickPos.x;
+        var yDiff = mousePos.y - clickPos.y;
+        var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
+        drawCircle(ctx, centre, radius);
+        drawCircleOutline(ctx, centre, radius);
+        addDataToSend();
+    }
+}
+
+function mouseMove(evt) {
+    if(tool == "Pen" || tool == "Eraser") {
+        var colour = (tool == "Pen" ? userPen.colour : "#ffffff");
+        clearCtx(tempCtx);
+        tempCtx.fillStyle = colour;
+        tempCtx.strokeStyle = "black";
+        tempCtx.lineWidth = 1;
+        drawCircle(tempCtx, mousePos, userPen.thickness/2);
+        drawCircleOutline(tempCtx, mousePos, userPen.thickness/2);
+        if(mouseDown) {
+            setUserPreferences(ctx);
+            ctx.strokeStyle = colour;
+            ctx.beginPath();
+            ctx.moveTo(lastMousePos.x, lastMousePos.y);
+            ctx.lineTo(mousePos.x, mousePos.y);
+            ctx.stroke();
+            lastMousePos = mousePos;
+            addDataToSend();
+        }
+    }
+    if (tool == "Rectangle") {
+        if(mouseDown) {
+            clearCtx(tempCtx);
+            setUserPreferences(tempCtx);
+            var width = mousePos.x - clickPos.x;
+            var height = mousePos.y - clickPos.y;
+            tempCtx.beginPath();
+            tempCtx.rect(clickPos.x, clickPos.y, width, height);
+            tempCtx.fill();
+            tempCtx.stroke();
+            addDataToSend();
+        }
+    }
+    if (tool == "Line") {
+        if(mouseDown) {
+            clearCtx(tempCtx);
+            setUserPreferences(tempCtx);
+            tempCtx.beginPath();
+            tempCtx.moveTo(clickPos.x, clickPos.y);
+            tempCtx.lineTo(mousePos.x, mousePos.y);
+            tempCtx.stroke();
+            addDataToSend();
+        }
+    }
+    if (tool == "Circle") {
+        if(mouseDown) {
+            clearCtx(tempCtx);
+            setUserPreferences(tempCtx);
+            var centre = {};
+            centre.x = (clickPos.x + mousePos.x) / 2;
+            centre.y = (clickPos.y + mousePos.y) / 2;
+            var xDiff = mousePos.x - clickPos.x;
+            var yDiff = mousePos.y - clickPos.y;
+            var radius = Math.sqrt(xDiff * xDiff + yDiff * yDiff) / 2;
+            drawCircle(tempCtx, centre, radius);
+            drawCircleOutline(tempCtx, centre, radius);
+            addDataToSend();
+        }
+    }
+}
 
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
