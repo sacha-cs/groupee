@@ -1,4 +1,4 @@
-# [groupee](www.groupee.uk)
+# [groupee](http://groupee.uk)
 
 The *insanely* great collaborative platform.
 
