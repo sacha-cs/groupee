@@ -103,10 +103,10 @@ function getSome(request, response, params) {
                     "FROM notifications JOIN groups " +
                     "ON notifications.group_id=groups.group_id " +
                     "WHERE to_user='" + user + "' " +
-                    "ORDER BY notification_id " +
+                    "ORDER BY notification_id DESC " +
                     "LIMIT " + number;
         client.query(query, function(err, res) {
-            if(err) { return utils.respondJSON(response, {success:false}); }
+            if(err) { console.log(err); return utils.respondJSON(response, {success:false}); }
             for(var i = 0; i < res.rows.length; i++) {
                 var row = res.rows[i];
                 payload.notifications.push({
@@ -116,6 +116,7 @@ function getSome(request, response, params) {
                     group: row.group_name
                 });
             }
+            payload.notifications.reverse();
             utils.respondJSON(response, payload);
             done(client);
         });
