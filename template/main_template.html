@@ -24,7 +24,6 @@
                 <img src="http://natpat.net/groupee/icons/posts.png" onclick="goTo('posts')"> </br>
                 <img src="http://natpat.net/groupee/icons/documents.png" onclick="goTo('documents')">
                 <img src="http://natpat.net/groupee/icons/photos.png" onclick="goTo('photos')">
-                <img src="http://natpat.net/groupee/icons/code.png" onclick="goTo('code-editor')">
                 <img src="http://natpat.net/groupee/icons/settings.png" onclick="goTo('groupsettings')">
             </div>
         </span>
@@ -45,21 +44,21 @@
             <span onclick="logout(); window.location='/login/index.html'" id="navbar-logout">
                 <img src="http://natpat.net/groupee/icons/logout.png">
                 <span id="popover-logout">Log out</span>
-            </span> 
+            </span>
 
             <span id="navbar-self">
             </span>
 
             <span onclick="window.location='/usersettings/'" id="avatar-self">
                 <span id="popover-avatar">Profile settings</span>
-            </span> 
+            </span>
         </span>
     </div>
 
     <div id="chat-left">
         <div id="chat-toggle" onclick="toggleChat()">
             <span id="half1"></span>
-            <span id="half2"></span>    
+            <span id="half2"></span>
             <div id="chat-toggle-icon">
                 <img src="http://natpat.net/groupee/icons/chat-icon.png">
                 <div id="new-messages-icon"></div>
@@ -73,12 +72,12 @@
         </div>
         <div id="chat-box">
             <!-- Chat box gets inserted here by js -->
-        </div> 
+        </div>
     </div>
 
     <div id="content" onclick="hideShortcuts()">
         <?content?>
-    </div>  
+    </div>
     </body>
 
 </html>
