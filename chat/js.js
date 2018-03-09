@@ -138,7 +138,7 @@ function addMessagesToChat(messages) {
         var day = prefixWithZero(nd.getDate());
         var month = prefixWithZero(nd.getMonth() + 1);
         var year = nd.getFullYear()
-        var tooltipData = hours + ":" + minutes;
+        var tooltipDate = hours + ":" + minutes;
         var now = new Date()
         if (year != now.getFullYear()) {
             tooltipDate = day + "/" + month + "/" + year + " " + tooltipDate
