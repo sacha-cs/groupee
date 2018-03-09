@@ -137,10 +137,14 @@ function addMessagesToChat(messages) {
         var minutes = prefixWithZero(nd.getMinutes());
         var day = prefixWithZero(nd.getDate());
         var month = prefixWithZero(nd.getMonth() + 1);
-        if (day == (new Date().getDate())) {
-            
+        var year = nd.getFullYear()
+        var tooltipData = hours + ":" + minutes;
+        var now = new Date()
+        if (year != now.getFullYear()) {
+            tooltipDate = day + "/" + month + "/" + year + " " + tooltipDate
+        } else if (day != now.getDate() && month != now.getMonth()) {
+            tooltipDate = day + "/" + month + " " + tooltipDate
         }
-        var tooltipDate = ((day != (new Date().getDate())) ? (day + "/" + month) : "") + " " + hours + ":" + minutes;
         
         if (getCookie("username") == user) {
             messenger = "self";
