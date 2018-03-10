@@ -21,7 +21,7 @@ require('./photosServer');
 require('./documentsServer');
 notificationServer = require('./notificationServer');
 
-connectionString = 'postgres://zhiqcqrrpvrhin:kyDKPUF4T1iKHEt_uG6h85YEYX@ec2-54-204-20-209.compute-1.amazonaws.com/d6s1veg7u54ta5?ssl=true';
+connectionString = 'postgres://zhiqcqrrpvrhin:kyDKPUF4T1iKHEt_uG6h85YEYX@ec2-54-204-20-209.compute-1.amazonaws.com:5432/d6s1veg7u54ta5?ssl=true';
 filePath = "http://natpat.net/groupee/";
 
 sessionKeys = [];

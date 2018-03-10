@@ -109,6 +109,7 @@ function escapeHtml(text) {
 
 this.getAllChatHistory = function() {
     pg.connect(connectionString, function(err, client, done) {
+        console.log(err);
         var allChatQuery = "SELECT * " +
                            "FROM group_chats JOIN chat_messages " +
                               "USING (chat_id) " +
